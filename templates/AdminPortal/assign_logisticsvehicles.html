@@ -1,0 +1,146 @@
+{% extends 'AdminPortal/base.html' %}
+{% load static %}
+{% block body_block %}
+
+<style>
+    label {
+        font-weight: bold;
+        font-size: 14px;
+    }
+    .card-title {
+        font-size: 24px;
+        font-weight: bold;
+        color: #4b6584;
+        margin-bottom: 20px;
+    }
+    .form-group input, .form-group textarea {
+        border-radius: 8px;
+        padding: 6px 10px;
+        font-size: 14px;
+        height: 38px;
+    }
+    .form-group textarea {
+        height: auto;
+    }
+    .btn-primary {
+        background-color: #4b6584;
+        border: none;
+        padding: 8px 20px;
+        font-size: 14px;
+        border-radius: 6px;
+    }
+    .btn-primary:hover {
+        background-color: #3867d6;
+    }
+    .btn-light {
+        padding: 8px 20px;
+        font-size: 14px;
+        border-radius: 6px;
+    }
+    th {
+        background: #d9e6f1;
+        text-align: center;
+        font-size: 15px;
+    }
+    td {
+        text-align: center;
+        font-size: 14px;
+    }
+    .content-wrapper {
+        padding: 20px;
+    }
+</style>
+
+<div class="content-wrapper">
+    <!-- Create Branch Form -->
+    <div class="col-12 grid-margin stretch-card">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h1 class="card-title text-center">Assign Logistics Vehicles</h1>
+
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="row mb-3">
+                      <div class="col-md-6">
+                        <label for="id_partner">Logistics Partner</label>
+                        {{ form.partner }}
+                      </div>
+                      <div class="col-md-6">
+                        <label for="id_vehicle_number">Vehicle Number</label>
+                        {{ form.vehicle_number }}
+                      </div>
+                    </div>
+                  
+                    <div class="row mb-3">
+                      <div class="col-md-6">
+                        <label for="id_transport_mode">Transport Mode</label>
+                        {{ form.transport_mode }}
+                      </div>
+                      <div class="col-md-6">
+                        <label for="id_capacity">Capacity (in tons)</label>
+                        {{ form.capacity }}
+                      </div>
+                    </div>
+                  
+                    <div class="row mb-3">
+                      <div class="col-md-6 d-flex align-items-center">
+                        {{ form.is_active }} &nbsp;
+                        <label class="form-check-label" for="id_is_active">Active</label>
+                      </div>
+                    </div>
+                  
+                    <button type="submit" class="btn btn-primary">Save Vehicle</button>
+                  </form>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Distributor Branch List -->
+    <div class="col-12 grid-margin stretch-card mt-5">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h4 class="card-title text-center">📋 Logistics Vehicle List</h4>
+
+                <div class="table-responsive">
+                    <table id="branchTable" class="table table-striped table-bordered">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Partner</th>
+                                <th>Vehicle Number</th>
+                                <th>Transport Mode</th>
+                                <th>Capacity</th>
+                                <th>Active</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for vehicle in vehicles %}
+                            <tr>
+                              <td>{{ forloop.counter }}</td>
+                              <td>{{ vehicle.partner.name }}</td>
+                              <td>{{ vehicle.vehicle_number }}</td>
+                              <td>{{ vehicle.get_transport_mode_display }}</td>
+                              <td>{{ vehicle.capacity }}</td>
+                              <td>{{ vehicle.is_active|yesno:"Yes,No" }}</td>
+                              <td>
+                                <a href="#" class="btn btn-sm btn-primary">Edit</a>
+                                <a href="#" class="btn btn-sm btn-danger">Delete</a>
+                              </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                              <td colspan="7">No vehicles found.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

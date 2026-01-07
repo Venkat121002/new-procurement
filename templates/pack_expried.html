@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>BB School Management</title>
+    {% load static %}
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: linear-gradient(to right, #f8f9fa, #e3e3e3);
+            font-family: 'Arial', sans-serif;
+        }
+
+        .card {
+            background: #fff;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 500px;
+            width: 90%;
+        }
+
+        .warning-message {
+            background: #ffeeba;
+            color: #8B0000;
+            padding: 15px;
+            font-size: 18px;
+            font-weight: bold;
+            border-left: 5px solid #8B0000;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .next-btn {
+            padding: 12px 25px;
+            font-size: 16px;
+            font-weight: bold;
+            color: white;
+            background: #007bff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .next-btn:hover {
+            background: #0056b3;
+        }
+
+        .form-container {
+            margin-top: 10px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="card">
+        <div class="warning-message">
+            Your monthly subscription has expired. Our services have been suspended. Kindly contact Bharathbrands' Client Relationship Manager to clear your dues and restore your services. We look forward to serving you again.        </div>
+
+        <div class="form-container">
+            <form method="POST">
+                {% csrf_token %}
+                <input type="hidden" name="select_pk" value="{{ pk }}">
+                <button type="submit" class="next-btn">Proceed</button>
+            </form>
+        </div>
+    </div>
+
+</body>
+
+</html>

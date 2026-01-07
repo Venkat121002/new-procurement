@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+{% block body_block %}
+{% load static %}
+
+<div class="content-wrapper">
+    <div class="col-12 grid-margin stretch-card">
+        <div class="card">
+            <div class="card-body">
+                {% if 'invoice_create' in user_permissions %}
+                <a href="{% url 'invoice_create' %}">
+                    <button type="button" class="btn btn-primary float-right">+ New</button>
+                </a>
+                {% endif %}
+                <h3>{{screen_name}}</h3>
+
+                <!-- New Tab -->
+            </div>
+            {% if 'invoice_view' in user_permissions %}
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table id="tableID" class="display table table-hover">
+                        <thead class="bg-col">
+                            <tr>
+                                <th>No.</th>
+<th>invoice no</th>
+<th>po</th>
+<th>customer</th>
+<th>issue date</th>
+<th>due date</th>
+<th>total amount</th>
+<th>tax amount</th>
+<th>discount amount</th>
+<th>net amount</th>
+<th>payment status</th>
+<th>payment terms</th>
+<th>payment method</th>
+<th>payment reference</th>
+<th>remarks</th>
+                                    <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for data in records %}
+                            <tr>
+                                <td>{{ forloop.counter }}</td>
+<td>{{data.invoice_no}}</td>
+<td>{{data.po}}</td>
+<td>{{data.customer}}</td>
+<td>{{data.issue_date}}</td>
+<td>{{data.due_date}}</td>
+<td>{{data.total_amount}}</td>
+<td>{{data.tax_amount}}</td>
+<td>{{data.discount_amount}}</td>
+<td>{{data.net_amount}}</td>
+<td>{{data.payment_status}}</td>
+<td>{{data.payment_terms}}</td>
+<td>{{data.payment_method}}</td>
+<td>{{data.payment_reference}}</td>
+<td>{{data.remarks}}</td>
+                                    <td>
+                                        <div class="dropdown">
+                                            <button class="btn dropdown-toggle" type="button"
+                                                id="dropdownMenuIconButton2" data-toggle="dropdown" aria-haspopup="true"
+                                                aria-expanded="false">
+                                                <i class="fas fa-ellipsis-v"></i>
+                                            </button>
+                                           
+                                            <div class="dropdown-menu" aria-labelledby="dropdownMenuIconButton2">
+                                                <a class="dropdown-item" href="{% url 'invoice_detail' data.pk %}">
+                                                    <button class="btn iconbg-rose" data-bs-toggle="tooltip"
+                                                        data-bs-placement="top" title="View"><i
+                                                            class="fa fa-eye"></i> View</button>
+                                                </a>
+                                                {% if 'invoice_update' in user_permissions %}
+                                                <a class="dropdown-item" href="{% url 'invoice_update' data.pk %}">
+                                                    <button class="btn iconbg-yellow" data-bs-toggle="tooltip"
+                                                        data-bs-placement="top" title="Edit"><i class="fas fa-edit"></i>
+                                                        Edit</button>
+                                                </a>
+                                                {% endif %}
+                                                {% if 'invoice_delete' in user_permissions %}
+                                                <a class="dropdown-item" href="{% url 'invoice_delete' data.pk %}">
+                                                    <button class="btn iconbg-rose" data-bs-toggle="tooltip"
+                                                        data-bs-placement="top" title="Delete"><i
+                                                            class="fas fa-trash-alt"></i> Delete</button>
+                                                </a>
+                                                {% endif %}
+                                                
+                                            </div>
+                                        </div>
+                                    </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <br><br><br>
+
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}

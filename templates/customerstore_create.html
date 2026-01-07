@@ -1,0 +1,211 @@
+{% extends 'AdminPortal/base.html' %}
+{% load static %}
+{% block body_block %}
+
+<style>
+    label {
+        font-weight: bold;
+        font-size: 14px;
+    }
+    .card-title {
+        font-size: 24px;
+        font-weight: bold;
+        color: #4b6584;
+        margin-bottom: 20px;
+    }
+    .form-group input, .form-group textarea {
+        border-radius: 8px;
+        padding: 6px 10px;
+        font-size: 14px;
+        height: 38px;
+    }
+    .form-group textarea {
+        height: auto;
+    }
+    .btn-primary {
+        background-color: #4b6584;
+        border: none;
+        padding: 8px 20px;
+        font-size: 14px;
+        border-radius: 6px;
+    }
+    .btn-primary:hover {
+        background-color: #3867d6;
+    }
+    .btn-light {
+        padding: 8px 20px;
+        font-size: 14px;
+        border-radius: 6px;
+    }
+    th {
+        background: #d9e6f1;
+        text-align: center;
+        font-size: 15px;
+    }
+    td {
+        text-align: center;
+        font-size: 14px;
+    }
+    .content-wrapper {
+        padding: 20px;
+    }
+</style>
+
+<div class="content-wrapper">
+    <!-- Create Customer Store Form -->
+    <div class="col-12 grid-margin stretch-card">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h1 class="card-title text-center">Create Customer Store</h1>
+
+                <form method="post" class="forms-sample">
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="form-group col-md-6">
+                            <label for="name">Store Name</label>
+                            <input type="text" class="form-control" name="name" id="name" placeholder="Enter Store Name" required>
+                        </div>
+
+                        <div class="form-group col-md-6">
+                            <label for="customer">Customer</label>
+                            <select class="form-control" name="customer" id="customer" required>
+                                <option value="">Select Customer</option>
+                                {% for customer in customer_register %}
+                                    <option value="{{ customer.id }}">{{ customer.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label for="state">branch</label>
+                            <select class="form-control" name="branch" id="branch" required>
+                                <option value="">Select Branch</option>
+                            </select>
+                        </div>
+
+
+                        <div class="form-group col-md-6">
+                            <label for="phone_number">Conatct Number</label>
+                            <input type="number" class="form-control" name="phone_number" id="phone_number" placeholder="Enter Phone Number" required>
+                        </div>
+
+                        {% comment %} <div class="form-group col-md-6">
+                            <label for="email">Email</label>
+                            <input type="email" class="form-control" name="email" id="email" placeholder="Enter Email Address" required>
+                        </div> {% endcomment %}
+
+                        <div class="form-group col-md-6">
+                            <label for="manager_name">Manager Name</label>
+                            <input type="text" class="form-control" name="manager_name" id="manager_name" placeholder="Enter Manager Name" required>
+                        </div>
+
+                        {% comment %} <div class="form-group col-md-4">
+                            <label for="country">Country</label>
+                            <input type="text" class="form-control" name="country" id="country" placeholder="Enter Country" required>
+                        </div> {% endcomment %}
+
+                        
+                        <div class="form-group col-md-4">
+                            <label for="city">Location</label>
+                            <input type="text" class="form-control" name="city" id="city" placeholder="Enter City" required>
+                        </div>
+
+                        <div class="form-group col-md-12">
+                            <label for="description">Description</label>
+                            <textarea class="form-control" name="description" id="description" rows="3" placeholder="Enter Description" required></textarea>
+                        </div>
+                    </div>
+                    <label for="purchase_access">
+                        <input type="checkbox" name="purchase_access" id="purchase_access">
+                        Purchase Access
+                      </label>
+
+                    <div class="text-center mt-3">
+                        <button type="submit" class="btn btn-primary mr-2">Save Store</button>
+                        <a href="{% url 'customerstore_list' %}" class="btn btn-light">Cancel</a>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Customer Store List -->
+    <div class="col-12 grid-margin stretch-card mt-5">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h4 class="card-title text-center">📋 Customer Store List</h4>
+
+                <div class="table-responsive">
+                    <table id="customerStoreTable" class="table table-striped table-bordered">
+                        <thead>
+                            <tr>
+                                <th>No.</th>
+                                <th>Store Name</th>
+                                {% comment %} <th>Address</th> {% endcomment %}
+                                <th>Conatct Number</th>
+                                {% comment %} <th>Email</th> {% endcomment %}
+                                <th>Manager Name</th>
+                                {% comment %} <th>Country</th> {% endcomment %}
+                                {% comment %} <th>State</th> {% endcomment %}
+                                <th>Location</th>
+                                <th>Description</th>
+                                {% comment %} <th>Created At</th>
+                                <th>Updated At</th> {% endcomment %}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for store in distributor %}
+                            <tr>
+                                <td>{{ forloop.counter }}</td>
+                                <td>{{ store.name }}</td>
+                                {% comment %} <td>{{ store.address }}</td> {% endcomment %}
+                                <td>{{ store.contact_number }}</td>
+                                {% comment %} <td>{{ store.email }}</td> {% endcomment %}
+                                <td>{{ store.manager_name }}</td>
+                                {% comment %} <td>{{ store.country }}</td>
+                                <td>{{ store.state }}</td> {% endcomment %}
+                                <td>{{ store.location }}</td>
+                                <td>{{ store.description }}</td>
+                                {% comment %} <td>{{ store.created_at|date:"Y-m-d H:i" }}</td>
+                                <td>{{ store.updated_at|date:"Y-m-d H:i" }}</td> {% endcomment %}
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="12">No customer stores found.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const branchesData = {{ branch_data|safe }};
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const customerSelect = document.getElementById('customer');
+        const branchSelect = document.getElementById('branch');
+
+        customerSelect.addEventListener('change', function() {
+            const customerId = this.value;
+
+            // Clear branch options
+            branchSelect.innerHTML = '<option value="">Select Branch</option>';
+
+            if (branchesData[customerId]) {
+                branchesData[customerId].forEach(function(branch) {
+                    const option = document.createElement('option');
+                    option.value = branch.id;
+                    option.textContent = branch.name;
+                    branchSelect.appendChild(option);
+                });
+            }
+        });
+    });
+</script>
+
+{% endblock %}

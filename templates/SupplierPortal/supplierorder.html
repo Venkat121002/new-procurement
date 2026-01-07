@@ -1,0 +1,336 @@
+{% extends 'SupplierPortal/supplier_base.html' %}
+{% block body_block %}
+{% load static %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<style>
+.table-responsive {
+    overflow-x: auto !important;
+    white-space: nowrap;
+}
+.content-wrapper {
+    background: #F5F7FF;
+    padding: 2.375rem 2.375rem;
+    width: 100%;
+    -webkit-flex-grow: 1;
+    flex-grow: 1;
+    padding-top: 0px;
+}
+</style>
+<div class="content-wrapper">
+        {% csrf_token %}
+        <div class="row grid-margin stretch-card">
+            <div class="container mt-5 col-md-12 mb-3">
+                <form method ="post" action="">
+                    {% csrf_token %}
+                <div class="card card-body">
+                    <h4>Purchase Goods</h4>
+                    {% if messages %}
+                    <ul class="messages">
+                        {% for message in messages %}
+                        <li class="{% if message.tags %}{{ message.tags }}{% endif %}">
+                            {{ message }}
+                        </li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+                    <div class="row">
+                     
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="{{ form_field.id_for_label }}">
+                                    Vendor/Manufacturer<b style="color: red;">*</b>
+                                </label>
+                                <select name="vendor" id="vendorid" class="form-control" required>
+                                    <option value="None">-------</option>
+                                    {% for data in vendors %}
+                                    <option value="{{data.id}}">{{data.name}}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label>
+                                    Expected Date<b style="color: red;">*</b>
+                                </label>
+                                <input type="date" name="expecteddate" class="form-control" required>
+                            </div>
+                        </div>
+
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label>
+                                    Total Amount<b style="color: red;">*</b>
+                                </label>
+                                <input type="number" name="total_amount" value="{{total_amount}}" class="form-control" required>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label >
+                                    Delivery Store<b style="color: red;">*</b>
+                                </label>
+                                <select name="deliverystore" id="deliverystoreid" class="form-control" required>
+                                    <option value="None">-------</option>
+                                    {% for data in deliverystore %}
+                                    <option value="{{data.id}}">{{data.name}}({{data.storetype}})</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+
+
+                        <div class="col-md-3">
+                            <div class="form-group">
+                        <button class="btn btn-primary pt-10 mt-10" type="submit">
+                            Purchase
+                        </button>
+                    </div>
+                </div>
+                    </div>
+      
+                 
+                </div>
+            </form>
+            </div>
+<br>
+        <form method = "post" action="{% url 'supplieroredritemstemp' %}"> 
+            {% csrf_token %}
+            <div class="card">
+                <div class="card-body">
+                  
+                    
+                    <div class="table-responsive">
+                        <table class="table" id="table_puchasegoods">
+                            <thead>
+                                <tr>
+                                    <th>Item Name <b style="color: red;">*</b></th>
+                                    <th>OrderType<b style="color: red;">*</b></th>
+                                    <th>Package</th>
+                                    <th>Qty<b style="color: red;">*</b></th>
+                                    <th id="amt">Unit Price<b style="color: red;">*</b></th>
+                                    <th>Discount Type</th>
+                                    <th>Discount Value</th>
+                                    <th>Tax</th>
+                                    <th>Total Value<b style="color: red;">*</b></th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                
+                                    <tr>
+                                        <td>
+                                            <select class="form-control text-dark item-unit" style="width: 100px;" name="item_unit">
+                                                <option value="None">---select---</option>
+                                                {% for item in itemunit  %}
+                                                <option value="{{item.id}}">{{item.item.item_name}} ({{item.conversion_factor_to_base}}/{{item.unit}}) {{item.brand}} </option>
+                                                {% endfor %}
+                                            </select>
+                                        </td>
+                                        <td>
+                                            <select class="form-control text-dark order-type" style="width: 100px;" name="order_type">
+                                                <option value="Piece">Piece</option>
+                                                <option value="Package">Package</option>  
+                                            </select>
+                                        </td>
+
+                                    <td>
+                                            <select class="form-control item-package" style="width: 100px;" name="item_package">
+                                                <option value="None" >-------</option>
+                                        
+                                            </select>
+                                        </td>
+                                        <td>
+                                            <input type="number" class="form-control quantity-field" style="width: 100px;" name="quantity_received">
+                                        </td>
+                                        <td>
+                                            <input type="number" class="form-control unit-price-field" style="width: 100px;" name="amt">
+                                        </td>
+                                        <td>
+                                            <select class="form-control text-dark discount_type" name="discount_type" style="width: 100px;">
+                                                <option value="Fixed">Fixed</option>
+                                                <option value="Percentage">Percentage</option>
+                                            </select>
+                                        </td>
+                                        <td>
+                                            <input type="number" class="form-control discount-value-field" style="width: 100px;" name="discount_value" value="0">
+                                        </td>
+                                        <td>
+                                            <input type="number" class="form-control item_tax" name = "item_tax" style="width: 100px;" value="0">
+                                        </td>
+                                        <td>
+                                            <input type="number" class="form-control total-value-field" name = "total_amt" style="width: 100px;" value="0" readonly>
+                                        </td>
+                                        <td class="multivaluebtn">
+                                            <button class="btn btn-primary" type="submit">
+                                                <i class="fas fa-plus"></i>
+                                            </button>
+                                        </td>
+                                 
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </form> 
+     
+                {% if itemtemp %}
+                <div class="container mt-2 col-md-12 ">
+             <div class="card">
+                <div class="card-body">
+                    <h5>Added Products</h5>
+                    <div class="table-responsive">
+                        <table class="table" id="table_puchasegoods">
+                            <thead class="bg-col">
+                                <tr>
+                                    <th>Item Name</th>
+                                    <th>OrderType</th>
+                                    <th>Package</th>
+                                    <th>Qty</th>
+                                    <th id="amt">Unit Price</th>
+                                    <th>Discount Type</th>
+                                    <th>Discount Value</th>
+                                    <th>Total Value</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                              
+                                    {% for data in itemtemp %}
+                                    <tr>
+                                        <td>{{data.item_unit.brand}},{{data.item_unit.item}}/{{data.item_unit.conversion_factor_to_base}}{{data.item_unit.unit.symbol}}</td>
+                                        <td>{{data.ordertype}}</td>
+                                        <td>{{data.package_size.package_name}}-{{data.package_size.quantity}}</td>
+                                        <td>{{data.quantity}}</td>
+                                        <td>{{data.unit_price}}</td>
+                                        <td>{{data.discount}}</td>
+                                        <td>{{data.discount_type}}</td>
+                                        <td>{{data.total_price}}</td>
+                                        <td class="multivaluebtn">
+                                            <a href="{% url 'delete_POtempdetails' data.id %}" class="btn btn-danger remove-btn"  >
+                                                <i class="fas fa-trash"></i>
+                                            </a>
+                                        </td>
+                                 
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div> 
+        </div>
+            {% endif %}
+            
+        </div>
+   
+    </div>
+ 
+
+<!-- #=============================== getting item related packsize ============== -->
+
+<!-- AJAX Script -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+$(document).ready(function() {
+    // When OrderType changes
+    $(document).on("change", ".order-type", function() {
+        let row = $(this).closest("tr"); // Get the current row
+        let orderType = $(this).val();
+        let itemUnit = row.find(".item-unit").val(); // Get selected item unit
+        let packageDropdown = row.find(".item-package");
+
+        // If "Package" is selected, fetch package sizes
+        if (orderType === "Package" && itemUnit) {
+            $.ajax({
+                url: "{% url 'get_package_sizes' %}", // Django URL to fetch package sizes
+                type: "GET",
+                data: { itemunit_id: itemUnit },
+                success: function(response) {
+                    packageDropdown.html('<option>---select---</option>'); // Reset options
+                    $.each(response.packages, function(index, package) {
+                        packageDropdown.append(`<option value="${package.id}">${package.name} - ${package.quantity} units</option>`);
+                    });
+                }
+            });
+        } else {
+            packageDropdown.html('<option value="None">-------</option>'); // Reset if "Piece" is selected
+        }
+    });
+});
+</script>
+
+<!-- ====================== this function for get amount details based on order type ======= -->
+<script>
+$(document).ready(function() {
+    $(".table").on("change", ".item-unit, .order-type", function() {
+        var row = $(this).closest("tr");
+        var itemUnitId = row.find(".item-unit").val();
+        var orderType = row.find(".order-type").val();
+        var package = row.find(".item-package").val();
+
+        if (itemUnitId) {
+            $.ajax({
+                url: "/get-item-price/",  // Django URL to handle the request
+                type: "GET",
+                data: {
+                    "item_unit_id": itemUnitId,
+                    "order_type": orderType,
+                    'package':package
+                },
+                success: function(response) {
+                    row.find(".unit-price-field").val(response.amount);
+                    row.find(".discount-value-field").val(response.discount);
+                    row.find(".discount_type").val(response.discounttype);
+                    row.find(".item_tax").val(response.tax);
+                },
+                error: function(xhr, status, error) {
+                    console.log("Error:", error);
+                }
+            });
+        }
+    });
+});
+</script>
+
+<!-- 
+============ quantity and amount find over all cal culation =============== -->
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        function calculateTotal() {
+            let quantity = parseFloat(document.querySelector(".quantity-field").value) || 0;
+            let unitPrice = parseFloat(document.querySelector(".unit-price-field").value) || 0;
+            let discountType = document.querySelector("[name='discount_type']").value;
+            let discountValue = parseFloat(document.querySelector(".discount-value-field").value) || 0;
+            let tax = parseFloat(document.querySelector(".item_tax").value) || 0;
+            let totalField = document.querySelector(".total-value-field");
+    
+            let total = quantity * unitPrice; // Base total (without discount/tax)
+    
+            // Apply Discount
+            if (discountType === "Fixed") {
+                total -= discountValue; // Deduct fixed amount
+            } else if (discountType === "Percentage") {
+                total -= (total * discountValue / 100); // Deduct percentage
+            }
+    
+            // Apply Tax
+            total += (total * tax / 100); // Add tax percentage
+    
+            totalField.value = total.toFixed(2); // Ensures two decimal places
+        }
+    
+        // Event Listeners
+        document.querySelector(".quantity-field").addEventListener("input", calculateTotal);
+        document.querySelector(".unit-price-field").addEventListener("input", calculateTotal);
+        document.querySelector("[name='discount_type']").addEventListener("change", calculateTotal);
+        document.querySelector(".discount-value-field").addEventListener("input", calculateTotal);
+        document.querySelector(".item_tax").addEventListener("input", calculateTotal);
+    });
+    </script>
+
+{% endblock %}

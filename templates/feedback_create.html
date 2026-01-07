@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Create Feedback</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: "Segoe UI", sans-serif;
+            background: linear-gradient(135deg, #bba9f2ff, #eae6ecff);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .feedback-card {
+            background: #ffffff;
+            width: 100%;
+            max-width: 480px;
+            border-radius: 12px;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+            padding: 30px;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .feedback-header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .feedback-header h4 {
+            margin: 0;
+            font-size: 22px;
+            color: #333;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: #555;
+            margin-bottom: 6px;
+        }
+
+        select,
+        textarea {
+            width: 100%;
+            padding: 10px 12px;
+            font-size: 14px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+
+        select:focus,
+        textarea:focus {
+            border-color: #7532d4;
+            box-shadow: 0 0 0 2px rgba(117, 50, 212, 0.15);
+        }
+
+        textarea {
+            resize: none;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 10px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-submit {
+            background: #7532d4;
+            color: #fff;
+        }
+
+        .btn-submit:hover {
+            background: #5a25a8;
+            transform: translateY(-1px);
+        }
+
+        .btn-cancel {
+            background: #e0e0e0;
+            color: #333;
+            text-decoration: none;
+            text-align: center;
+            line-height: 38px;
+        }
+
+        .btn-cancel:hover {
+            background: #cfcfcf;
+        }
+
+        /* POPUP MODAL (same logic, new design) */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            align-items: center;
+            justify-content: center;
+            z-index: 999;
+        }
+
+        .modal {
+            background: #fff;
+            border-radius: 10px;
+            padding: 25px;
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+            animation: scaleIn 0.3s ease;
+        }
+        
+        .feedback-name {
+            font-size: 25px;
+            font-weight: bold;
+            color: #7532d4;   /* choose any color */
+        }
+
+
+        @keyframes scaleIn {
+            from {
+                transform: scale(0.8);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .modal i {
+            font-size: 40px;
+            color: #7532d4;
+            margin-bottom: 10px;
+        }
+
+        .modal h5 {
+            margin: 10px 0;
+            color: #333;
+        }
+
+        .modal button {
+            margin-top: 15px;
+            padding: 8px 16px;
+            background: #7532d4;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .modal button:hover {
+            background: #5a25a8;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="feedback-card">
+    <div class="feedback-header">
+        <h4>
+    Create Feedback for
+    <span class="feedback-name">{{ name }}</span>
+</h4>
+
+    </div>
+
+    <form method="POST">
+        <!-- CSRF token here -->
+        {% csrf_token %}
+        <div class="form-group">
+            <label>Feedback Reason</label>
+            <select name="reason" required>
+                <option value="">-- Select Reason --</option> 
+                {% for reason in reasons %} 
+                <option value="{{ reason.id }}"> {{ reason.reason }} </option> 
+                {% endfor %} 
+            </select>
+        </div>
+        <input type="hidden" name="last_name" value="{{ last_name }}">
+
+        <div class="form-group">
+            <label>Feedback</label>
+            <textarea
+                name="feedback"
+                rows="4"
+                placeholder="Enter your feedback"
+                required
+            ></textarea>
+        </div>
+
+        <div class="btn-group">
+            <button type="submit" class="btn btn-submit">
+                Submit Feedback
+            </button>
+           
+        </div>
+    </form>
+</div>
+
+<!-- POPUP -->
+<div class="modal-overlay" id="successModal">
+    <div class="modal">
+        <i class="fa fa-check-circle"></i>
+        <h5>Feedback Submitted!</h5>
+        <p>Thank you for your feedback.</p>
+        <button onclick="closeModal()">OK</button>
+    </div>
+</div>
+
+<script>
+    function closeModal() {
+        document.getElementById("successModal").style.display = "none";
+    }
+
+    // Example trigger (you can trigger after form submit)
+    // document.getElementById("successModal").style.display = "flex";
+</script>
+
+</body>
+</html>

@@ -1,0 +1,68 @@
+{% extends 'AdminPortal/base.html' %}
+{% block body_block %}
+{% load static %}
+<style>
+    th {
+        text-align: inherit;
+        text-align: -webkit-match-parent;
+        background: #d9e6f1;
+    }
+</style>
+
+<div class="content-wrapper">
+    <div class="col-12 grid-margin stretch-card">
+        <div class="card">
+  
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table id="tableID" class="display table table-hover">
+                        <thead class="">
+                            <tr>
+                                <th>No.</th>
+                                <th>Distributor Name</th>
+                                <th>Phone</th>
+                                <th>Email</th>
+                                <th>Status</th>
+                                <th colspan="2">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for data in customers %}
+                            <tr>
+                                <td>{{ forloop.counter }}</td>
+                                <td>{{ data.name }}</td>
+                                <td>{{ data.phone }}</td>
+                                <td>{{ data.email }}</td>
+                                <td>{{data.rejection_reason}}</td>
+
+                                <td>
+                                    <a class="btn btn-success" href="{% url 'create_distributor_branch' data.id  %}">Add Branch</a>
+                                </td>
+                            
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+     
+        </div>
+    </div>
+</div>
+
+<!-- Rejection Modal -->
+
+
+<!-- JavaScript to Capture Supplier ID -->
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll(".reject-btn").forEach(function (button) {
+            button.addEventListener("click", function () {
+                var CustomerID = this.getAttribute("data-id"); 
+                document.getElementById("customer_id").value = CustomerID; 
+            });
+        });
+    });
+</script>
+
+{% endblock %}

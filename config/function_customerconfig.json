@@ -1,0 +1,35 @@
+{
+    "functions": [
+      "customerorder_itemstemp",
+      "customer_purchase_order",
+      "customer_po_edit",
+      "customerorder_view",
+      "customer_po_delete",
+      "customer_POtemp_details",
+      "customer_po_approval_view",
+      "customer_orderlist",
+      "customer_orderapproval",
+      "cutomer_order_rejections",
+      "customerordersub_view",
+      "customerorder_preview",
+      "customer_all_orders",
+      "customer_orderlist_supplier_view",
+      "get_stock_balance",
+      "get_batches_by_item",
+      "customer_goodsreceivedfromsupplier",
+      "customer_goodsreceivedfromvendor",
+      "recieved_items",
+      "recieved_itemlist",
+      "pending_invoice_list",
+      "customer_all_goods",
+      "customer_paymentprocess",
+      "customer_inventory",
+      "Distributor_roles",
+      "Distributor_roles_create",
+      "Distributor_roles_edit",
+      "Distributor_delete",
+      "Distributor_permission",
+      "function_setup"
+    ]
+  }
+  

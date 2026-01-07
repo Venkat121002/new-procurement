@@ -1,0 +1,67 @@
+
+{% extends 'base.html' %}
+{% block body_block %}
+{% load static %}
+<div class="card hadow mb-4">
+      <div class="card-header ">
+        <div class="d-flex justify-content-between">
+          <h4 class="card-title">Branch List User Managment</h4>
+            {% if 'branch_create' in request.session.permission %}
+            <a href="{% url 'branch_create' %}">
+                <button class="btn btn-primary ml-auto mb-4">Create New</button>
+            </a>
+            {% else %}
+            <button disabled class="btn btn-primary ml-auto mb-4">Create New</button>
+           {% endif %}
+          </div>
+      </div>
+      <div class="card-body">
+          <div class="table-responsive">
+                    <table class="table table-bordered table-hover">
+                      <thead>
+            {% if 'branch_view' not in request.session.permission %}
+
+                      <tr>
+                        <th>S.No</th>
+                        <th>Name</th>
+                        <th>Company</th>
+                        <th>Contact Number</th>
+                        <th>Manager Name</th>
+                        <th>country</th>
+                        <th>state</th>
+                        <th>city</th>
+                        <th>Actions</th>
+
+
+
+
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {% for obj in branch %}
+                      <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ obj.name }}</td>
+                        <td>{{ obj.company.name }}</td>
+                        <td>{{ obj.phone_number }}</td>
+                        <td>{{ obj.manager_name }}</td>
+                        <td>{{ obj.country}}</td>
+                        <td>{{ obj.state}}</td>
+                        <td>{{ obj.city }}</td>
+
+
+                        <td>
+                            <a href="{% url 'branch_update' obj.id %}" class="btn btn-warning">Update</a>
+                            <a href="{% url 'branch_delete' obj.id %}" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this category?');">Delete</a>
+                        </td>
+
+                      </tr>
+                      {% endfor %}
+                      {% endif %}
+                    </tbody>
+                    </table>
+          </div>
+        </div>
+      </div>
+   </div>
+{% endblock %}

@@ -1,0 +1,267 @@
+{% extends 'SupplierPortal/supplier_base.html' %}
+{% block body_block %}
+{% load static %}
+
+<div class="content-wrapper">
+    <div class="col-12 grid-margin stretch-card">
+        <div class="card">
+            
+   
+            <div class="card-body">
+                <h3 class="card-title">Assign Logistics</h3>
+                <form method="post">
+                    {% csrf_token %}
+                <div class="col-lg-12 col-md-12 col-sm-4 col-xs-4"
+                                                style="background-color:rgb(233, 233, 233);"><br>
+
+                                                <div class="form-row" >
+                                                    <div class="form-group col-md-3 mb-0">
+                                                        <label><b>Transfer No:</b>&nbsp;{{records.transfer_id}}</label>
+                                                        
+                                                    </div>
+                                                    <div class="form-group col-md-3 mb-0">
+                                                        <label><b>Source Store:</b>&nbsp;{{records.storefrom}}</label>
+                                                       
+                                                    </div>
+                                                   
+                                                    <div class="form-group col-md-3 mb-0">
+                                                        <label><b>Destination Store:</b>&nbsp;{{records.distributorstore}}</label>
+                                                       
+                                                    </div>
+                                                    <div class="form-group col-md-3 mb-0">
+                                                        <label><b>Expected Delivery Date:</b> &nbsp;{{records.delivery_date}}</label>
+                                                       
+                                                    </div>
+                                                    <div class="form-group col-md-3 mb-0">
+                                                        <label><b>Total Amount:</b> &nbsp;{{records.total_amount}}</label>
+                                                       
+                                                    </div>
+                                                    <div class="form-group col-md-3 mb-0">
+                                                        <label><b>Transfer Date:</b> &nbsp;{{records.transfer_date}}</label>
+                                                       
+                                                    </div>
+                                                    
+
+                                                </div>
+                                                <br>
+
+
+                                            </div><br>
+                        <div class="text-right mt-2 mb-1">
+    
+                            <button type="button" data-toggle="modal" data-target=".bd-example-modal-lg" class="btn btn-primary btn-lm mr-3">Logistics
+                            </button>
+                        </div>
+                    </form>
+
+                <div class="table-responsive">
+                    <table id="tableID" class="display table table-hover">
+                        <thead class="bg-col">
+                            <tr>
+                                <th>No.</th>
+                                <th>Item.Dec</th>
+                                <th>Expiry Date</th>
+                                <th>Batch_no</th>
+                                <th>Packsize</th>
+                                <th>Quantity</th>
+                                <th>Amount</th>
+                            
+                              
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for data in recordssub %}
+                            <tr>
+                                <td>{{ forloop.counter }}</td>
+                                <td>{{data.item_unit.item}}/{{data.item_unit.conversion_factor_to_base}}{{data.item_unit.unit.symbol}}</td>
+                                <td>{{data.batch.expiry_date}}</td>
+                                <td>{{data.batch.batch_no}}</td>
+                                <td>{{data.batch.packsize}}</td>
+                                <td>{{data.quantity}}</td>
+                          
+                                <td>{{data.amount}}</td>
+                             
+                               
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <br><br><br>
+
+            </div>
+         
+        </div>
+    </div>
+</div>
+
+<!-- # ============================ start logistics vehicle model ========================== -->
+<div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+            <h4 class="modal-title" id="exampleModalLabel"><b>Add Logistics</b></h4>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+        <form method="post">
+            {% csrf_token %}
+            <div class="row">
+                <div class="col-lg-4">
+                    <label for="">Logistics<span style="color: red;">*</span></label>
+                    <select name="logistics" id="logistics" class="form-control" required>
+                        <option selected disabled>Choose</option>
+                        {% for data in logistics %}
+                        <option value="{{data.id}}" {%if added_logistics.logistics.id == data.id %}selected{% endif %}>{{data.name}}</option>
+                        {% endfor %}
+
+                    </select>
+                 
+                </div>
+                <div class="col-lg-4">
+                    <label for="">Transfertype<span style="color: red;">*</span></label>
+                    <select name="transfertype" id="transfertype" class="form-control" onchange="toggleIntermediateStore(this.value)" required>
+                        <option value="Direct"{% if added_logistics.transfertype == "Direct" %} selected {% endif %}>Direct</option>
+                        <option value="MultiStore"{% if added_logistics.transfertype == "IntermediateStores" %} selected {% endif %}>MultiStore</option>
+                    </select>
+                </div>
+       
+                <div class="col-lg-4">
+                    <label for="">Vehicle Number<span style="color: red;">*</span></label>
+                    <input type="text" class="form-control" value="{{added_logistics.vehicle_number}}" name="vehiclenumber" required>
+                </div>
+                <div class="col-lg-4">
+                    <label for="">Transport Mode <span style="color: red;">*</span></label>
+                    <select name="transportmode" id="transportmode" class="form-control" required>
+                        <option value="truck"{% if added_logistics.transport_mode == "truck" %} selected {% endif %}>Truck</option>
+                        <option value="van"{% if added_logistics.transport_mode == "van" %} selected {% endif %}>Van</option>
+                        <option value="air"{% if added_logistics.transport_mode == "air" %} selected {% endif %}>Air</option>
+                    </select>
+                </div>
+                <div class="col-lg-4">
+                    <label for="driver_name">Driver Name:<span style="color: red;">*</span></label>
+                    <input type="text" id="driver_name" value="{{added_logistics.driver_name}}" name="driver_name" class="form-control" maxlength="100" required><br><br>
+                </div>
+                <div class="col-lg-4">
+                <label for="driver_contact">Driver Contact:<span style="color: red;">*</span></label>
+                <input type="text" id="driver_contact" value="{{added_logistics.driver_contact}}" class="form-control" name="driver_contact" maxlength="20" required><br><br>
+             </div>
+                <div class="col-lg-4">
+                <label for="departure_time">Departure Time:<span style="color: red;">*</span></label>
+                    <input type="datetime-local" id="departure_time"
+                        value="{{ added_logistics.departure_time|date:'Y-m-d\\TH:i' }}"
+                        class="form-control" name="departure_time" required>           
+                 </div>
+                <div class="col-lg-4">
+                <label for="arrival_estimate">Estimated Arrival:</label>
+                    <input type="datetime-local" id="arrival_estimate"
+                        value="{{ added_logistics.arrival_estimate|date:'Y-m-d\\TH:i' }}"
+                        class="form-control" name="arrival_estimate">        
+                        </div>
+            <div class="col-lg-4">
+                <label for="driver_signature">Driver Signature</label>
+                <input type="file" name="driver_signature" id="driver_signature" class="form-control-file" accept="image/*">                {% if added_logistics.driver_signature %}
+                <p>Current Signature:</p>
+                <img src="{{ added_logistics.driver_signature.url }}" alt="Driver Signature" style="max-width: 200px;">
+            {% endif %}
+            </div>
+                <div class="col-lg-12">
+                <label for="notes">Notes:</label><br>
+                <textarea id="notes" name="notes" class="form-control" rows="4" cols="50"></textarea><br><br>
+            </div>
+           
+    
+            <div class="col-lg-4" id="intermediateStoresSection" style="display: none;">
+                <label for="">InterMediate Stores</label>
+                <div class="input-group mb-2">
+                    <select name="intermediatestores" id="intermediatestores" class="form-control">
+                        {% for data in supplierstore %}
+                        <option value="{{data.id}}" data-name="{{data.name}}">{{data.name}}</option>
+                        {% endfor %}
+                    </select>
+                    <div class="input-group-append">
+                        <button class="btn btn-outline-primary" type="button" onclick="addStoreToTable()">
+                            <i class="fa fa-plus"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+      
+
+
+            </div>
+                    <!-- Table to display selected stores -->
+        <table class="table table-bordered" id="storeTable" style="display: none;">
+            <thead>
+                <tr>
+                    <th>Store ID</th>
+                    <th>Store Name</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Added rows will appear here -->
+            </tbody>
+        </table><br>
+            {% if added_logistics %}
+            <button type="submit" class="btn btn-primary">Done</button>
+
+            {% endif %}
+        </form>
+    </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    function addStoreToTable() {
+        const select = document.getElementById("intermediatestores");
+        const selectedOption = select.options[select.selectedIndex];
+        const storeId = selectedOption.value;
+        const storeName = selectedOption.getAttribute("data-name");
+
+        // Check if already added
+        if (document.getElementById("store-row-" + storeId)) {
+            alert("Store already added.");
+            return;
+        }
+
+        const tableBody = document.querySelector("#storeTable tbody");
+        const row = document.createElement("tr");
+        row.id = "store-row-" + storeId;
+        row.innerHTML = `
+            <td>
+                <input type="hidden" name="store_ids[]" value="${storeId}">
+                ${storeId}
+            </td>
+            <td>${storeName}</td>
+            <td><button type="button" class="btn btn-danger btn-sm" onclick="removeStore('${storeId}')">Remove</button></td>
+        `;
+        tableBody.appendChild(row);
+    }
+
+    function removeStore(storeId) {
+        const row = document.getElementById("store-row-" + storeId);
+        if (row) {
+            row.remove();
+        }
+    }
+</script>
+<script>
+    function toggleIntermediateStore(value) {
+        var section = document.getElementById("intermediateStoresSection");
+        var table = document.getElementById("storeTable");
+    
+        if (value === "MultiStore") {
+            section.style.display = "block";
+            table.style.display = "block";
+        } else {
+            section.style.display = "none";
+            table.style.display = "none";
+        }
+    }
+    </script>
+    
+
+{% endblock %}

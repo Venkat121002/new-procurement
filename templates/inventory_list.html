@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+{% block body_block %}
+{% load static %}
+
+<div class="content-wrapper">
+    <div class="col-12 grid-margin stretch-card">
+        <div class="card">
+            <div class="card-body">
+                {% if 'inventory_create' in user_permissions %}
+                <a href="{% url 'inventory_create' %}">
+                    <button type="button" class="btn btn-primary float-right">+ New</button>
+                </a>
+                {% endif %}
+                <h3>{{screen_name}}</h3>
+
+                <!-- New Tab -->
+            </div>
+            {% if 'inventory_view' in user_permissions %}
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table id="tableID" class="display table table-hover">
+                        <thead class="bg-col">
+                            <tr>
+                                <th>No.</th>
+<th>store to</th>
+<th>item unit</th>
+<th>packsize</th>
+<th>inhand whole</th>
+<th>inhand pieces</th>
+<th>piece amt</th>
+<th>whole amount</th>
+<th>whole selling rate</th>
+<th>piece selling rate</th>
+<th>tax</th>
+<th>stock balance</th>
+                                    <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for data in records %}
+                            <tr>
+                                <td>{{ forloop.counter }}</td>
+<td>{{data.store_to}}</td>
+<td>{{data.item_unit}}</td>
+<td>{{data.packsize}}</td>
+<td>{{data.inhand_whole}}</td>
+<td>{{data.inhand_pieces}}</td>
+<td>{{data.piece_amt}}</td>
+<td>{{data.whole_amount}}</td>
+<td>{{data.whole_selling_rate}}</td>
+<td>{{data.piece_selling_rate}}</td>
+<td>{{data.tax}}</td>
+<td>{{data.stock_balance}}</td>
+                                    <td>
+                                        <div class="dropdown">
+                                            <button class="btn dropdown-toggle" type="button"
+                                                id="dropdownMenuIconButton2" data-toggle="dropdown" aria-haspopup="true"
+                                                aria-expanded="false">
+                                                <i class="fas fa-ellipsis-v"></i>
+                                            </button>
+                                           
+                                            <div class="dropdown-menu" aria-labelledby="dropdownMenuIconButton2">
+                                                <a class="dropdown-item" href="{% url 'inventory_detail' data.pk %}">
+                                                    <button class="btn iconbg-rose" data-bs-toggle="tooltip"
+                                                        data-bs-placement="top" title="View"><i
+                                                            class="fa fa-eye"></i> View</button>
+                                                </a>
+                                                {% if 'inventory_update' in user_permissions %}
+                                                <a class="dropdown-item" href="{% url 'inventory_update' data.pk %}">
+                                                    <button class="btn iconbg-yellow" data-bs-toggle="tooltip"
+                                                        data-bs-placement="top" title="Edit"><i class="fas fa-edit"></i>
+                                                        Edit</button>
+                                                </a>
+                                                {% endif %}
+                                                {% if 'inventory_delete' in user_permissions %}
+                                                <a class="dropdown-item" href="{% url 'inventory_delete' data.pk %}">
+                                                    <button class="btn iconbg-rose" data-bs-toggle="tooltip"
+                                                        data-bs-placement="top" title="Delete"><i
+                                                            class="fas fa-trash-alt"></i> Delete</button>
+                                                </a>
+                                                {% endif %}
+                                                
+                                            </div>
+                                        </div>
+                                    </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <br><br><br>
+
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}

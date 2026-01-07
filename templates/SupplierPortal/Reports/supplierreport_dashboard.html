@@ -1,0 +1,119 @@
+{% extends 'SupplierPortal/supplier_base.html' %}
+{% block body_block %}
+{% load static %}
+<style>
+    @import url("https://fonts.googleapis.com/css2?family=Lato:wght@700&display=swap");
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Lato", sans-serif !important;
+  font-weight: 700 !important;
+  color: #242E4C !important;
+ 
+  min-height: 100vh;
+}
+
+main {
+  margin-top: 2rem;
+  max-width: 600px;
+  width: 95%;
+}
+main h3 {
+  font-size: 1.625rem;
+}
+main a,
+main a:visited {
+  color: #3d4d80;
+  border: 1.5px solid #E6ECFF;
+}
+main .list .cards {
+  border: 1.5px solid #E6ECFF;
+  cursor: pointer;
+}
+main .list .cards {
+  border-left: 4.5px solid #186306;
+}
+
+main .list .cards span {
+  color: #3d4d80;
+}
+</style>
+<div class="content-wrapper">
+    <div class="col-12 grid-margin stretch-card">
+        <div class="card">
+            <div class="card-body">
+                <h3>Reports</h3>
+           
+                <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+
+                <main class="bg-white">
+                    <section class="list mb-4">
+                      <div class="row g-3">
+                        <div class="col-lg-12">
+                          <a href="{% url 'supplierorderreport' %}" class="cards one rounded-3 p-4 d-block text-decoration-none text-dark">
+                            <h5>Stock Order Report</h5>
+                          </a>
+                        </div>
+                        <div class="col-lg-12">
+                          <a href="{% url 'supplierorderapprovalreport' %}" class="cards one rounded-3 p-4 d-block text-decoration-none text-dark">
+                            <h5>Stock Order Approval Report</h5>
+                          </a>
+                        </div>
+                        <div class="col-lg-12">
+                          <a href="{% url 'stockreorder_report' %}" class="cards one rounded-3 p-4 d-block text-decoration-none text-dark">
+                            <h5>Stock Reorder Report</h5>
+                          </a>
+                        </div>
+                        <div class="col-lg-12">
+                          <a href="{% url 'goodsreceivereport' %}" class="cards one rounded-3 p-4 d-block text-decoration-none text-dark">
+                            <h5>Goods Receive Report</h5>
+                          </a>
+                        </div>
+                        <div class="col-lg-12">
+                            <a href="{% url 'supplierstock_report' %}" class="cards one rounded-3 p-4 d-block text-decoration-none text-dark">
+                              <h5>Stock Report</h5>
+                            </a>
+                          </div>
+                        <div class="col-lg-12">
+                          <a href="{% url 'invoices_reports' %}" class="cards one rounded-3 p-4 d-block text-decoration-none text-dark">
+                            <h5>Invoice Report</h5>
+                          </a>
+                        </div>
+                   
+                        <div class="col-lg-12">
+                          <a href="{% url 'stocktransferreport' %}" class="cards one rounded-3 p-4 d-block text-decoration-none text-dark">
+                            <h5>Stock Transfer Report</h5>
+                          </a>
+                        </div>
+                        <div class="col-lg-12">
+                          <a href="{% url 'stock_returnreport' %}" class="cards one rounded-3 p-4 d-block text-decoration-none text-dark">
+                            <h5>Stock Return Report</h5>
+                          </a>
+                        </div>
+                        <div class="col-lg-12">
+                          <a href="{% url 'stock_wastagereport' %}" class="cards one rounded-3 p-4 d-block text-decoration-none text-dark">
+                            <h5>Wastage Report</h5>
+                          </a>
+                        </div>
+                         <div class="col-lg-12">
+                          <a href="{% url 'manualstock_report' %}" class="cards one rounded-3 p-4 d-block text-decoration-none text-dark">
+                            <h5>Manual Stock Adjust Report</h5>
+                          </a>
+                        </div>
+                      </div>
+                    </section>
+                  </main>
+         
+
+            </div>
+         
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}

@@ -1,0 +1,375 @@
+{% extends 'SupplierPortal/supplier_base.html' %}
+{% block body_block %}
+{% load static %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<style>
+    .table-responsive {
+        overflow-x: auto !important;
+        white-space: nowrap;
+    }
+    .content-wrapper {
+        background: #F5F7FF;
+        padding: 2.375rem 2.375rem;
+        width: 100%;
+        flex-grow: 1;
+    }
+</style>
+
+<div class="content-wrapper">
+    <div class="container mt-5 col-md-12 mb-3">
+        <form method="post">
+            {% csrf_token %}
+            <div class="card card-body">
+                <h3>Edit Purchase Order</h3>
+
+                {% if messages %}
+                    <ul class="messages">
+                        {% for message in messages %}
+                            <li class="{{ message.tags }}">{{ message }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+
+                <div class="row">
+                    <!-- Vendor Selection -->
+                    <div class="col-md-3">
+                        <label>Vendor <b style="color: red;">*</b></label>
+                        <select name="vendor" class="form-control" required>
+                            <option value="None">-------</option>
+                            {% for data in vendors %}
+                                <option value="{{ data.id }}" {% if data.id == order.vendor_id %} selected {% endif %}>
+                                    {{ data.name }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <!-- Expected Delivery Date -->
+                    <div class="col-md-3">
+                        <label>Expected Date <b style="color: red;">*</b></label>
+                        <input type="date" name="expecteddate" value="{{date|date:'Y-m-d'}}" class="form-control" required>
+                    </div>
+
+                    <!-- Total Amount -->
+                    <div class="col-md-3">
+                        <label>Total Amount <b style="color: red;">*</b></label>
+                        <input type="number" name="total_amount" value="{{ order.total_amount }}" step="0.01" class="form-control"  required>
+                    </div>
+
+                    <div class="col-md-3">
+                        <button class="btn btn-primary mt-4" type="submit">Update Order</button>
+                    </div>
+                </div>
+            </div>
+    </div>
+
+    <!-- Order Items Table -->
+    <div class="container mt-3">
+        <div class="card">
+            <div class="card-body">
+                <h4>Edit Order Items</h4>
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Item Name</th>
+                                <th>Order Type</th>
+                                <th>Package</th>
+                                <th>Qty</th>
+                                <th>Unit Price</th>
+                                <th>Discount Type</th>
+                                <th>Discount Value</th>
+                                <th>Tax</th>
+                                <th>Total Value</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in items %}
+                                <tr>
+                                    <td>
+                                        <select class="form-control text-dark item-unit" style="width: 100px;" name="item_unit">
+                                            <option value="None">---select---</option>
+                                            {% for itemss in itemunits %}
+                                                <option value="{{ itemss.id }}" {% if itemss.id == item.item_unit_id %} selected {% endif %}>
+                                                    {{ itemss.item.item_name }} {{ itemss.unit }} {{ itemss.item.brand }}
+                                                </option>
+                                            {% endfor %}
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <select name="order_type_{{ item.id }}" class="form-control order-type">
+                                            <option value="Piece" {% if item.ordertype == "Piece" %}selected{% endif %}>Piece</option>
+                                            <option value="Package" {% if item.ordertype == "Package" %}selected{% endif %}>Package</option>
+                                        </select>
+                                    </td>
+                                <td>
+                                        <select class="form-control item-package" value="{{ item.package_size }}" style="width: 100px;" name="item_package_{{ item.id }}">
+                                            <option value="">{{pa}}</option>
+                                            <option value="{{ item.package_size.id }}">{{ item.package_size.package_name }} - {{ item.package_size.quantity }}</option>
+                                    
+                                        </select>
+                                    </td>
+                                  
+                                    <td>
+                                        <input type="number" name="quantity_{{ item.id }}" value="{{ item.quantity }}" class="form-control quantity-field" required>
+                                    </td>
+                                    <td>
+                                        <input type="number" name="unit_price_{{ item.id }}" value="{{ item.unit_price }}" class="form-control unit-price-field" required>
+                                    </td>
+                                    <td>
+                                        <select name="discount_type_{{ item.id }}" class="form-control discount-type-field">
+                                            <option value="Fixed" {% if item.discount_type == "Fixed" %}selected{% endif %}>Fixed</option>
+                                            <option value="Percentage" {% if item.discount_type == "Percentage" %}selected{% endif %}>Percentage</option>
+                                        </select>
+                                    </td>
+                                    
+                                    <td>
+                                        <input type="number" name="discount_value_{{ item.id }}" value="{{ item.discount }}" class="form-control discount-value-field" required>
+                                    </td>
+                                    <td>
+                                        <input type="number" name="item_tax_{{ item.id }}" value="{{ item.tax }}" class="form-control item_tax" >
+                                    </td>
+                                    <td>
+                                        <input type="number" name="total_amt_{{ item.id }}" value="{{ item.total_price }}" class="form-control total-value-field" readonly>
+                                    </td>
+                                    <td>
+                                        <button type="button" class="btn btn-danger delete-item" data-item-id="{{ item.id }}">Delete</button>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    {% comment %} </table>
+                    <button class="btn btn-success mt-3" type="submit">Update Items</button> {% endcomment %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</form>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    function calculateTotal(row) {
+        let quantity = parseFloat(row.querySelector(".quantity-field").value) || 0;
+        let unitPrice = parseFloat(row.querySelector(".unit-price-field").value) || 0;
+        let discountType = row.querySelector(".discount-type-field").value;
+        let discountValue = parseFloat(row.querySelector(".discount-value-field").value) || 0;
+        let tax = parseFloat(row.querySelector(".item_tax").value) || 0;
+        let totalField = row.querySelector(".total-value-field");
+
+        let total = quantity * unitPrice; // Base total (before discount/tax)
+
+        // Apply Discount
+        if (discountType === "Fixed") {
+            total -= discountValue; // Deduct fixed amount
+        } else if (discountType === "Percentage") {
+            total -= (total * discountValue / 100); // Deduct percentage
+        }
+
+        // Apply Tax
+        total += (total * tax / 100); // Add tax percentage
+
+        totalField.value = total.toFixed(2); // Ensures two decimal places
+    }
+
+    function updateTotalAmount() {
+        let totalAmount = 0;
+        document.querySelectorAll(".total-value-field").forEach(field => {
+            totalAmount += parseFloat(field.value) || 0;
+        });
+
+        document.querySelector("input[name='total_amount']").value = totalAmount.toFixed(2);
+    }
+
+    function recalculateAllRows() {
+        document.querySelectorAll("tbody tr").forEach(row => calculateTotal(row));
+        updateTotalAmount();
+    }
+
+    // Event delegation to handle dynamic changes
+    document.querySelector("table").addEventListener("input", function(event) {
+        let target = event.target;
+        if (target.classList.contains("quantity-field") ||
+            target.classList.contains("unit-price-field") ||
+            target.classList.contains("discount-value-field") ||
+            target.classList.contains("item_tax")) {
+            
+            let row = target.closest("tr");
+            calculateTotal(row);
+            updateTotalAmount();
+        }
+    });
+
+    document.querySelector("table").addEventListener("change", function(event) {
+        let target = event.target;
+        if (target.classList.contains("discount-type-field")) {
+            let row = target.closest("tr");
+            calculateTotal(row);
+            updateTotalAmount();
+        }
+    });
+
+    // Automatically update totals every second
+    setInterval(recalculateAllRows, 1000);
+
+    // Initial calculation on page load
+    recalculateAllRows();
+});
+
+
+
+</script>
+
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+$(document).ready(function() {
+    // When OrderType changes
+    $(document).on("change", ".order-type", function() {
+        let row = $(this).closest("tr"); // Get the current row
+        let orderType = $(this).val();
+        let itemUnit = row.find(".item-unit").val(); // Get selected item unit
+        let packageDropdown = row.find(".item-package");
+
+        // If "Package" is selected, fetch package sizes
+        if (orderType === "Package" && itemUnit) {
+            $.ajax({
+                url: "{% url 'get_package_sizes' %}", // Django URL to fetch package sizes
+                type: "GET",
+                data: { itemunit_id: itemUnit },
+                success: function(response) {
+                    packageDropdown.html('<option>---select---</option>'); // Reset options
+                    $.each(response.packages, function(index, package) {
+                        packageDropdown.append(`<option value="${package.id}">${package.name} - ${package.quantity} units</option>`);
+                    });
+                }
+            });
+        } else {
+            packageDropdown.html('<option value="None">-------</option>'); // Reset if "Piece" is selected
+        }
+    });
+});
+</script>
+
+<!-- ====================== this function for get amount details based on order type ======= -->
+<script>
+$(document).ready(function() {
+    $(".table").on("change", ".item-unit, .order-type", function() {
+        var row = $(this).closest("tr");
+        var itemUnitId = row.find(".item-unit").val();
+        var orderType = row.find(".order-type").val();
+        var package = row.find(".item-package").val();
+
+        if (itemUnitId) {
+            $.ajax({
+                url: "/get-item-price/",  // Django URL to handle the request
+                type: "GET",
+                data: {
+                    "item_unit_id": itemUnitId,
+                    "order_type": orderType,
+                    'package':package
+                },
+                success: function(response) {
+                    row.find(".unit-price-field").val(response.amount);
+                    row.find(".discount-value-field").val(response.discount);
+                    row.find(".discount_type").val(response.discounttype);
+                    row.find(".item_tax").val(response.tax);
+                },
+                error: function(xhr, status, error) {
+                    console.log("Error:", error);
+                }
+            });
+        }
+    });
+});
+</script>
+
+
+{% comment %} /////////////////////////////////// {% endcomment %}
+<script>
+    $(document).ready(function() {
+        $(".table").on("click", ".delete-item", function() {
+            let row = $(this).closest("tr"); // Get the current row
+            let itemId = $(this).data("item-id"); // Get item ID
+    
+            if (confirm("Are you sure you want to delete this item?")) {
+                $.ajax({
+                    url: "{% url 'delete_order_item' %}", // Django URL for deleting order items
+                    type: "POST",
+                    data: {
+                        item_id: itemId,
+                        csrfmiddlewaretoken: "{{ csrf_token }}"
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            row.remove(); // Remove row from table on success
+                            updateTotalAmount(); // Recalculate total
+                        } else {
+                            alert("Failed to delete item.");
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.log("Error:", error);
+                    }
+                });
+            }
+        });
+    });
+    </script>
+
+    {% comment %} //////////////////////////////////my script {% endcomment %}
+
+    <script>
+        $(document).ready(function() {
+            // When package selection changes
+            $(document).on("change", ".item-package, .order-type", function() {
+                let row = $(this).closest("tr"); // Get the current row
+                let itemUnitId = row.find(".item-unit").val(); // Get selected item unit ID
+                let orderType = row.find(".order-type").val(); // Get selected order type
+                let packageId = row.find(".item-package").val(); // Get selected package ID
+                let unitPriceField = row.find(".unit-price-field"); // Unit price input field
+                let discountField = row.find(".discount-value-field"); // Discount input field
+                let discountTypeField = row.find(".discount_type"); // Discount type input field
+                let taxField = row.find(".item_tax"); // Tax input field
+        
+                // Validate input before making an AJAX request
+                if (itemUnitId && orderType) {
+                    $.ajax({
+                        url: "{% url 'get_item_price' %}", // Django URL
+                        type: "GET",
+                        data: {
+                            "item_unit_id": itemUnitId,
+                            "order_type": orderType,
+                            "package": packageId
+                        },
+                        success: function(response) {
+                            if (response.amount) {
+                                unitPriceField.val(response.amount);
+                            }
+                            if (response.discount) {
+                                discountField.val(response.discount);
+                            }
+                            if (response.discounttype) {
+                                discountTypeField.val(response.discounttype);
+                            }
+                            if (response.tax) {
+                                taxField.val(response.tax);
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            console.log("Error:", error);
+                        }
+                    });
+                }
+            });
+        });
+        </script>
+        
+
+
+
+
+{% endblock %}

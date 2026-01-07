@@ -1,0 +1,175 @@
+{% extends 'AdminPortal/base.html' %}
+{% block body_block %}
+{% load static %}
+
+<div class="content-wrapper">
+    <div class="col-12 grid-margin stretch-card">
+        <div class="card">
+            <div class="card-body">
+                {% comment %} {% if 'customerstore_create' in user_permissions %} {% endcomment %}
+                <a href="{% url 'customerstore_create' %}">
+                    <button type="button" class="btn btn-primary float-right">+ New</button>
+                </a>
+                {% comment %} {% endif %} {% endcomment %}
+
+                <h3>Distributor Store</h3>
+        
+                <!-- New Tab -->
+            </div>
+          
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table id="tableID" class="display table table-hover">
+                        <thead class="bg-col">
+                            <tr>
+                                <th>No.</th>
+<th>distributor</th>
+<th>name</th>
+<th>location</th>
+<th>contact number</th>
+<th>manager name</th>
+<th>description</th>
+                                    <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for data in records %}
+                            <tr>
+                                <td>{{ forloop.counter }}</td>
+<td>{{data.customer}}</td>
+<td>{{data.name}}</td>
+<td>{{data.location}}</td>
+<td>{{data.contact_number}}</td>
+<td>{{data.manager_name}}</td>
+<td>{{data.description}}</td>
+                                    <td>
+                                        <div class="dropdown">
+                                            <button class="btn dropdown-toggle" type="button"
+                                                id="dropdownMenuIconButton2" data-toggle="dropdown" aria-haspopup="true"
+                                                aria-expanded="false">
+                                                <i class="fas fa-ellipsis-v"></i>
+                                            </button>
+                                           
+                                            <div class="dropdown-menu" aria-labelledby="dropdownMenuIconButton2">
+                                                <a class="dropdown-item" href="{% url 'customerstore_detail' data.pk %}">
+                                                    <button class="btn iconbg-rose" data-bs-toggle="tooltip"
+                                                        data-bs-placement="top" title="View"><i
+                                                            class="fa fa-eye"></i> View</button>
+                                                </a>
+                                 
+                                                <a class="dropdown-item" href="{% url 'customerstore_update' data.pk %}">
+                                                    <button class="btn iconbg-yellow" data-bs-toggle="tooltip"
+                                                        data-bs-placement="top" title="Edit"><i class="fas fa-edit"></i>
+                                                        Edit</button>
+                                                </a>
+                                            
+                                                <a class="dropdown-item" href="{% url 'customerstore_delete' data.pk %}">
+                                                    <button class="btn iconbg-rose" data-bs-toggle="tooltip"
+                                                        data-bs-placement="top" title="Delete"><i
+                                                            class="fas fa-trash-alt"></i> Delete</button>
+                                                </a>
+                                           
+                                                
+                                            </div>
+                                        </div>
+                                    </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+           
+
+            </div>
+           
+        </div>
+    </div>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const table = document.getElementById('tableID');
+        const tbody = table.querySelector('tbody');
+        let allRows = Array.from(tbody.querySelectorAll('tr')); // Save original rows
+    
+        // 1. Copy Button
+        document.querySelector('.buttons-copy').addEventListener('click', function() {
+            let range, selection;
+            if (document.createRange && window.getSelection) {
+                range = document.createRange();
+                selection = window.getSelection();
+                selection.removeAllRanges();
+                try {
+                    range.selectNodeContents(table);
+                    selection.addRange(range);
+                } catch (e) {
+                    range.selectNode(table);
+                    selection.addRange(range);
+                }
+                document.execCommand('copy');
+                selection.removeAllRanges();
+                alert('Table copied to clipboard!');
+            }
+        });
+    
+        // 2. CSV Download Button
+        document.querySelector('.buttons-csv').addEventListener('click', function() {
+            let csv = [];
+            const rows = table.querySelectorAll('tr');
+            rows.forEach(function(row) {
+                const cols = row.querySelectorAll('td, th');
+                const rowData = [];
+                cols.forEach(function(col) {
+                    rowData.push('"' + col.innerText.replace(/"/g, '""') + '"');
+                });
+                csv.push(rowData.join(','));
+            });
+    
+            const csvFile = new Blob([csv.join('\n')], { type: 'text/csv' });
+            const downloadLink = document.createElement('a');
+            downloadLink.download = 'table_data.csv';
+            downloadLink.href = window.URL.createObjectURL(csvFile);
+            downloadLink.style.display = 'none';
+            document.body.appendChild(downloadLink);
+            downloadLink.click();
+            document.body.removeChild(downloadLink);
+        });
+    
+        // 3. Print Button
+        document.querySelector('.buttons-print').addEventListener('click', function() {
+            const newWin = window.open('', '_blank');
+            newWin.document.write('<html><head><title>Print Table</title>');
+            newWin.document.write('<style>table { width: 100%; border-collapse: collapse; } table, th, td { border: 1px solid black; padding: 8px; }</style>');
+            newWin.document.write('</head><body>');
+            newWin.document.write(table.outerHTML);
+            newWin.document.write('</body></html>');
+            newWin.document.close();
+            newWin.print();
+        });
+    
+        // 4. Entries Dropdown
+        const lengthSelect = document.querySelector('select[name="tableID_length"]');
+        lengthSelect.addEventListener('change', function() {
+            let selectedValue = parseInt(this.value);
+            tbody.innerHTML = ''; // Clear table body
+            if (selectedValue === -1) { // Show all
+                allRows.forEach(row => tbody.appendChild(row));
+            } else {
+                allRows.slice(0, selectedValue).forEach(row => tbody.appendChild(row));
+            }
+        });
+    
+        // 5. Search Filter
+        const searchInput = document.querySelector('#tableID_filter input');
+        searchInput.addEventListener('input', function() {
+            const searchText = this.value.toLowerCase();
+            tbody.innerHTML = ''; // Clear table body
+            const filteredRows = allRows.filter(row => {
+                return row.innerText.toLowerCase().includes(searchText);
+            });
+            filteredRows.forEach(row => tbody.appendChild(row));
+        });
+    });
+    </script>
+
+
+{% endblock %}

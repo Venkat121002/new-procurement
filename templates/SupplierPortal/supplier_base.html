@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>Procurement</title>
+
+  <!-- Static Django Styles -->
+  <link rel="stylesheet" href="{% static 'assets/vendors/feather/feather.css' %}">
+  <link rel="stylesheet" href="{% static 'assets/vendors/ti-icons/css/themify-icons.css' %}">
+  <link rel="stylesheet" href="{% static 'assets/vendors/css/vendor.bundle.base.css' %}">
+  <link rel="stylesheet" href="{% static 'assets/vendors/datatables.net-bs4/dataTables.bootstrap4.css' %}">
+  <link rel="stylesheet" href="{% static 'assets/css/vertical-layout-light/style.css' %}">
+  <link rel="shortcut icon" href="{% static 'assets/images/favicon.png' %}"/>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-..." crossorigin="anonymous" />
+
+  <!-- DataTables CSS (latest version) -->
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
+  <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.3.6/css/buttons.dataTables.min.css">
+
+  <!-- jQuery -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+  <!-- DataTables JS -->
+  <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+
+  <!-- DataTables Buttons Extension -->
+  <script src="https://cdn.datatables.net/buttons/2.3.6/js/dataTables.buttons.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+  <script src="https://cdn.datatables.net/buttons/2.3.6/js/buttons.html5.min.js"></script>
+  <script src="https://cdn.datatables.net/buttons/2.3.6/js/buttons.print.min.js"></script>
+
+  <!-- Custom Watermark Style -->
+  <style>
+    html:after {
+      content: "Bharathbrands";
+      font-size: 520%;
+      color: rgba(134, 134, 134, 0.1);
+      z-index: 9999;
+      cursor: default;
+      display: block;
+      position: fixed;
+      top: 33%;
+      right: 0;
+      bottom: 0;
+      left: 15%;
+      font-family: sans-serif;
+      font-weight: bold;
+      font-style: italic;
+      text-align: center;
+      line-height: 100%;
+      pointer-events: none;
+      transform: rotate(-45deg);
+      user-select: none;
+    }
+  </style>
+
+  <!-- Custom Tab & Collapse Styling -->
+  <style>
+    .home-btn {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background-color: #f3f4f6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    transition: all 0.3s ease;
+  }
+
+  .home-btn i {
+    font-size: 1.4rem;
+    color: #4b49ac; /* match theme primary */
+  }
+
+  .home-btn:hover {
+    background-color: #4b49ac;
+  }
+
+  .home-btn:hover i {
+    color: #ffffff;
+  }
+    .nav-tabs .nav-link {
+      border: 1px solid #ddd;
+      border-radius: 0.25rem;
+      background-color: #f8f9fa;
+      color: #495057;
+    }
+    .nav-tabs .nav-link.active {
+      background-color: chocolate;
+      color: #fff;
+      border-color: chocolate;
+    }
+    .nav-tabs .nav-link:hover {
+      background-color: #e2e6ea;
+      color: #495057;
+    }
+    .tab-content {
+      padding: 1rem;
+    }
+    .collapse {
+      height: 0;
+      opacity: 0;
+      overflow: hidden;
+      transition: height 0.3s ease, opacity 0.3s ease;
+    }
+    .collapse.show {
+      height: auto;
+      opacity: 1;
+      overflow: visible;
+      transition: height 0.3s ease, opacity 0.3s ease;
+    }
+    .sidebar .nav.sub-menu {
+      padding: 0.25rem 0 0 2.07rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container-scroller">
+    <!-- partial:partials/_navbar.html -->
+    <nav class="navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
+  <div class="text-center navbar-brand-wrapper d-flex align-items-center justify-content-center">
+    <a class="navbar-brand brand-logo mr-5" href="{% url 'supplierdashboard' %}"><img src="{% static 'assets/images/bb_logo.jpg' %}" class="mr-2" alt="logo"/></a>
+    <a class="navbar-brand brand-logo-mini" href="{% url 'supplierdashboard' %}"><img src="{% static 'assets/images/bbmini_logo.jpeg' %}" alt="logo"/></a>
+  </div>
+  <div class="navbar-menu-wrapper d-flex align-items-center justify-content-end">
+    <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">
+      <span class="icon-menu"></span>
+    </button>
+    
+    <!-- Store Icon - Added one line -->
+    <button class="btn btn-link text-white mr-3" data-toggle="modal" data-target="#storeModal" title="Store Details">
+      <i class="ti-home" style="font-size: 1.5rem;"></i>
+    </button>
+    
+    <ul class="navbar-nav mr-lg-2">
+      
+      <li class="nav-item nav-search d-none d-lg-block">
+        <div class="input-group">
+          <div class="input-group-prepend hover-cursor" id="navbar-search-icon">
+            <span class="input-group-text" id="search">
+              <i class="icon-search"></i>
+            </span>
+          </div>
+          <input type="text" class="form-control" id="navbar-search-input" placeholder="Search now" aria-label="search" aria-describedby="search">
+        </div>
+      </li>
+    </ul>
+    <ul class="navbar-nav navbar-nav-right">
+      <li class="nav-item company-display d-none d-lg-flex align-items-center mr-3">
+            <div class="company-info">
+              <h1 class="font-weight-bold mb-0 text-primary" style="font-size: 1rem; color: #400861ff !important;">
+                {{current_store.name}} - {{current_store.supplier.supplier_name}}
+              </h1>
+              <small class="text-muted" style="font-size: 0.75rem; color: #07470fff !important;">Active Store</small>
+            </div>
+            <div class="vertical-divider ml-3"></div>
+          </li>
+
+                  <li class="nav-item">
+  <a href={% url "feedback_create" %}
+     class="nav-link feedback-link"
+     data-toggle="tooltip"
+     title="Feedback">
+    <i class="fa fa-comment"></i>
+    <span>Feedback</span>
+  </a>
+</li>
+      <li class="nav-item dropdown">
+        <a class="nav-link count-indicator dropdown-toggle" id="notificationDropdown" href="#" data-toggle="dropdown">
+          <i class="icon-bell mx-0"></i>
+          <span class="count"></span>
+        </a>
+        <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list" aria-labelledby="notificationDropdown">
+          <p class="mb-0 font-weight-normal float-left dropdown-header">Notifications</p>
+          <a class="dropdown-item preview-item">
+            <div class="preview-thumbnail">
+              <div class="preview-icon bg-success">
+                <i class="ti-info-alt mx-0"></i>
+              </div>
+            </div>
+            <div class="preview-item-content">
+              <h6 class="preview-subject font-weight-normal">Application Error</h6>
+              <p class="font-weight-light small-text mb-0 text-muted">
+                Just now
+              </p>
+            </div>
+          </a>
+          <a class="dropdown-item preview-item">
+            <div class="preview-thumbnail">
+              <div class="preview-icon bg-warning">
+                <i class="ti-settings mx-0"></i>
+              </div>
+            </div>
+            <div class="preview-item-content">
+              <h6 class="preview-subject font-weight-normal">Settings</h6>
+              <p class="font-weight-light small-text mb-0 text-muted">
+                Private message
+              </p>
+            </div>
+          </a>
+          <a class="dropdown-item preview-item">
+            <div class="preview-thumbnail">
+              <div class="preview-icon bg-info">
+                <i class="ti-user mx-0"></i>
+              </div>
+            </div>
+            <div class="preview-item-content">
+              <h6 class="preview-subject font-weight-normal">New user registration</h6>
+              <p class="font-weight-light small-text mb-0 text-muted">
+                2 days ago
+              </p>
+            </div>
+          </a>
+        </div>
+      </li>
+      <li class="nav-item nav-profile">
+              <button class="nav-link count-indicator home-btn"
+                data-toggle="modal"
+                data-target="#storeModal"
+                title="Store Details">
+          <i class="ti-home"></i>
+        </button>
+      </li>
+      <li class="nav-item nav-profile dropdown">
+        <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" id="profileDropdown">
+          <img src="{% static 'assets/images/faces/face28.jpg' %}" alt="profile"/>
+        </a>
+        <div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="profileDropdown">
+          <a class="dropdown-item">
+            <i class="ti-settings text-primary"></i>
+            Settings
+          </a>
+          <a class="dropdown-item" href="{% url 'logout' %}">
+            <i class="ti-power-off text-primary"></i>
+            Logout
+          </a>
+        </div>
+      </li>
+       
+    
+
+    </ul>
+    <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button" data-toggle="offcanvas">
+      <span class="icon-menu"></span>
+    </button>
+  </div>
+</nav>
+
+
+    <!-- partial -->
+    <div class="container-fluid page-body-wrapper">
+
+      <nav class="sidebar sidebar-offcanvas" id="sidebar">
+        <ul class="nav">
+          
+          <li class="nav-item {{supplierdashboard}} active">
+            <a class="nav-link active" href="{% url 'supplierdashboard' %}">
+              <i class="bi bi-speedometer2"></i>&nbsp;&nbsp;&nbsp;
+              <span class="menu-title">Dashboard</span>
+            </a>
+          </li>
+      
+          <li class="nav-item">
+            <a class="nav-link {{supplierorder}}" href="{% url 'supplierorderview' %}">
+              <i class="bi bi-cart"></i>&nbsp;&nbsp;&nbsp;
+              <span class="menu-title">Purchase Order</span>
+            </a>
+          </li>
+          
+          <li class="nav-item">
+            <a class="nav-link {{customerOrder}}" href="{% url 'create_supplier_order' %}">
+              <i class="bi bi-cart"></i>&nbsp;&nbsp;&nbsp;
+              <span class="menu-title">Order Approval</span>
+            </a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link {{goodsreceivedfromvendor}}" href="{% url 'goodsreceivedfromvendor' %}">
+              <i class="bi bi-truck"></i>&nbsp;&nbsp;&nbsp;
+              <span class="menu-title">GoodsReceive</span>
+            </a>
+          </li>
+      
+          <li class="nav-item">
+            <a class="nav-link {{received_goodsmain_details}}" href="{% url 'received_goodsmain_details' %}">
+              <i class="bi bi-list-check"></i>&nbsp;&nbsp;&nbsp;
+              <span class="menu-title">Received Goods Details</span>
+            </a>
+          </li>
+      
+          <li class="nav-item">
+            <a class="nav-link {{pendinginvoices}}" href="{% url 'pendinginvoices' %}">
+              <i class="bi bi-file-earmark-text"></i>&nbsp;&nbsp;&nbsp;
+              <span class="menu-title">Invoice</span>
+            </a>
+          </li>
+      
+          <li class="nav-item">
+            <a class="nav-link {{all_goods}}" href="{% url 'all_goods' %}">
+              <i class="bi bi-credit-card"></i>&nbsp;&nbsp;&nbsp;
+              <span class="menu-title">Payment</span>
+            </a>
+          </li>
+     
+      
+          <li class="nav-item">
+            <a class="nav-link {{stocktransfer_dashboard}}" href="{% url 'stocktransfer_dashboard' %}">
+              <i class="bi bi-arrow-left-right"></i>&nbsp;&nbsp;&nbsp;
+              <span class="menu-title">StoreToStore Transfer</span>
+            </a>
+          </li>
+
+      
+          <li class="nav-item">
+            <a class="nav-link {{search_instock_forwastage}}" href="{% url 'search_instock_forwastage' %}">
+              <i class="bi bi-trash"></i>&nbsp;&nbsp;&nbsp;
+              <span class="menu-title">Wastage Stock</span>
+            </a>
+          </li>
+      
+          <li class="nav-item">
+            <a class="nav-link {{Stockdetails}}" href="{% url 'Stockdetails' %}">
+              <i class="bi bi-box-seam"></i>&nbsp;&nbsp;&nbsp;
+              <span class="menu-title">Stocks</span>
+            </a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link {{supplier_viewstockadjust}}" href="{% url 'supplier_viewstockadjust' %}">
+              <i class="bi bi-box-seam"></i>&nbsp;&nbsp;&nbsp;
+              <span class="menu-title">Manual Stock Adjustment</span>
+            </a>
+          </li>
+            <li class="nav-item {{itemreturn_to_manufacturer}}{{itemreturn_to_manufacturer}}{{itemreturn_to_manufacturer}}">
+            <a class="nav-link" href="#stock-return" aria-expanded="false" aria-controls="stock-return">
+              <i class="bi bi-people"></i>&nbsp;&nbsp;&nbsp;
+              <span class="menu-title">Item Return </span>
+              <i class="menu-arrow"></i>
+            </a>
+            <div class="collapse {{itemreturn_to_manufacturer}}{{user_list_show}}{{roles_show}}" id="stock-return">
+              <ul class="nav flex-column sub-menu">
+                <li class="nav-item" {{itemreturn_to_manufacturer}}> 
+                  <a class="nav-link" href="{% url 'itemreturn_to_manufacturer' %}">
+                     Item Return
+                  </a>
+                </li>
+             
+              </ul>
+            </div>
+          </li>
+
+          
+      
+          <li class="nav-item">
+            <a class="nav-link {{supplierreportdashboard}}" href="{% url 'supplierreportdashboard' %}">
+              <i class="bi bi-bar-chart"></i>&nbsp;&nbsp;&nbsp;
+              <span class="menu-title">Reports</span>
+            </a>
+          </li>
+
+
+        </ul>
+      </nav>
+      
+      <!-- partial -->
+      <div class="main-panel">
+        {% block body_block %}
+        {% endblock %}
+
+
+        <!-- content-wrapper ends -->
+        <!-- partial:partials/_footer.html -->
+        <footer class="footer">
+          <!-- <div class="d-sm-flex justify-content-center justify-content-sm-between">
+            <span class="text-muted text-center text-sm-left d-block d-sm-inline-block">Copyright © 2024.  Premium <a href="#" target="_blank">ERP Sacco</a> from Us. All rights reserved.</span>
+            <span class="float-none float-sm-right d-block mt-1 mt-sm-0 text-center">Hand-crafted & made with <i class="ti-heart text-danger ml-1"></i></span>
+          </div>
+          <div class="d-sm-flex justify-content-center justify-content-sm-between">
+            <span class="text-muted text-center text-sm-left d-block d-sm-inline-block">Distributed by <a href="#" target="_blank">Us</a></span>
+          </div> -->
+        </footer>
+        <!-- partial -->
+      </div>
+      <!-- main-panel ends -->
+    </div>
+    <!-- page-body-wrapper ends -->
+  </div>
+  <!-- Store Modal - Added at the bottom -->
+<div class="modal fade" id="storeModal" tabindex="-1" role="dialog" aria-labelledby="storeModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="storeModalLabel">Store Details</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        {% if current_store %}
+        <div class="store-details">
+          <h6 class="font-weight-bold">{{current_store.supplier.supplier_name}}</h6>
+          <div class="store-info mt-3">
+            <div class="row mb-2">
+              <div class="col-4 font-weight-bold">Store:</div>
+              <div class="col-8">{{current_store.name}}</div>
+            </div>
+            <div class="row mb-2">
+              <div class="col-4 font-weight-bold">Location:</div>
+              <div class="col-8">{{current_store.location}}</div>
+            </div>
+            <div class="row mb-2">
+              <div class="col-4 font-weight-bold">E-mail:</div>
+              <div class="col-8">{{current_store.supplier.email}}</div>
+            </div>
+            <div class="row mb-2">
+              <div class="col-4 font-weight-bold">Contact:</div>
+              <div class="col-8">{{current_store.contact_number}}</div>
+            </div>
+            <div class="row mb-2">
+              <div class="col-4 font-weight-bold">Manager:</div>
+              <div class="col-8">{{current_store.manager_name}}</div>
+            </div>
+            <div class="row mb-2">
+              <div class="col-4 font-weight-bold">Store Type:</div>
+              <div class="col-8">{{current_store.storetype}}</div>
+            </div>
+            <div class="row mb-2">
+              <div class="col-4 font-weight-bold">Status:</div>
+              <div class="col-8">
+                <span class="badge badge-success">Active</span>
+                <span class="badge badge-info ml-2">Main Store</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        {% endif %}
+      </div>
+    
+    </div>
+  </div>
+</div>
+  <!-- container-scroller -->
+  {% block script_block %}
+
+  {% endblock %}
+  
+  <script>
+    // Hide the messages after 3 seconds
+    setTimeout(function() {
+      const messageContainer = document.getElementById('message-container');
+      if (messageContainer) {
+        messageContainer.style.transition = "opacity 0.5s ease";
+        messageContainer.style.opacity = "0";
+        setTimeout(() => messageContainer.remove(), 500);  // remove from DOM
+      }
+    }, 3000);
+  </script>
+  
+  <script>
+    $(document).ready(function() {
+      $('#tableID').DataTable({
+        dom: 'Bfrtip',
+        buttons: [
+          'copyHtml5',
+          'csvHtml5',
+          'excelHtml5',
+          'pdfHtml5',
+          'print'
+        ]
+      });
+    });
+  </script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      // Find all elements that are links with href starting with '#'
+      var collapsibleLinks = document.querySelectorAll('a.nav-link[href^="#"]');
+  
+      collapsibleLinks.forEach(function (link) {
+        link.addEventListener('click', function (event) {
+          event.preventDefault(); // Prevent default anchor click behavior
+  
+          var targetId = link.getAttribute('href').substring(1); // Get the ID from href (without '#')
+          var targetElement = document.getElementById(targetId); // Find the element with that ID
+  
+          if (targetElement) {
+            // Check if this is a main menu (not a sub-menu)
+            var isMainMenu = !link.closest('.sub-menu');
+  
+            if (isMainMenu) {
+              // Close all other open main menus
+              document.querySelectorAll('.collapse.show').forEach(function (openElement) {
+                if (openElement !== targetElement && !openElement.closest('.sub-menu')) {
+                  // Collapse other open main menus
+                  var openLink = document.querySelector('a.nav-link[href="#' + openElement.id + '"]');
+                  if (openLink) {
+                    openLink.setAttribute('aria-expanded', 'false'); // Update aria-expanded
+                  }
+                  openElement.style.height = openElement.scrollHeight + 'px'; // Set height to current height
+                  openElement.offsetHeight; // Force browser reflow
+                  openElement.style.height = '0'; // Animate to height 0
+                  openElement.style.opacity = '0'; // Fade out
+                  setTimeout(function () {
+                    openElement.classList.remove('show');
+                  }, 300); // Remove class after transition duration
+                }
+              });
+            }
+  
+            // Toggle the current menu
+            if (targetElement.classList.contains('show')) {
+              // Collapse menu
+              link.setAttribute('aria-expanded', 'false'); // Set aria-expanded to false
+              targetElement.style.height = targetElement.scrollHeight + 'px'; // Set height to current height
+              targetElement.offsetHeight; // Force browser reflow
+              targetElement.style.height = '0'; // Animate to height 0
+              targetElement.style.opacity = '0'; // Fade out
+              setTimeout(function () {
+                targetElement.classList.remove('show');
+              }, 300); // Remove class after transition duration
+            } else {
+              // Expand menu
+              link.setAttribute('aria-expanded', 'true'); // Set aria-expanded to true
+              targetElement.classList.add('show'); // Add the show class to transition smoothly
+              targetElement.style.height = '0'; // Reset height to zero first
+              targetElement.offsetHeight; // Force browser reflow
+              targetElement.style.height = targetElement.scrollHeight + 'px'; // Animate to full height
+              targetElement.style.opacity = '1'; // Fade in
+              setTimeout(function () {
+                targetElement.style.height = 'auto'; // Set height to auto after transition
+              }, 300); // Reset height after the transition duration
+            }
+          }
+        });
+      });
+    });
+  </script>
+
+  <!-- plugins:js -->
+  <script src="{% static 'assets/vendors/js/vendor.bundle.base.js' %}"></script>
+  <!-- endinject -->
+  <!-- Plugin js for this page -->
+
+
+  <!-- End plugin js for this page -->
+  <!-- inject:js -->
+  <script src="{% static 'assets/js/off-canvas.js' %}"></script>
+  <script src="{% static 'assets/js/hoverable-collapse.js' %}"></script>
+  <script src="{% static 'assets/js/template.js' %}"></script>
+  <script src="{% static 'assets/js/settings.js' %}"></script>
+  <script src="{% static 'assets/js/todolist.js' %}"></script>
+  <!-- endinject -->
+  <!-- Custom js for this page-->
+  <script src="{% static 'assets/js/dashboard.js' %}"></script>
+  <script src="{% static 'assets/js/Chart.roundedBarCharts.js' %}"></script>
+  <!-- End custom js for this page-->
+
+     <!-- DataTables -->
+     <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+     <script src="https://cdn.datatables.net/buttons/2.0.0/js/dataTables.buttons.min.js"></script>
+     <script src="https://cdn.datatables.net/buttons/2.0.0/js/buttons.html5.min.js"></script>
+     <script src="https://cdn.datatables.net/buttons/2.0.0/js/buttons.print.min.js"></script>
+     <script src="https://cdn.datatables.net/buttons/2.0.0/js/buttons.colVis.min.js"></script>
+     
+  
+     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Export to Copy
+        document.getElementById('copy').addEventListener('click', function () {
+            copyTableData();
+        });
+
+        // Export to CSV
+        document.getElementById('csv').addEventListener('click', function () {
+            exportTableToCSV('report.csv');
+        });
+
+        // Export to Excel
+        document.getElementById('excel').addEventListener('click', function () {
+            exportTableToExcel('ReportID', 'report.xlsx');
+        });
+
+        // Export to PDF
+        document.getElementById('pdf').addEventListener('click', function () {
+            exportTableToPDF('ReportID', 'report.pdf');
+        });
+
+        // Export to Print
+        document.getElementById('print').addEventListener('click', function () {
+            printTable('ReportID');
+        });
+
+        // Function to copy table data to clipboard
+        function copyTableData() {
+            const table = document.getElementById('ReportID');
+            const rows = Array.from(table.querySelectorAll('tr'));
+            let textToCopy = rows.map(row => {
+                const cols = Array.from(row.querySelectorAll('th, td'));
+                return cols.map(col => col.innerText).join('\t');
+            }).join('\n');
+
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                alert('Table data copied to clipboard!');
+            });
+        }
+
+        // Function to export table data to CSV
+        function exportTableToCSV(filename) {
+            const table = document.getElementById('ReportID');
+            const rows = Array.from(table.querySelectorAll('tr'));
+            const csvContent = rows.map(row => {
+                const cols = Array.from(row.querySelectorAll('th, td'));
+                return cols.map(col => col.innerText).join(',');
+            }).join('\n');
+
+            const blob = new Blob([csvContent], { type: 'text/csv' });
+            saveAs(blob, filename);
+        }
+
+        // Function to export table data to Excel
+        function exportTableToExcel(ReportID, filename) {
+            const table = document.getElementById(ReportID);
+            const worksheet = XLSX.utils.table_to_sheet(table);
+            const workbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet1');
+            XLSX.writeFile(workbook, filename);
+        }
+
+        // Function to export table data to PDF
+        function exportTableToPDF(ReportID, filename) {
+            const { jsPDF } = window.jspdf;
+            const pdf = new jsPDF();
+            pdf.autoTable({ html: `#${ReportID}` });
+            pdf.save(filename);
+        }
+
+        // Function to print table
+        function printTable(ReportID) {
+            const table = document.getElementById(ReportID).outerHTML;
+            const newWin = window.open('');
+            newWin.document.write('<html><head><title>Print Table</title></head><body>' + table + '</body></html>');
+            newWin.document.close();
+            newWin.print();
+        }
+    });
+</script>
+
+
+
+
+<script>
+
+  // Common function to handle dropdown population based on payload
+function fetchData(...fieldsArray) {
+  // Loop through the fieldsArray (which contains multiple arrays of arguments)
+  fieldsArray.forEach(function(fieldData) {
+    const [service_name, field_name, field_id, linkTableName, selectValue] = fieldData;
+
+    // Only make AJAX request if selectValue is not empty
+    if (selectValue) {
+      let payload = {
+        'service_name': service_name, // dynamically setting the service name
+        'field_name': field_name,     // the primary key or value to filter data
+        'field_value': selectValue,
+        'link_table_name': linkTableName
+      };
+
+      $.ajax({
+        url: '/get_data/', // URL for the request
+        type: 'GET',
+        dataType: 'json',
+        data: payload, // Payload data
+        success: function(data) {
+          console.log(data);
+          console.log('field_id', field_id);
+          let selectElement = $(field_id);
+          selectElement.empty(); // Clear existing options
+          // Populate the select element with the response data
+          selectElement.append(`<option value="">---select---</option>`);
+          $.each(data.value, function(index, datas) {
+            selectElement.append(`<option value="${datas.id}">${datas.name}</option>`);
+          });
+        },
+        error: function(xhr, status, error) {
+          console.error('Error fetching data:', error);
+        }
+      });
+    } else {
+      console.error('selectValue is required to fetch data');
+    }
+  });
+}
+
+
+</script>
+</body>
+
+</html>
+

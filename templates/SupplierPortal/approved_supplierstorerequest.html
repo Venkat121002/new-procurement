@@ -1,0 +1,155 @@
+{% extends 'SupplierPortal/supplier_base.html' %}
+{% block body_block %}
+{% load static %}
+
+<div class="content-wrapper">
+    <div class="col-12 grid-margin stretch-card">
+        <div class="card">
+            <div class="card-body">
+             
+                <!-- <a href="{% url 'stock_request_tostore' %}">
+                    <button type="button" class="btn btn-primary float-right">+ New</button>
+                </a> -->
+          
+                <h3>Approved StoreRequest View</h3>
+            
+                <!-- New Tab -->
+            </div>
+   
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table id="tableID" class="display table table-hover">
+                        <thead class="bg-col">
+                            <tr>
+                                <th>No.</th>
+                               <th>Request ID</th>
+                                <th>Request From</th>
+                                <th>Request To</th>
+                                <th>Action</th>
+                                <th>Request Date</th>
+                                <th>Expected date</th>
+                                <th>Total Amount</th>
+
+                                <th>Approval Status</th>
+                       
+
+                                    
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for data in records %}
+                            <tr>
+                                <td>{{ forloop.counter }}</td>
+                              <td>{{data.request_number}}</td>
+                                <td>{{data.supplierstore_from}}</td>
+                                <td>{{data.supplierstore_destination}}</td>
+                                <td>
+                                        <a href="{% url 'supplierstorerequesttransfer' data.id %}" class="btn btn-primary btn-sm">
+                                            <i class="fa fa-plus"></i>
+                                        </a>
+                                    </td>
+                                <td>{{data.request_date}}</td>
+                                <td>{{data.expected_delivery}}</td>
+                                <td>{{data.total_amount}}</td>
+                                <td>{% if data.approval_status == "Pending" %} <span class="badge badge-info">Pending</span>{% elif data.approval_status == "Approved" %}<span class="badge badge-success">Approved</span>{% else %}<span class="badge badge-danger">Rejected</span>{% endif %}</td>
+
+                                    
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <br><br><br>
+
+            </div>
+         
+        </div>
+    </div>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const table = document.getElementById('tableID');
+        const tbody = table.querySelector('tbody');
+        let allRows = Array.from(tbody.querySelectorAll('tr')); // Save original rows
+    
+        // 1. Copy Button
+        document.querySelector('.buttons-copy').addEventListener('click', function() {
+            let range, selection;
+            if (document.createRange && window.getSelection) {
+                range = document.createRange();
+                selection = window.getSelection();
+                selection.removeAllRanges();
+                try {
+                    range.selectNodeContents(table);
+                    selection.addRange(range);
+                } catch (e) {
+                    range.selectNode(table);
+                    selection.addRange(range);
+                }
+                document.execCommand('copy');
+                selection.removeAllRanges();
+                alert('Table copied to clipboard!');
+            }
+        });
+    
+        // 2. CSV Download Button
+        document.querySelector('.buttons-csv').addEventListener('click', function() {
+            let csv = [];
+            const rows = table.querySelectorAll('tr');
+            rows.forEach(function(row) {
+                const cols = row.querySelectorAll('td, th');
+                const rowData = [];
+                cols.forEach(function(col) {
+                    rowData.push('"' + col.innerText.replace(/"/g, '""') + '"');
+                });
+                csv.push(rowData.join(','));
+            });
+    
+            const csvFile = new Blob([csv.join('\n')], { type: 'text/csv' });
+            const downloadLink = document.createElement('a');
+            downloadLink.download = 'table_data.csv';
+            downloadLink.href = window.URL.createObjectURL(csvFile);
+            downloadLink.style.display = 'none';
+            document.body.appendChild(downloadLink);
+            downloadLink.click();
+            document.body.removeChild(downloadLink);
+        });
+    
+        // 3. Print Button
+        document.querySelector('.buttons-print').addEventListener('click', function() {
+            const newWin = window.open('', '_blank');
+            newWin.document.write('<html><head><title>Print Table</title>');
+            newWin.document.write('<style>table { width: 100%; border-collapse: collapse; } table, th, td { border: 1px solid black; padding: 8px; }</style>');
+            newWin.document.write('</head><body>');
+            newWin.document.write(table.outerHTML);
+            newWin.document.write('</body></html>');
+            newWin.document.close();
+            newWin.print();
+        });
+    
+        // 4. Entries Dropdown
+        const lengthSelect = document.querySelector('select[name="tableID_length"]');
+        lengthSelect.addEventListener('change', function() {
+            let selectedValue = parseInt(this.value);
+            tbody.innerHTML = ''; // Clear table body
+            if (selectedValue === -1) { // Show all
+                allRows.forEach(row => tbody.appendChild(row));
+            } else {
+                allRows.slice(0, selectedValue).forEach(row => tbody.appendChild(row));
+            }
+        });
+    
+        // 5. Search Filter
+        const searchInput = document.querySelector('#tableID_filter input');
+        searchInput.addEventListener('input', function() {
+            const searchText = this.value.toLowerCase();
+            tbody.innerHTML = ''; // Clear table body
+            const filteredRows = allRows.filter(row => {
+                return row.innerText.toLowerCase().includes(searchText);
+            });
+            filteredRows.forEach(row => tbody.appendChild(row));
+        });
+    });
+    </script>
+
+{% endblock %}

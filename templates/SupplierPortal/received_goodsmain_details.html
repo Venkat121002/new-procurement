@@ -1,0 +1,61 @@
+{% extends 'SupplierPortal/supplier_base.html' %}
+{% block body_block %}
+{% load static %}
+
+<div class="content-wrapper">
+    <div class="col-12 grid-margin stretch-card">
+        <div class="card">
+            
+   
+            <div class="card-body">
+                <h3 class="card-title">Received Goods Details</h3>
+                <div class="table-responsive">
+                    <table id="tableID" class="display table table-hover">
+                        <thead class="bg-col">
+                            <tr>
+                                <th>No.</th>
+                                <th>POID</th>
+                                <th>GRN</th>
+                                <th>Vendor</th>
+                                <th>OrderDate</th>
+                                <th>Received date</th>
+                           
+                                <th>GRN Amount</th>
+                              
+                                    <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for data in records %}
+                            <tr>
+                                <td>{{ forloop.counter }}</td>
+                                <td>{{data.po_number.po_number}}</td>
+                                <td>{{data.GRN_number}}</td>
+                                <td>{{data.vendor.name}}</td>
+                                <td>{{data.po_number.order_date}}</td>
+                                <td>{{data.received_date}}</td>
+                          
+                                <td>{{data.GRN_amount}}</td>
+                             
+                                    <td>
+                                        <a href="{% url 'received_goodssub_details' data.id %}" class="btn btn-primary" >
+                                            <i class="fas fa-plus"></i>
+                                        </a>
+                                        <a href="{% url 'supplier_grminvoice' data.id %}" class="btn btn-info">
+                                            <i class="fas fa-file-invoice"></i>
+                                        </a></td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <br><br><br>
+
+            </div>
+         
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}

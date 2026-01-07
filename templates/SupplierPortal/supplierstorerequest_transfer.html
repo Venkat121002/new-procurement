@@ -1,0 +1,179 @@
+{% extends 'SupplierPortal/supplier_base.html' %}
+{% block body_block %}
+{% load static %}
+
+<div class="content-wrapper">
+    <div class="col-12 grid-margin stretch-card">
+        <div class="card">
+            
+   
+            <div class="card-body">
+                <div class="row d-flex justify-content-between">
+                <h3 class="card-title">Stock Transfer To Store</h3>
+             
+            </div>
+                <form method ="POST">
+                    {% csrf_token %}
+                <div class="row p-1 mb-2">
+                    <div class="col-md-3">
+                        <label >Branch</label>
+                        <input type="text" class="form-control" value="{{supplier.supplier}}" readonly>
+                    </div>
+                    <div class="col-md-3">
+                        <label >Branch Store</label>
+                        <input type="text" class="form-control" value="{{supplier.name}}({{supplier.storetype}})" readonly>
+                    </div>
+                    <div class="col-md-3">
+                        <label >Destination Store<span style="color: red;">*</span></label>
+                        <select class="form-control" name="destination_store" required>
+                            <option selected disabled>Choose Destination</option>
+                            {% for data in destination_store %}
+                            <option value="{{data.id}}" {% if requestmain.supplierstore_from.id == data.id %} selected {% endif %}>{{data.name}}({{data.storetype}})</option>
+                            {% endfor %}
+                        </select>
+
+                    </div>
+                    <div class="col-md-3">
+                        <label >Expected Delivery Date<span style="color: red;">*</span></label>
+                        <input type="date"  class="form-control" name="expected_delivery_date"  required>
+                    </div>
+                 
+         
+                </div>
+           
+          
+             
+                    <div class="text-right mt-2 mb-1">
+                       
+                        <button type="submit" name="transfer_btn" value="transfer_btn" class="btn btn-primary btn-lm mr-3">Transfer
+                        </button>
+                    </div>
+                <div class="table-responsive">
+                    <table id="tableID" class="display table table-hover">
+                        <thead class="bg-col">
+                            <tr>
+                                <th>#.</th>
+                              
+                                <th>Product</th>
+                                <th>Unit</th>
+                                <th>Type</th>
+                          
+                                <th>Request qty</th>
+                                
+                                <th>Pending qty</th>
+                                <th> Instore </th>                    
+                                <th>Qty</th>
+                        
+                                <th>Packsize</th>
+                                <th>Price</th>
+                          
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for data in lists %}
+                            <tr data-rowid="{{ data.recordssub.id }}">
+                                <td>
+                                    <input type="checkbox" name="active_products" value="{{ data.recordssub.id }}">
+                                </td>
+
+                                <td>
+                                    {{ data.recordssub.item_unit.item }}/{{ data.recordssub.item_unit.brand }}
+                                    <input type="hidden" id="itemunit_{{ data.recordssub.id }}" name="itemunit_{{ data.recordssub.id }}" value="{{ data.recordssub.item_unit.id }}">
+                                </td>
+
+                                <td>
+                                    {{ data.recordssub.item_unit.conversion_factor_to_base }}/{{ data.recordssub.item_unit.unit.symbol }}
+                                </td>
+
+                                <td>
+                                    <select id="transfertype_{{ data.recordssub.id }}" name="transfertype_{{ data.recordssub.id }}" style="width: 100px;">
+                                        <option value="Piece" {% if data.recordssub.ordertype == 'Piece' %}selected{% endif %}>Piece</option>
+                                        <option value="Package" {% if data.recordssub.ordertype == 'Package' %}selected{% endif %}>Package</option>
+                                    </select>
+                                </td>
+{% comment %} 
+                                <td>
+                                    <select id="batch_no_{{ data.recordssub.id }}" name="batch_no_{{ data.recordssub.id }}" class="batch-select" data-id="{{ data.recordssub.id }}" style="width: 100px;">
+                                        <option value="">Choose</option>
+                                        {% for data1 in data.batch %}
+                                            <option value="{{ data1.batch_id }}">{{ data1.batch_no }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </td> {% endcomment %}
+
+                                <td>{{ data.recordssub.quantity }}</td>
+                                <td>{{ data.pending_qty }} <input type="hidden" id="pendingqty_{{ data.recordssub.id }}"  value="{{ data.pending_qty }}"></td>
+
+                               <td><input type="text" id="instoreqty_{{ data.recordssub.id }}" value="{{data.instore_qty}}" class="form-control" style="width: 100px;"></td>
+                                {% comment %} <td><input type="text" id="dispatchqty_{{ data.recordssub.id }}" name="dispatchqty_{{ data.recordssub.id }}" value="{{ data.pending_qty }}" class="form-control" style="width: 100px;"></td> {% endcomment %}
+                                <td>
+                                <input type="number" 
+                                        id="dispatchqty_{{ data.recordssub.id }}" 
+                                        name="dispatchqty_{{ data.recordssub.id }}" 
+                                        value="{{ data.pending_qty }}" 
+                                        class="form-control" 
+                                        style="width: 100px;"
+                                        oninput="validateDispatchQty({{ data.recordssub.id }})">
+                                </td>
+                                 <td><input type="text" id="package_{{ data.recordssub.id }}" class="form-control" style="width: 100px;"></td>
+                                <td><input type="text" id="price_{{ data.recordssub.id }}" value="{{data.recordssub.item_unit.price}}" class="form-control" style="width: 100px;"></td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </form>
+         
+
+            </div>
+         
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+$(document).ready(function() {
+    $('.batch-select').change(function() {
+    let rowId = $(this).data('id');
+    let batchId = $(this).val();  // batch ID
+    let itemUnit = $(`#itemunit_${rowId}`).val();  // Get value by id
+    let transferType = $(`#transfertype_${rowId}`).val();  // Also use id here if set
+
+    if (batchId && itemUnit && transferType) {
+        $.ajax({
+            url: "{% url 'get_batch_data' %}",
+            type: 'GET',
+            data: {
+                batch_id: batchId,
+                item_unit_id :itemUnit, 
+                transfer_type: transferType
+            },
+            success: function(response) {
+                $(`#instoreqty_${rowId}`).val(response.instoreqty);
+           
+                $(`#package_${rowId}`).val(response.package);
+                $(`#price_${rowId}`).val(response.price);
+            },
+            error: function() {
+                alert('Error fetching batch details.');
+            }
+        });
+    }
+});
+});
+</script>
+
+<script>
+function validateDispatchQty(id) {
+    var pending = parseFloat(document.getElementById("pendingqty_" + id).value) || 0;
+    var dispatchInput = document.getElementById("dispatchqty_" + id);
+    var dispatch = parseFloat(dispatchInput.value) || 0;
+
+    if (dispatch > pending) {
+        alert("Dispatch quantity cannot be greater than pending quantity (" + pending + ")");
+        dispatchInput.value = pending;
+    }
+}
+</script>
+{% endblock %}

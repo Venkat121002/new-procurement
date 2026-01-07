@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+{% block body_block %}
+{% load static %}
+
+<div class="content-wrapper">
+    <div class="col-12 grid-margin stretch-card">
+        <div class="card">
+            <div class="card-body">
+                {% if 'packageassignment_create' in user_permissions %}
+                <a href="{% url 'packageassignment_create' %}">
+                    <button type="button" class="btn btn-primary float-right">+ New</button>
+                </a>
+                {% endif %}
+                <h3>{{screen_name}}</h3>
+
+                <!-- New Tab -->
+            </div>
+            {% if 'packageassignment_view' in user_permissions %}
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table id="tableID" class="display table table-hover">
+                        <thead class="bg-col">
+                            <tr>
+                                <th>No.</th>
+<th>logistics partner</th>
+<th>stock</th>
+<th>roots</th>
+<th>currentlocation</th>
+<th>assigned at</th>
+<th>status</th>
+                                    <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for data in records %}
+                            <tr>
+                                <td>{{ forloop.counter }}</td>
+<td>{{data.logistics_partner}}</td>
+<td>{{data.stock}}</td>
+<td>{{data.roots}}</td>
+<td>{{data.currentlocation}}</td>
+<td>{{data.assigned_at}}</td>
+<td>{{data.status}}</td>
+                                    <td>
+                                        <div class="dropdown">
+                                            <button class="btn dropdown-toggle" type="button"
+                                                id="dropdownMenuIconButton2" data-toggle="dropdown" aria-haspopup="true"
+                                                aria-expanded="false">
+                                                <i class="fas fa-ellipsis-v"></i>
+                                            </button>
+                                           
+                                            <div class="dropdown-menu" aria-labelledby="dropdownMenuIconButton2">
+                                                <a class="dropdown-item" href="{% url 'packageassignment_detail' data.pk %}">
+                                                    <button class="btn iconbg-rose" data-bs-toggle="tooltip"
+                                                        data-bs-placement="top" title="View"><i
+                                                            class="fa fa-eye"></i> View</button>
+                                                </a>
+                                                {% if 'packageassignment_update' in user_permissions %}
+                                                <a class="dropdown-item" href="{% url 'packageassignment_update' data.pk %}">
+                                                    <button class="btn iconbg-yellow" data-bs-toggle="tooltip"
+                                                        data-bs-placement="top" title="Edit"><i class="fas fa-edit"></i>
+                                                        Edit</button>
+                                                </a>
+                                                {% endif %}
+                                                {% if 'packageassignment_delete' in user_permissions %}
+                                                <a class="dropdown-item" href="{% url 'packageassignment_delete' data.pk %}">
+                                                    <button class="btn iconbg-rose" data-bs-toggle="tooltip"
+                                                        data-bs-placement="top" title="Delete"><i
+                                                            class="fas fa-trash-alt"></i> Delete</button>
+                                                </a>
+                                                {% endif %}
+                                                
+                                            </div>
+                                        </div>
+                                    </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <br><br><br>
+
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}

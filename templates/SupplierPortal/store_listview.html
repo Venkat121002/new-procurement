@@ -1,0 +1,85 @@
+{% extends 'CustomerPortal/customer_base.html' %}
+{% block body_block %}
+{% load static %}
+<style>
+    .card.h-100 {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        cursor: pointer;
+        border: 1px solid rgba(0,0,0,0.125);
+    }
+    
+    .card.h-100:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 1rem 3rem rgba(0,0,0,0.175) !important;
+        background-color: #f8f9fa;
+    }
+    
+    .card-header.bg-primary {
+        transition: background-color 0.3s ease;
+    }
+    
+    .card.h-100:hover .card-header.bg-primary {
+        background-color: #0062cc !important;
+    }
+</style>
+
+<div class="content-wrapper">
+    <div class="col-12 grid-margin stretch-card">
+        <div class="card">
+            <div class="card-body">
+                <h3 class="card-title mb-4">Customer Stores</h3>
+                <div class="row">
+                    {% for store in records %}
+                    <div class="col-md-4 mb-4">
+                        <div class="card h-100 shadow-sm">
+                            <div class="card-header rounded bg-primary text-white">
+                                <h5 class="mb-0">{{ store.name }}</h5>
+                                <small class="d-block">{{ store.branch.name }}</small>
+                            </div>
+                            <div class="card-body">
+                                <dl class="row mb-0">
+                                    <dt class="col-sm-5">Company:</dt>
+                                    <dd class="col-sm-7">{{ store.company.name }}</dd>
+
+                                    <dt class="col-sm-5">Customer:</dt>
+                                    <dd class="col-sm-7">{{ store.customer.name }}</dd>
+
+                                    <dt class="col-sm-5">Location:</dt>
+                                    <dd class="col-sm-7">{{ store.location }}</dd>
+
+                                    <dt class="col-sm-5">Contact:</dt>
+                                    <dd class="col-sm-7">{{ store.contact_number }}</dd>
+
+                                    <dt class="col-sm-5">Manager:</dt>
+                                    <dd class="col-sm-7">{{ store.manager_name }}</dd>
+
+                                    <dt class="col-sm-5">Description:</dt>
+                                    <dd class="col-sm-7">{{ store.description|default:"-"|truncatechars:40 }}</dd>
+
+                                    <dt class="col-sm-5">Purchase Access:</dt>
+                                    <dd class="col-sm-7">
+                                        {% if store.purchase_access %}
+                                            <span class="badge bg-success">Allowed</span>
+                                        {% else %}
+                                            <span class="badge bg-danger">Restricted</span>
+                                        {% endif %}
+                                    </dd>
+                                </dl>
+                            </div>
+                            {% comment %}
+                            <div class="card-footer bg-light">
+                                <small class="text-muted">
+                                    Store ID: {{ store.id }}
+                                </small>
+                            </div>
+                            {% endcomment %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+{% block body_block %}
+{% load static %}
+
+<div class="content-wrapper">
+    <div class="col-12 grid-margin stretch-card">
+        <div class="card">
+            <div class="card-body">
+                {% if 'orderrequestparent_create' in user_permissions %}
+                <a href="{% url 'orderrequestparent_create' %}">
+                    <button type="button" class="btn btn-primary float-right">+ New</button>
+                </a>
+                {% endif %}
+                <h3>{{screen_name}}</h3>
+
+                <!-- New Tab -->
+            </div>
+            {% if 'orderrequestparent_view' in user_permissions %}
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table id="tableID" class="display table table-hover">
+                        <thead class="bg-col">
+                            <tr>
+                                <th>No.</th>
+<th>po datetime</th>
+<th>supplier</th>
+<th>customer</th>
+<th>net amount</th>
+<th>basic amt</th>
+<th>po status</th>
+<th>purpose</th>
+<th>invoice no</th>
+<th>delivery instruction</th>
+<th>deliver date</th>
+<th>payment terms</th>
+                                    <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for data in records %}
+                            <tr>
+                                <td>{{ forloop.counter }}</td>
+<td>{{data.po_datetime}}</td>
+<td>{{data.supplier}}</td>
+<td>{{data.customer}}</td>
+<td>{{data.net_amount}}</td>
+<td>{{data.basic_amt}}</td>
+<td>{{data.po_status}}</td>
+<td>{{data.purpose}}</td>
+<td>{{data.invoice_no}}</td>
+<td>{{data.delivery_instruction}}</td>
+<td>{{data.deliver_date}}</td>
+<td>{{data.payment_terms}}</td>
+                                    <td>
+                                        <div class="dropdown">
+                                            <button class="btn dropdown-toggle" type="button"
+                                                id="dropdownMenuIconButton2" data-toggle="dropdown" aria-haspopup="true"
+                                                aria-expanded="false">
+                                                <i class="fas fa-ellipsis-v"></i>
+                                            </button>
+                                           
+                                            <div class="dropdown-menu" aria-labelledby="dropdownMenuIconButton2">
+                                                <a class="dropdown-item" href="{% url 'orderrequestparent_detail' data.pk %}">
+                                                    <button class="btn iconbg-rose" data-bs-toggle="tooltip"
+                                                        data-bs-placement="top" title="View"><i
+                                                            class="fa fa-eye"></i> View</button>
+                                                </a>
+                                                {% if 'orderrequestparent_update' in user_permissions %}
+                                                <a class="dropdown-item" href="{% url 'orderrequestparent_update' data.pk %}">
+                                                    <button class="btn iconbg-yellow" data-bs-toggle="tooltip"
+                                                        data-bs-placement="top" title="Edit"><i class="fas fa-edit"></i>
+                                                        Edit</button>
+                                                </a>
+                                                {% endif %}
+                                                {% if 'orderrequestparent_delete' in user_permissions %}
+                                                <a class="dropdown-item" href="{% url 'orderrequestparent_delete' data.pk %}">
+                                                    <button class="btn iconbg-rose" data-bs-toggle="tooltip"
+                                                        data-bs-placement="top" title="Delete"><i
+                                                            class="fas fa-trash-alt"></i> Delete</button>
+                                                </a>
+                                                {% endif %}
+                                                
+                                            </div>
+                                        </div>
+                                    </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <br><br><br>
+
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}

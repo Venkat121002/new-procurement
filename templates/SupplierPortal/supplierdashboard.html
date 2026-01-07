@@ -1,0 +1,393 @@
+{% extends "SupplierPortal/supplier_base.html" %}
+{% block body_block %}
+{% load static %}
+<style>
+  :root {
+    --primary: #4e73df;
+    --success: #1cc88a;
+    --info: #36b9cc;
+    --warning: #f6c23e;
+    --danger: #e74a3b;
+    --secondary: #858796;
+    --light: #f8f9fc;
+    --dark: #5a5c69;
+}
+
+body {
+    font-family: 'Nunito', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    background-color: #f8f9fc;
+    overflow-x: hidden;
+}
+
+.wrapper {
+    display: flex;
+    width: 100%;
+    align-items: stretch;
+}
+
+a[data-toggle="collapse"] {
+    position: relative;
+}
+
+.dropdown-toggle::after {
+    display: block;
+    position: absolute;
+    top: 50%;
+    right: 20px;
+    transform: translateY(-50%);
+}
+
+#content {
+    width: 100%;
+    padding: 20px;
+    min-height: 100vh;
+    transition: all 0.3s;
+}
+
+@media (max-width: 768px) {
+    #sidebar {
+        margin-left: -250px;
+    }
+    #sidebar.active {
+        margin-left: 0;
+    }
+    #sidebarCollapse span {
+        display: none;
+    }
+}
+
+/* Card Styles */
+.card {
+    border: none;
+    border-radius: 0.35rem;
+    box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+}
+
+.card-header {
+    background-color: #f8f9fc;
+    border-bottom: 1px solid #e3e6f0;
+}
+
+.border-left-primary {
+    border-left: 0.25rem solid var(--primary) !important;
+}
+
+.border-left-success {
+    border-left: 0.25rem solid var(--success) !important;
+}
+
+.border-left-info {
+    border-left: 0.25rem solid var(--info) !important;
+}
+
+.border-left-warning {
+    border-left: 0.25rem solid var(--warning) !important;
+}
+
+/* Chart Styles */
+.chart-area {
+    position: relative;
+    height: 20rem;
+    width: 100%;
+}
+
+.chart-bar {
+    position: relative;
+    height: 20rem;
+    width: 100%;
+}
+
+.chart-pie {
+    position: relative;
+    height: 15rem;
+    width: 100%;
+}
+
+/* Table Styles */
+.table-responsive {
+    overflow-x: auto;
+}
+
+.badge {
+    font-size: 0.85em;
+    font-weight: 600;
+    padding: 0.35em 0.65em;
+}
+
+.bg-success {
+    background-color: var(--success) !important;
+}
+
+.bg-warning {
+    background-color: var(--warning) !important;
+}
+
+.bg-danger {
+    background-color: var(--danger) !important;
+}
+
+/* Navbar Styles */
+.navbar {
+    padding: 0.5rem 1rem;
+    background: #fff !important;
+    box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+}
+
+.navbar .navbar-brand {
+    font-weight: 600;
+}
+
+.navbar .fa-user-circle {
+    font-size: 1.5rem;
+}
+
+/* Button Styles */
+.btn-info {
+    color: #fff;
+    background-color: var(--primary);
+    border-color: var(--primary);
+}
+
+.btn-info:hover {
+    background-color: #3a5bc7;
+    border-color: #3a5bc7;
+}
+
+/* Responsive adjustments */
+@media (max-width: 576px) {
+    .card-body {
+        padding: 1rem;
+    }
+    .chart-area, .chart-bar {
+        height: 15rem;
+    }
+}
+</style>
+<div class="content-wrapper">
+      <div class="wrapper">
+          <!-- Page Content -->
+          <div id="content">
+              <!-- Dashboard Cards -->
+              <div class="container-fluid mt-4">
+                  <div class="row">
+                      <div class="col-xl-3 col-md-6 mb-4">
+                          <div class="card border-left-primary shadow h-100 py-2">
+                              <div class="card-body">
+                                  <div class="row no-gutters align-items-center">
+                                      <div class="col me-2">
+                                          <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                              Total Purchase Orders</div>
+                                          <div class="h5 mb-0 font-weight-bold text-gray-800" id="totalCustomers">{{total_purchase}}</div>
+                                      </div>
+                                      <div class="col-auto">
+                                          <i class="fas fa-users fa-2x text-gray-300"></i>
+                                      </div>
+                                  </div>
+                              </div>
+                          </div>
+                      </div>
+  
+                      <div class="col-xl-3 col-md-6 mb-4">
+                          <div class="card border-left-success shadow h-100 py-2">
+                              <div class="card-body">
+                                  <div class="row no-gutters align-items-center">
+                                      <div class="col me-2">
+                                          <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                              Total Paid Amount</div>
+                                          <div class="h5 mb-0 font-weight-bold text-gray-800" id="overallStock">{{total_paid_amount}}</div>
+                                      </div>
+                                      <div class="col-auto">
+                                          <i class="fas fa-boxes fa-2x text-gray-300"></i>
+                                      </div>
+                                  </div>
+                              </div>
+                          </div>
+                      </div>
+  
+                      <div class="col-xl-3 col-md-6 mb-4">
+                          <div class="card border-left-info shadow h-100 py-2">
+                              <div class="card-body">
+                                  <div class="row no-gutters align-items-center">
+                                      <div class="col me-2">
+                                          <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Invoices_Pending
+                                          </div>
+                                          <div class="row no-gutters align-items-center">
+                                              <div class="col-auto">
+                                                  <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800" id="newStock">{{invoices_pending}}</div>
+                                              </div>
+                                          </div>
+                                      </div>
+                                      <div class="col-auto">
+                                          <i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
+                                      </div>
+                                  </div>
+                              </div>
+                          </div>
+                      </div>
+  
+                      <div class="col-xl-3 col-md-6 mb-4">
+                          <div class="card border-left-warning shadow h-100 py-2">
+                              <div class="card-body">
+                                  <div class="row no-gutters align-items-center">
+                                      <div class="col me-2">
+                                          <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                            Pending Amount</div>
+                                          <div class="h5 mb-0 font-weight-bold text-gray-800" id="neededStock">{{pending_amount}}</div>
+                                      </div>
+                                      <div class="col-auto">
+                                          <i class="fas fa-exclamation-triangle fa-2x text-gray-300"></i>
+                                      </div>
+                                  </div>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+  
+                  <!-- Charts Row -->
+                  <div class="row">
+                      <!-- Line Chart -->
+                      {% comment %} <div class="col-xl-8 col-lg-7">
+                          <div class="card shadow mb-4">
+                              <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                                  <h6 class="m-0 font-weight-bold text-primary">Stock Overview (Last 6 Months)</h6>
+                              </div>
+                              <div class="card-body">
+                                  <div class="chart-area">
+                                      <canvas id="lineChart"></canvas>
+                                  </div>
+                              </div>
+                          </div>
+                      </div>
+   {% endcomment %}
+                      <!-- Pie Chart -->
+                      {% comment %} <div class="col-xl-4 col-lg-5">
+                          <div class="card shadow mb-4">
+                              <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                                  <h6 class="m-0 font-weight-bold text-primary">Invoice</h6>
+                              </div>
+                              <div class="card-body">
+                                  <div class="chart-pie pt-4 pb-2">
+                                      <canvas id="pieChart"></canvas>
+                                  </div>
+                                  <div class="mt-4 text-center small">
+                                      <span class="me-2">
+                                          <i class="fas fa-circle text-primary"></i> Paid
+                                      </span>
+                                      <span class="me-2">
+                                          <i class="fas fa-circle text-success"></i> Pending
+                                      </span>
+                                      <span class="me-2">
+                                          <i class="fas fa-circle text-info"></i> Partially Paid
+                                      </span>
+                                  </div>
+                              </div>
+                          </div>
+                      </div> {% endcomment %}
+                  </div>
+  
+                  <!-- Bar Chart -->
+                 <div class="row">
+                      <div class="col-xl-12">
+                          <div class="card shadow mb-4">
+                              <div class="card-header py-3">
+                                  <h6 class="m-0 font-weight-bold text-primary">Inventory Total Amount</h6>
+                              </div>
+                              <div class="card-body">
+                                  <div class="chart-bar">
+                                       <canvas id="inventoryChart" width="800" height="400"></canvas>
+                                  </div>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+  
+                  <!-- DataTables -->
+                  <div class="row">
+                      <div class="col-12">
+                          <div class="card shadow mb-4">
+                              <div class="card-header py-3">
+                                  <h6 class="m-0 font-weight-bold text-primary">Recent Purchase Orders</h6>
+                              </div>
+                              <div class="card-body">
+                                  <div class="table-responsive">
+                                      <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                          <thead>
+                                              <tr>
+                                                <th>Item Name <b style="color: red;">*</b></th>
+                                                <th>OrderType<b style="color: red;">*</b></th>
+                                                <th>Package</th>
+                                                <th>Qty<b style="color: red;">*</b></th>
+                                                
+                                                <th id="amt">Unit Price<b style="color: red;">*</b></th>
+                                                <th>Discount Value</th>
+                                                <th>Discount Type</th>
+                                                <th>Tax</th>
+                                                <th>Total Value<b style="color: red;">*</b></th>
+                                              </tr>
+                                          </thead>
+                                          <tbody>
+                                          
+                                            {% for data in po_last %}
+                                            <tr>
+                                                
+                                                <td>{{data.item_unit.brand}},{{data.item_unit.item}}/{{data.item_unit.conversion_factor_to_base}}{{data.item_unit.unit.symbol}}</td>
+                                                <td>{{data.ordertype}}</td>
+                                                <td>{{data.package_size.package_name}}-{{data.package_size.quantity}}</td>
+                                                <td>{{data.quantity}}</td>
+                                                <td>{{data.unit_price}}</td>
+                                                <td>{{data.discount}}</td>
+                                                <td>{{data.discount_type}}</td>
+                                                <td>{{data.tax}}</td>
+                                                <td>{{data.total_price}}</td>
+                                                {% comment %} <td class="multivaluebtn">
+                                                    <a href="{% url 'delete_POtempdetails' data.id %}" class="btn btn-danger remove-btn"  >
+                                                        <i class="fas fa-trash"></i>
+                                                    </a>
+                                                </td> {% endcomment %}
+                                         
+                                        </tr>
+                                        {% endfor %}
+                                              
+                                          </tbody>
+                                      </table>
+                                  </div>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </div>
+</div>
+
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<!-- Custom JS for Charts -->
+<script>
+        const ctx = document.getElementById('inventoryChart').getContext('2d');
+        const inventoryChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: {{ items|safe }},
+                datasets: [{
+                    label: 'Total Amount',
+                    data: {{ totals|safe }},
+                    backgroundColor: 'rgba(54, 162, 235, 0.7)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    </script>
+
+
+{% endblock %}

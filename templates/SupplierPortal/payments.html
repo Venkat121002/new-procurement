@@ -1,0 +1,159 @@
+{% extends 'SupplierPortal/supplier_base.html' %}
+{% block body_block %}
+{% load static %}
+
+<style>
+    #payment_heading {
+        font-size: 24px;
+        font-weight: bold;
+    }
+    .error-message {
+        color: red;
+        font-size: 14px;
+        margin-top: 5px;
+    }
+</style>
+
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-header bg-info text-white">
+            <h5 class="text-center">Payment</h5>
+        </div>
+        <div class="card-body">
+            <form method="POST" id="payment_form">
+                {% csrf_token %}
+                <div class="row mb-3">
+                    <!-- Payment Mode Dropdown -->
+                    <div class="col-md-3">
+                        <label for="payment_mode" class="form-label">Payment Mode</label>
+                        <select class="form-control" id="payment_mode" name="payment_mode">
+                            <option value="">----Select----</option>
+                            <option value="cash">Cash</option>
+                            <option value="card">Card</option>
+                            <option value="mpesa">M-Pesa</option>
+                        </select>
+                    </div>
+
+                    <!-- Payable Amount -->
+                    <div class="col-md-3">
+                        <label for="payable_amount" class="form-label">Payable Amount</label>
+                        <input type="text" class="form-control" id="payable_amount" name="payable_amount"
+                            value="{{invoice.pending_amount}}" readonly>
+                    </div>
+                </div>
+
+                <!-- Payment Details Section -->
+                <div id="payment_details" style="display: none; border: 1px solid #ccc; padding: 10px; margin-top: 10px;">
+                    <h5 id="payment_heading" class="text-center"></h5>
+                    <div class="row">
+                        <div class="col-md-3" id="paid_by_container">
+                            <label for="paid_by" class="form-label">Paid By</label>
+                            <input type="text" class="form-control" id="paid_by" name="paid_by" required>
+                        </div>
+                        <div class="col-md-3" id="pay_amount_container">
+                            <label for="pay_amount" class="form-label">Pay Amount</label>
+                            <input type="number" class="form-control" id="pay_amount" name="pay_amount">
+                            <span id="error_message" class="error-message"></span>
+                        </div>
+                        <div class="col-md-3" id="ref_no_container">
+                            <label for="ref_no" class="form-label">Ref No</label>
+                            <input type="text" class="form-control" id="ref_no" name="ref_no">
+                        </div>
+                        <div class="col-md-3" id="bank_no_container">
+                            <label for="bank_no" class="form-label">Bank No</label>
+                            <input type="text" class="form-control" id="bank_no" name="bank_no">
+                        </div>
+                        <div class="col-md-3" id="card_holder_name_container">
+                            <label for="card_holder_name" class="form-label">Card Holder Name</label>
+                            <input type="text" class="form-control" id="card_holder_name" name="card_holder_name">
+                        </div>
+                        <div class="col-md-3" id="mobile_number_container">
+                            <label for="mobile_number" class="form-label">Mobile Number</label>
+                            <input type="number" class="form-control" id="mobile_number" name="mobilenumber">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="d-flex justify-content-center mt-3">
+                    <button type="submit" class="btn btn-success mx-2"><i class="fas fa-save"></i> Save</button>
+                    <!-- <button type="button" class="btn btn-primary mx-2"><i class="fas fa-print"></i> Print</button> -->
+                    <button type="button" class="btn btn-danger mx-2"><i class="fas fa-times"></i> Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const paymentMode = document.getElementById("payment_mode");
+        const paymentDetails = document.getElementById("payment_details");
+        const paymentHeading = document.getElementById("payment_heading");
+        const payAmountInput = document.getElementById("pay_amount");
+        const payableAmount = parseFloat(document.getElementById("payable_amount").value); // Corrected to .value
+        const errorMessage = document.getElementById("error_message");
+        const paymentForm = document.getElementById("payment_form");
+
+        const fields = {
+            refNo: document.getElementById("ref_no_container"),
+            bankNo: document.getElementById("bank_no_container"),
+            cardHolderName: document.getElementById("card_holder_name_container"),
+            mobileNumber: document.getElementById("mobile_number_container"),
+            paidBy: document.getElementById("paid_by_container"),
+            payAmount: document.getElementById("pay_amount_container"),
+        };
+
+        function updateFields() {
+            const selectedValue = paymentMode.value;
+
+            // Hide all fields by default
+            Object.values(fields).forEach(field => field.style.display = "none");
+
+            if (selectedValue) {
+                paymentDetails.style.display = "block";
+                paymentHeading.textContent = selectedValue.charAt(0).toUpperCase() + selectedValue.slice(1) + " Payment";
+            } else {
+                paymentDetails.style.display = "none";
+            }
+
+            if (selectedValue === "cash") {
+                fields.paidBy.style.display = "block";
+                fields.payAmount.style.display = "block";
+            } else if (selectedValue === "card") {
+                fields.refNo.style.display = "block";
+                fields.bankNo.style.display = "block";
+                fields.paidBy.style.display = "block";
+                fields.payAmount.style.display = "block";
+            } else if (selectedValue === "mpesa") {
+                fields.refNo.style.display = "block";
+                fields.cardHolderName.style.display = "block";
+                fields.mobileNumber.style.display = "block";
+                fields.paidBy.style.display = "block";
+                fields.payAmount.style.display = "block";
+            }
+        }
+
+        function validateAmount(event) {
+            const enteredAmount = parseFloat(payAmountInput.value);
+            if (enteredAmount > payableAmount) {
+                errorMessage.textContent = "You entered an invalid amount. It should be less than or equal to Payable Amount.";
+                payAmountInput.style.border = "2px solid red";
+                event.preventDefault(); // Prevent form submission
+            } else {
+                errorMessage.textContent = "";
+                payAmountInput.style.border = "";
+            }
+        }
+
+        // Initialize fields on page load
+        updateFields();
+
+        // Listen for changes
+        paymentMode.addEventListener("change", updateFields);
+        payAmountInput.addEventListener("input", validateAmount);
+        paymentForm.addEventListener("submit", validateAmount);
+    });
+</script>
+
+{% endblock %}

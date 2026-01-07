@@ -1,0 +1,110 @@
+{% extends 'SupplierPortal/supplier_base.html' %}
+{% block body_block %}
+{% load static %}
+
+
+<div class="content-wrapper">
+    <div class="col-12 grid-margin stretch-card">
+        <div class="card">
+
+            <div class="card-body">
+                <h3 class="card-title">Purchase Order </h3>
+                <div class="table-responsive">
+                    <table id="tableID" class="display table table-hover">
+                        <thead class="bg-col">
+                            <tr>
+                                <th>No.</th>
+                                <th>Branch</th>
+                                 
+                                <th>Branchstore</th>
+
+                                <th>Order number</th>
+
+                                <th>order_date</th>
+                                <th>vendor/manufacture</th>
+                              
+                                <th>Approve Status</th>
+                             
+                                <th colspan="2">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for data in orders %}
+                            <tr>
+                                <td>{{ forloop.counter }}</td>
+                                <td>{{ data.supplier }}</td>
+                                <td>{{ data.supplierstore }}</td>
+                                <td>{{ data.po_number }}</td>
+
+                                <td>{{ data.order_date }}</td>
+                                <td>{{ data.vendor }}</td>
+                            
+                              
+
+                                <td>{{ data.approval_status }}</td>
+
+
+                                <td>
+                                    <a class="btn btn-success" href="{% url 'supplierordersubview' data.id %}">Order Deatails</a>
+                                </td>
+                                {% comment %} <td>
+                                    <button type="button" class="btn btn-danger reject-btn" 
+                                            data-toggle="modal" data-target="#rejectModal"
+                                            data-id="{{ data.id }}">
+                                        Reject
+                                    </button>
+                                </td> {% endcomment %}
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        
+        </div>
+    </div>
+</div>
+
+<!-- Rejection Modal -->
+<div class="modal fade" id="rejectModal" tabindex="-1" role="dialog" aria-labelledby="rejectModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="rejectModalLabel">Reject </h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form method="post" action="{% url 'rejection' %}">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <label>Reason for Rejection</label>
+                            <textarea class="form-control" name="rejection_reason" required></textarea>
+                            <input type="hidden" id="supplier_id" name="supplier_id">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Confirm Rejection</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript to Capture Supplier ID -->
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll(".reject-btn").forEach(function (button) {
+            button.addEventListener("click", function () {
+                var supplierId = this.getAttribute("data-id"); // Get supplier ID from button
+                document.getElementById("supplier_id").value = supplierId; // Set supplier ID in hidden input
+            });
+        });
+    });
+</script>
+
+{% endblock %}

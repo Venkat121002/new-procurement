@@ -1,0 +1,153 @@
+{% extends 'SupplierPortal/supplier_base.html' %}
+
+{% block body_block %}
+{% load static %}
+
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  
+    <style>
+      body {
+        background-color: #f1f8f9;
+        font-family: 'Roboto', sans-serif;
+      }
+  
+      .content-wrapper {
+        background-color: #ffffff;
+        padding: 25px;
+        border-radius: 12px;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+      }
+  
+      .card {
+        background-color: #fff;
+        border-radius: 10px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        margin: 10px 0;
+        padding: 20px;
+        text-align: center;
+      }
+  
+      .card p {
+        font-size: 18px;
+        margin: 5px 0;
+      }
+  
+      .card-dark-blue { background-color: #007bff; color: white; }
+      .card-light-blue { background-color: #00bcd4; color: white; }
+      .card-green { background-color: #28a745; color: white; }
+      .card-red { background-color: #dc3545; color: white; }
+      .card-light-yellow { background-color: rgb(217, 227, 11); color: white; }
+      .card-light-orange { background-color: rgb(227, 126, 11); color: white; }
+      .card-light-peach { background-color: rgb(165, 50, 117); color: white; }
+      .card-light-pink { background-color: rgb(10, 175, 95); color: white; }
+      .card-light-red { background-color: rgb(14, 2, 82); color: white; }
+      .card-light-purple { background-color: rgb(234, 25, 178); color: white; }
+  
+      .chart-row {
+        display: flex;
+        justify-content: space-between;
+        gap: 40px;
+        flex-wrap: wrap;
+      }
+  
+      .chart-container-half {
+        width: 48%;
+        height: 500px;
+        background-color: #f4f9f4;
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        margin-bottom: 20px;
+      }
+    </style>
+  </head>
+  
+  <body>
+  <div class="container mt-4">
+    <div class="content-wrapper">
+      <!-- Cards Row -->
+      <div class="row">
+        <div class="col-md-3"><div class="card card-dark-blue"><p>Total Purchase Orders</p><p style="font-size: 24px;">{{ total_purchase }}</p></div></div>
+        <div class="col-md-3"><div class="card card-light-blue"><p>Total Invoice</p><p style="font-size: 24px;">{{ total_invoice }}</p></div></div>
+        <div class="col-md-3"><div class="card card-green"><p>Total Items</p><p style="font-size: 24px;">{{ total_purchase_sub }}</p></div></div>
+        <div class="col-md-3"><div class="card card-red"><p>Pending Purchase Orders</p><p style="font-size: 24px;">{{ po_pending }}</p></div></div>
+        <div class="col-md-3"><div class="card card-light-yellow"><p>Total Paid Amount</p><p style="font-size: 24px;">{{ total_paid_amount|floatformat:2 }}</p></div></div>
+        <div class="col-md-3"><div class="card card-light-orange"><p>Total Stock Return To Supplier</p><p style="font-size: 24px;">{{ stock_return|floatformat:2 }}</p></div></div>
+        <div class="col-md-3"><div class="card card-light-red"><p>Stock Transfer To Store</p><p style="font-size: 24px;">{{ store_stock_transfer }}</p></div></div>
+        <div class="col-md-3"><div class="card card-light-purple"><p>Total Inventory Count</p><p style="font-size: 24px;">{{ total_inventory }}</p></div></div>
+        <div class="col-md-3"><div class="card card-light-pink"><p>Receive Stock Pending</p><p style="font-size: 24px;">{{ recieve_stocks_pending|floatformat:2 }}</p></div></div>
+        <div class="col-md-3"><div class="card card-light-purple"><p>Total Pending Amount</p><p style="font-size: 24px;">{{ pending_amount }}</p></div></div>
+      </div>
+  
+      <!-- Charts Row -->
+      <div class="chart-row mt-5">
+        <div class="chart-container-half">
+          <h4>Payment Status Overview</h4>
+          <canvas id="loanPieChart"></canvas>
+        </div>
+        <div class="chart-container-half">
+          <h4>Total Paid Amount vs Total Due Amount</h4>
+          <canvas id="amountBarChart"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    const loanPieChart = document.getElementById('loanPieChart').getContext('2d');
+    const pieChart = new Chart(loanPieChart, {
+      type: 'pie',
+      data: {
+        labels: ['Paid', 'Pending'],
+        datasets: [{
+          label: 'Payment Status',
+          data: [{{ total_paid_amount|floatformat:2 }}, {{ pending_amount|floatformat:2 }}],
+          backgroundColor: ['#28a745', '#dc3545'],
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: {
+            position: 'bottom',
+          }
+        }
+      }
+    });
+  
+    const amountBarChart = document.getElementById('amountBarChart').getContext('2d');
+    const barChart = new Chart(amountBarChart, {
+      type: 'bar',
+      data: {
+        labels: ['Total Paid', 'Total Pending'],
+        datasets: [{
+          label: 'Amount (₹)',
+          data: [{{ total_paid_amount|floatformat:2 }}, {{ pending_amount|floatformat:2 }}],
+          backgroundColor: ['#007bff', '#ffc107'],
+          borderRadius: 10
+        }]
+      },
+      options: {
+        responsive: true,
+        scales: {
+          y: {
+            beginAtZero: true,
+            ticks: {
+              callback: value => '₹' + value
+            }
+          }
+        },
+        plugins: {
+          legend: { display: false }
+        }
+      }
+    });
+  </script>
+  </body>
+
+{% endblock %}

@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% block body_block %}
+{% load static %}
+
+<div class="content-wrapper">
+    {% if not view %}
+    <button type="submit" form="myForm" class="btn btn-success">Invite</button>
+    {% endif %}
+
+    <!-- Success message (Django messages) -->
+    {% if messages %}
+    <div id="successMessage" class="alert alert-success mt-3">
+        {% for message in messages %}
+            {{ message }}
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="col-12 grid-margin stretch-card">
+        <div class="container mt-5 col-md-6">
+            <div class="card card-body">
+                <h2>{{ screen_name }}</h2>
+                <form method="post" enctype="multipart/form-data" id="myForm">
+                    {% csrf_token %}
+                    {% for form_field in form %}
+                    <div class="form-group">
+                        {{ form_field.label_tag }}
+                        {{ form_field }}
+                        <span class="text-danger">{{ form_field.errors }}</span>
+                    </div>
+                    {% endfor %}
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Auto-hide success message after 3 seconds -->
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var successMessage = document.getElementById("successMessage");
+
+        if (successMessage) {
+            setTimeout(function () {
+                successMessage.style.display = "none";
+            }, 3000);
+        }
+
+        {% if view %}
+        var form = document.getElementById('myForm');
+        for (var i = 0; i < form.elements.length; i++) {
+            form.elements[i].disabled = true;
+        }
+        {% endif %}
+    });
+</script>
+
+{% endblock %}
+

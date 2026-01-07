@@ -1,0 +1,61 @@
+{% extends 'SupplierPortal/supplier_base.html' %}
+{% block body_block %}
+{% load static %}
+
+<div class="content-wrapper">
+    <div class="col-12 grid-margin stretch-card">
+  
+        <div class="card">
+            <div class="card-body">
+                <h3>Payment Recieve Details</h3>
+          
+            </div>
+            
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table id="tableID" class="display table table-hover">
+                        <thead class="bg-col">
+                            <tr>
+                                <th>No.</th>
+                                {% comment %} <th>Branch</th> {% endcomment %}
+                                <th>Branch</th>
+                                <th>Store To</th>
+                                <th>Supplier</th>
+                                <th>Invoice</th>
+                                <th>PO Number</th>
+                                <th>GRN Number</th>
+                                <th>GRN Amt</th>
+                                <th>Paid Amt</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for goods in GoodsReceiveds %}
+                            <tr>
+                                <td>{{ forloop.counter }}</td>
+                            
+                                <td>{{ goods.supplier }}</td>
+                                <td>{{ goods.store_to }}</td>
+                                <td>{{ goods.po_number.vendor.name }}</td>
+                                <td>{{ goods.invoice }}</td>
+                                <td>{{ goods.po_number.po_number }}</td>
+                                <td>{{ goods.GRN_number.GRN_number }}</td>
+                                <td>{{ goods.GRN_amount }}</td>
+                                <td>{{ goods.paid_amount }}</td>
+                                <td>{% if goods.payment_status == "Paid" %}<span class="badge badge-success">Paid</span>{% elif goods.payment_status == "PartiallyPaid" %}<span class="badge badge-warning">PartiallyPaid</span>{% else %}<span class="badge badge-danger">Pending</span>{% endif %}</td>
+                                <th><a href="{% url 'paiddetails' goods.id %}">
+                                    <button class="btn btn-primary mx-2">Details</button>
+                                </a></th>
+                            
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

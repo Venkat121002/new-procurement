@@ -1,0 +1,182 @@
+{% extends 'AdminPortal/base.html' %}
+{% block body_block %}
+{% load static %}
+<style>
+    .square-barcode {
+    width: 100px;
+    height: 100px;
+    object-fit: contain;
+    border: 1px solid #ccc;
+    padding: 5px;
+}
+</style>
+<div class="content-wrapper">
+    <div class="col-12 grid-margin stretch-card">
+        <div class="card">
+            <div class="card-body">
+                
+                <div class="d-flex justify-content-end mb-3 gap-2">
+                    <a href="{% static 'file_formats/itemunit.csv' %}" class="btn btn-info mr-2" download>
+                        <i class="fas fa-download"></i> Download File Format
+                    </a>
+                    <a href="{% url 'bulk_upload_itemunit' %}" class="btn btn-primary mr-2">
+                        Import
+                    </a>
+                    <a href="{% url 'itemunit_list' %}" class="me-2 mr-1">
+                        <button type="button" class="btn btn-primary" id="downloadCSV">Export</button>
+                    </a>
+
+                    <a href="{% url 'itemunit_create' %}" class="btn btn-primary">
+                        + New
+                    </a>
+                
+                 
+                
+                    
+                
+                </div>
+                {% comment %} {% endif %} {% endcomment %}
+                <h3>{{screen_name}}</h3>
+
+                <!-- New Tab -->
+            </div>
+          
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table id="tableID" class="display table table-hover">
+                        <thead class="bg-col">
+                            <tr>
+                                <th>No.</th>
+                                <th>item</th>
+                                <th>Brand</th>
+                                <th>unit</th>
+                                <th>factor</th>
+                                <th>price</th>
+                                <th>Bar code</th>
+                                    <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for data in records %}
+                            <tr>
+                                <td>{{ forloop.counter }}</td>
+                                    <td>{{data.item}}</td>
+                                    <td>{{data.brand}}</td>
+                                    <td>{{data.unit}}</td>
+                                    <td>{{data.conversion_factor_to_base}}</td>
+                                    <td>{{data.price}}</td>
+                                    <td>
+                                        {% if data.barcode_image %}
+                                      <img src="{{ data.barcode_image.url }}" alt="Barcode" class="square-barcode" onclick="openBarcodePopup('{{ data.barcode_image.url }}')">
+
+
+                                        {% else %}
+                                            No Barcode
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <div class="dropdown">
+                                            <button class="btn dropdown-toggle" type="button"
+                                                id="dropdownMenuIconButton2" data-toggle="dropdown" aria-haspopup="true"
+                                                aria-expanded="false">
+                                                <i class="fas fa-ellipsis-v"></i>
+                                            </button>
+                                           
+                                            <div class="dropdown-menu" aria-labelledby="dropdownMenuIconButton2">
+                                                <a class="dropdown-item" href="{% url 'itemunit_detail' data.pk %}">
+                                                    <button class="btn iconbg-rose" data-bs-toggle="tooltip"
+                                                        data-bs-placement="top" title="View"><i
+                                                            class="fa fa-eye"></i> View</button>
+                                                </a>
+                                            
+                                                <a class="dropdown-item" href="{% url 'itemunit_update' data.pk %}">
+                                                    <button class="btn iconbg-yellow" data-bs-toggle="tooltip"
+                                                        data-bs-placement="top" title="Edit"><i class="fas fa-edit"></i>
+                                                        Edit</button>
+                                                </a>
+                                               
+                                                <a class="dropdown-item" href="{% url 'itemunit_delete' data.pk %}">
+                                                    <button class="btn iconbg-rose" data-bs-toggle="tooltip"
+                                                        data-bs-placement="top" title="Delete"><i
+                                                            class="fas fa-trash-alt"></i> Delete</button>
+                                                </a>
+                                           
+                                                
+                                            </div>
+                                        </div>
+                                    </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <br><br><br>
+
+            </div>
+        
+        </div>
+    </div>
+</div>
+<!-- Barcode Modal -->
+<div id="barcodeModal" style="display:none; position:fixed; z-index:1000; left:0; top:0; width:100%; height:100%; background-color:rgba(0,0,0,0.7);">
+  <span onclick="closeBarcodePopup()" style="position:absolute; top:20px; right:40px; font-size:30px; color:white; cursor:pointer;">&times;</span>
+  <div style="margin:auto; padding-top:10%; text-align:center;">
+    <img id="popupBarcode" src="" style="max-width:80%; max-height:80%; border:5px solid white; background:white; padding:10px;">
+  </div>
+</div>
+<script>
+  function openBarcodePopup(src) {
+    document.getElementById("popupBarcode").src = src;
+    document.getElementById("barcodeModal").style.display = "block";
+  }
+
+  function closeBarcodePopup() {
+    document.getElementById("barcodeModal").style.display = "none";
+  }
+
+  // Optional: close modal on background click
+  window.onclick = function(event) {
+    var modal = document.getElementById("barcodeModal");
+    if (event.target == modal) {
+      modal.style.display = "none";
+    }
+  }
+</script>
+<script>
+    document.getElementById("downloadCSV").addEventListener("click", function () {
+        let table = document.getElementById("tableID");
+        let rows = table.querySelectorAll("tr");
+        let csvContent = [];
+
+        // Extract table headers (exclude last column)
+        let headers = Array.from(table.querySelectorAll("thead th"))
+            .slice(0, -1) // Exclude last header
+            .map(th => `"${th.textContent.trim()}"`);
+        csvContent.push(headers.join(","));
+
+        // Extract table rows (exclude last column)
+        rows.forEach(row => {
+            let cells = row.querySelectorAll("td");
+            if (cells.length > 0) {
+                let rowData = Array.from(cells)
+                    .slice(0, -1) // Exclude last cell
+                    .map(td => `"${td.textContent.trim()}"`);
+                csvContent.push(rowData.join(","));
+            }
+        });
+
+        // Create CSV file
+        let csvBlob = new Blob([csvContent.join("\n")], { type: "text/csv" });
+        let csvUrl = URL.createObjectURL(csvBlob);
+
+        // Create and trigger download
+        let hiddenLink = document.createElement("a");
+        hiddenLink.href = csvUrl;
+        hiddenLink.download = "data.csv";
+        document.body.appendChild(hiddenLink);
+        hiddenLink.click();
+        document.body.removeChild(hiddenLink);
+    });
+</script>
+
+{% endblock %}

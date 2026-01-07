@@ -1,0 +1,38 @@
+{% extends "CustomerPortal/customer_base.html" %}
+
+{% block body_block %}
+
+<div class="content-wrapper">
+
+    <div class="d-flex justify-content-between mb-3">
+        <h2>Create New Branch</h2>
+        <div>
+            <button type="submit" form="branchForm" class="btn btn-success">Save</button>
+            <a href="javascript:window.history.back();" class="btn btn-danger">Cancel</a>
+        </div>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card card-body">
+                <form method="post" enctype="multipart/form-data" id="branchForm">
+                    {% csrf_token %}
+                    
+                    {% for field in form %}
+                        <div class="form-group">
+                            {{ field.label_tag }}
+                            {{ field }}
+                            {% if field.errors %}
+                                <div class="text-danger">{{ field.errors }}</div>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+
+                </form>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}

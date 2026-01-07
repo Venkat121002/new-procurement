@@ -1,0 +1,231 @@
+{% extends 'SupplierPortal/supplier_base.html' %}
+{% block body_block %}
+{% load static %}
+
+<div class="content-wrapper">
+    <div class="col-12 grid-margin stretch-card">
+        <div class="card">
+            <div class="card-body">
+                <h3>Goods Receive Report</h3>
+            </div>
+                        <form method ="POST">
+                    {% csrf_token %}
+                <div class="row p-1 mb-2">
+                    <div class="col-md-2">
+                        <label >PO Number</label>
+                        <select class="form-control" name="POnumber">
+                            <option value="">--Select--</option>
+                            {% for data in maintable %}
+                                <option value="{{ data.id }}">{{ data.po_number }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label > GRN</label>
+                        <select class="form-control" name="GRNnumber">
+                            <option value="">--Select--</option>
+                            {% for data in receivetable %}
+                                <option value="{{ data.id }}">{{ data.GRN_number }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label >Supplier</label>
+                        <select class="form-control" name="vendorsss">
+                            <option value="">--Select--</option>
+                            {% for data1 in supplier %}
+                                <option value="{{ data1.id }}">{{ data1.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label >Start Date</label>
+                        <input type="date"  class="form-control" name="startdate">
+                
+                    </div>
+                    <div class="col-md-2">
+                        <label >End Date</label>
+                        <input type="date"  class="form-control" name="enddate" >
+                    </div>
+                     <div class="col-md-2 d-flex align-items-end">
+            <button type="submit" class="btn btn-primary w-50"><i class="fas fa-search"></i> </button>
+        </div>
+        
+                </div>
+            </form>
+            <div class="card-body">
+                <div class="pb-2">
+                    <button onclick="downloadPDF()" class="btn btn-primary">PDF</button>
+                    <button onclick="downloadCSV()" class="btn btn-primary">CSV</button>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-bordered" id="printpdf" >
+                        <thead  style="background-color: rgb(182, 205, 236);">
+                         
+                                <tr >
+                                    <th>Product</th>
+                                    <th>Receive Type</th>
+                                    <th>Package</th>
+                                    <th>Receive Qty</th>
+                                    <th>Batch</th>
+                                    <th>Expiry Date</th>
+                                    <th>Manufacture Date</th>
+                                    <th>GRN Amount</th>
+                                </tr>
+                           
+                        </thead>
+                        <tbody>
+                            {% for record in records %}
+                                <!-- ordermain Table Row -->
+                                <tr >
+                                    <td>{{ record.ordermain.po_number.po_number }}</td>
+                                    <td>{{ record.ordermain.po_number.order_date }}</td>
+                                    <td>{{record.ordermain.vendor}}</td>
+                                    <td colspan="5">{% if record.ordermain.approval_status == 'Pending'%}<span class="badge badge-info">Pending</span>{% elif record.ordermain.po_number.approval_status == "Approved"%}<span class="badge badge-success">Approved</span>{% else %} <span class="badge badge-danger">Reject</span> {% endif %}</td>
+                                </tr>
+                          
+                                {% regroup record.items by receiveddetails as grouped_items %}
+                                {% for group in grouped_items %}
+                                    <tr style="background-color: rgb(234, 250, 234);">
+                                        <td><strong>Received: {{ group.grouper.GRN_number }}</strong></td>
+                                        <td><strong>{{ group.grouper.received_by }}</strong></td>
+                                        <td><strong>{{ group.grouper.received_date }}</strong></td>
+                                        <td><strong>{{ group.grouper.GRN_amount }}</strong></td>
+                                        <td colspan="4"></td>
+                                    </tr>
+                                    {% for data in group.list %}
+                                    <tr>
+                                        <td>{{data.item_unit.item}}-{{data.item_unit.unit}}</td>
+                                     
+                                        <td>{{data.receivetype}}</td>
+
+                                        <td>{% if data.packsize %}{{data.packsize}}{% else %}-{% endif %}</td>
+                                     
+                                        <td>{{data.stock_balance}}</td>
+                                        <td>{{data.batch_no}}</td>
+                                        <td>{{data.expiry_date}}</td>
+                                        <td>{{data.manufacture_date}}</td>
+                                        <td>{{data.total_amount}}</td>
+                                    </tr>
+                                    {% endfor %}
+                                {% endfor %}
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add these scripts at the bottom -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script>
+    function downloadPDF() {
+        // Initialize jsPDF
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF('l', 'pt', 'a4'); // Landscape mode
+        
+        // Get the table element
+        const element = document.getElementById('printpdf');
+        const options = {
+            scale: 2, // Higher quality
+            useCORS: true,
+            allowTaint: true,
+            scrollX: 0,
+            scrollY: 0,
+            windowWidth: element.scrollWidth,
+            windowHeight: element.scrollHeight
+        };
+        
+        // Show loading indicator
+        const loading = document.createElement('div');
+        loading.style.position = 'fixed';
+        loading.style.top = '0';
+        loading.style.left = '0';
+        loading.style.width = '100%';
+        loading.style.height = '100%';
+        loading.style.backgroundColor = 'rgba(0,0,0,0.5)';
+        loading.style.color = 'white';
+        loading.style.display = 'flex';
+        loading.style.justifyContent = 'center';
+        loading.style.alignItems = 'center';
+        loading.style.zIndex = '9999';
+        loading.innerHTML = '<h2>Generating PDF, please wait...</h2>';
+        document.body.appendChild(loading);
+        
+        // Use html2canvas to capture the table
+        html2canvas(element, options).then(canvas => {
+            // Remove loading indicator
+            document.body.removeChild(loading);
+            
+            // Calculate the PDF dimensions
+            const imgData = canvas.toDataURL('image/png');
+            const imgWidth = doc.internal.pageSize.getWidth() - 20; // Margin
+            const pageHeight = doc.internal.pageSize.getHeight() - 20;
+            const imgHeight = canvas.height * imgWidth / canvas.width;
+            
+            let heightLeft = imgHeight;
+            let position = 10; // Top margin
+            
+            // Add the first page
+            doc.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
+            heightLeft -= pageHeight;
+            
+            // Add additional pages if the content is too long
+            while (heightLeft >= 0) {
+                position = heightLeft - imgHeight;
+                doc.addPage();
+                doc.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
+                heightLeft -= pageHeight;
+            }
+            
+            // Save the PDF
+            doc.save('stock_order_details.pdf');
+        });
+    }
+
+    function downloadCSV() {
+        let csv = [];
+        const rows = document.querySelectorAll("table tr");
+    
+        for (let row of rows) {
+            let cols = row.querySelectorAll("td, th");
+            let rowData = [];
+            for (let col of cols) {
+                rowData.push('"' + col.innerText.replace(/"/g, '""') + '"');
+            }
+            csv.push(rowData.join(","));
+        }
+    
+        const csvContent = csv.join("\n");
+        const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = "report.csv";
+        link.style.display = "none";
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+</script>
+
+<style>
+    @media print {
+        body * {
+            visibility: hidden;
+        }
+        #printpdf, #printpdf * {
+            visibility: visible;
+        }
+        #printpdf {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+        }
+    }
+</style>
+{% endblock %}

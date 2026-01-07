@@ -1,0 +1,90 @@
+{% extends 'SupplierPortal/supplier_base.html' %}
+{% block body_block %}
+{% load static %}
+
+<div class="content-wrapper">
+    <div class="col-12 grid-margin stretch-card">
+        <div class="card">
+            
+   
+            <div class="card-body">
+                <h3 class="card-title">Received Goods Details</h3>
+                <div class="col-lg-12 col-md-12 col-sm-4 col-xs-4"
+                                                style="background-color:rgb(233, 233, 233);"><br>
+
+                                                <div class="form-row" >
+                                                    <div class="form-group col-md-3 mb-0">
+                                                        <label><b>Order No:</b>&nbsp;{{receivedmain.po_number.po_number}}</label>
+                                                        
+                                                    </div>
+                                                    <div class="form-group col-md-3 mb-0">
+                                                        <label><b>GRN No:</b>&nbsp;{{receivedmain.GRN_number}}</label>
+                                                       
+                                                    </div>
+                                                   
+                                                    <div class="form-group col-md-3 mb-0">
+                                                        <label><b>Vendor:</b>&nbsp;{{receivedmain.vendor}}</label>
+                                                       
+                                                    </div>
+                                                    <div class="form-group col-md-3 mb-0">
+                                                        <label><b>Received By:</b> &nbsp;{{receivedmain.received_by}}</label>
+                                                       
+                                                    </div>
+                                                    <div class="form-group col-md-3 mb-0">
+                                                        <label><b>GRN Amount:</b> &nbsp;{{receivedmain.GRN_amount}}</label>
+                                                       
+                                                    </div>
+                                                    <div class="form-group col-md-3 mb-0">
+                                                        <label><b>Received Date:</b> &nbsp;{{receivedmain.received_date}}</label>
+                                                       
+                                                    </div>
+                                                    
+
+                                                </div>
+                                                <br>
+
+
+                                            </div><br>
+                <div class="table-responsive">
+                    <table id="tableID" class="display table table-hover">
+                        <thead class="bg-col">
+                            <tr>
+                                <th>No.</th>
+                                <th>Item.Dec</th>
+                                <th>Expiry Date</th>
+                                <th>Batch_no</th>
+                                <th>Packsize</th>
+                                <th>Quantity</th>
+                                <th>Amount</th>
+                                <th>Manufacture Date</th>
+                              
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for data in recordssub %}
+                            <tr>
+                                <td>{{ forloop.counter }}</td>
+                                <td>{{data.item_unit.item}}/{{data.item_unit.conversion_factor_to_base}}{{data.item_unit.unit.symbol}}</td>
+                                <td>{{data.expiry_date}}</td>
+                                <td>{{data.batch_no}}</td>
+                                <td>{{data.packsize}}</td>
+                                <td>{{data.received_qty}}</td>
+                          
+                                <td>{{data.total_amount}}</td>
+                             
+                                    <td>{{data.manufacture_date}}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <br><br><br>
+
+            </div>
+         
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}

@@ -1,0 +1,93 @@
+
+{% extends 'base.html' %}
+{% block body_block %}
+{% load static %}
+
+
+<div class="content-wrapper">
+    <button class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">Delegate</button>
+    <a href="{{ request.META.HTTP_REFERER }}" class="btn btn-danger">Cancel</a>
+    <div class="col-12 grid-margin stretch-card">
+        <div class="container mt-5 col-md-6">
+            <div class="card card-body">
+                <h2>{{ screen_name }}</h2>
+                    <form  method="post" enctype="multipart/form-data" id="myForm">
+                    {% csrf_token %}
+                    {% if record_details %}
+                    {% for key,value in record_details.items %}
+                        <label>{{key}}</label>
+                        <input name="{{key}}" value="{{value}}" class="form-control" readonly>
+                    {% endfor %}
+                    {% endif %}
+                </form>
+            </div>
+        </div>
+    </div>
+    
+<!-- Modal -->
+<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLongTitle">Send to approval</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form action="" method="post" id="approval_form">
+            {% csrf_token %}
+              <input type="text" name="pk" value="{{pk}}" hidden="hidden">
+              <input type="text" name="model_name" value="{{model_name}}" hidden="hidden">
+            <label for="user_id">User</label>
+            <select name="user_id" id="user_id" class="form-control" required>
+                <option value="">select</option>
+                {% for data in user_record %}
+                <option value="{{data.id}}">{{data.first_name}}</option>
+                {% endfor %}
+            </select>
+            <input type="text" name="send_to_authorized" value="s2a" hidden="hidden">
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-primary" form="approval_form">Send</button>
+        </div>
+      </div>
+    </div>
+  </div>
+<!-- Modal -->
+<div class="modal fade" id="returnNotes" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLongTitle">Return Notes</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form action="{% url 'unauthorized_return' %}" method="post" id="return_form">
+            {% csrf_token %}
+            <div class="form-group">
+                <input type="text" name="pk" value="{{pk}}" hidden="">
+                <input type="text" name="record_id" value="{{record_id}}" hidden="">
+                <input type="text" name="table_name" value="{{table_name}}" hidden="">
+                <label for="notes">Notes</label>
+                <textarea class="form-control" id="notes" name="notes" rows="4" required></textarea>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-primary" form="return_form">Return</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+</div>
+
+
+{% endblock %}

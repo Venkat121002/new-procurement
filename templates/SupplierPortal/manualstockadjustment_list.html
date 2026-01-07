@@ -1,0 +1,96 @@
+{% extends 'SupplierPortal/supplier_base.html' %}
+{% block body_block %}
+{% load static %}
+
+<div class="content-wrapper">
+    <div class="col-12 grid-margin stretch-card">
+        <div class="card">
+            <div class="card-body">
+                {% if 'manualstockadjustment_create' in user_permissions %}
+                <a href="{% url 'manualstockadjustment_create' %}">
+                    <button type="button" class="btn btn-primary float-right">+ New</button>
+                </a>
+                {% endif %}
+                <h3>{{screen_name}}</h3>
+
+                <!-- New Tab -->
+            </div>
+            {% if 'manualstockadjustment_view' in user_permissions %}
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table id="tableID" class="display table table-hover">
+                        <thead class="bg-col">
+                            <tr>
+                                <th>No.</th>
+<th>supplier</th>
+<th>store</th>
+<th>adjustment date</th>
+<th>item name</th>
+<th>packsize</th>
+<th>batch no</th>
+<th>expiry date</th>
+<th>amount</th>
+<th>remark</th>
+                                    <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for data in records %}
+                            <tr>
+                                <td>{{ forloop.counter }}</td>
+<td>{{data.supplier}}</td>
+<td>{{data.store}}</td>
+<td>{{data.adjustment_date}}</td>
+<td>{{data.item_name}}</td>
+<td>{{data.packsize}}</td>
+<td>{{data.batch_no}}</td>
+<td>{{data.expiry_date}}</td>
+<td>{{data.amount}}</td>
+<td>{{data.remark}}</td>
+                                    <td>
+                                        <div class="dropdown">
+                                            <button class="btn dropdown-toggle" type="button"
+                                                id="dropdownMenuIconButton2" data-toggle="dropdown" aria-haspopup="true"
+                                                aria-expanded="false">
+                                                <i class="fas fa-ellipsis-v"></i>
+                                            </button>
+                                           
+                                            <div class="dropdown-menu" aria-labelledby="dropdownMenuIconButton2">
+                                                <a class="dropdown-item" href="{% url 'manualstockadjustment_detail' data.pk %}">
+                                                    <button class="btn iconbg-rose" data-bs-toggle="tooltip"
+                                                        data-bs-placement="top" title="View"><i
+                                                            class="fa fa-eye"></i> View</button>
+                                                </a>
+                                                {% if 'manualstockadjustment_update' in user_permissions %}
+                                                <a class="dropdown-item" href="{% url 'manualstockadjustment_update' data.pk %}">
+                                                    <button class="btn iconbg-yellow" data-bs-toggle="tooltip"
+                                                        data-bs-placement="top" title="Edit"><i class="fas fa-edit"></i>
+                                                        Edit</button>
+                                                </a>
+                                                {% endif %}
+                                                {% if 'manualstockadjustment_delete' in user_permissions %}
+                                                <a class="dropdown-item" href="{% url 'manualstockadjustment_delete' data.pk %}">
+                                                    <button class="btn iconbg-rose" data-bs-toggle="tooltip"
+                                                        data-bs-placement="top" title="Delete"><i
+                                                            class="fas fa-trash-alt"></i> Delete</button>
+                                                </a>
+                                                {% endif %}
+                                                
+                                            </div>
+                                        </div>
+                                    </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <br><br><br>
+
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}

@@ -1,0 +1,136 @@
+{% extends 'AdminPortal/base.html' %}
+{% block body_block %}
+{% load static %}
+
+<div class="content-wrapper">
+    <form method="post">
+        {% csrf_token %}
+    <div class="col-12 grid-margin stretch-card">
+        <div class="card">
+            <div class="card-body">
+                <h3 class="mb-4">Route mapping</h3>
+
+                
+                <div class="card shadow-sm p-3 border rounded" style="background-color: #d3d3d3;">
+                    <div class="row g-3">
+                        <!-- Supplier Dropdown -->
+                        <div class="col-md-3">
+                            <label >Supplier<b style="color: red;">*</b></label>
+                           <input type="text" name="supplier" class="form-control" value="{{suppliers.supplier_name}}">
+                        </div>
+                
+                        <!-- Distributor Dropdown -->
+                        <div class="col-md-3">
+                            <label >Distributor<b style="color: red;">*</b></label>
+                            <select class="form-control" id="distributor" name="distributor" required>
+                                <option selected disabled>Choose Distributor</option>
+                                {% for data in customers %}
+                                <option value="{{data.id}}">{{data.customer.name}}</option>
+                                {% endfor %}
+                              
+                            </select>
+                        </div>
+                
+                        <!-- Distributor Store Dropdown -->
+                        <div class="col-md-3">
+                            <label >Distributor Store(Destination)<b style="color: red;">*</b></label>
+                            <select class="form-control" id="distributorstore" name="distributorstore" required>
+                                <option selected disabled>Choose Store</option>
+                              
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label >Route Name<b style="color: red;">*</b></label>
+                            <input type="text" class="form-control" id="routename" name="routename">
+                          
+                        </div>
+                        <div class="col-md-3 p-4">
+                            <button type="submit" class="btn btn-success">Save</button>
+                        </div>
+
+                    </div>
+                </div><br>
+             
+                
+                
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12 grid-margin stretch-card mt-4">
+        <div class="card">
+            <!-- Table to Display Added Suppliers -->
+            <div class="card shadow-sm p-3 border rounded" style="background-color: #ffffff;">
+                <h6>Selected Suppliers</h6>
+                <table class="table table-bordered table-striped mt-2">
+                    <thead>
+                        <tr>
+                           
+                            <th>Supplierstore</th>
+                            <th>Address</th>
+                            <th>Order</th>
+                            
+                        </tr>
+                    </thead>
+                    <tbody id="supplierTableBody">
+                        {% for data in supplierstores %}
+                        <tr>
+                           
+                            <td>
+                                <input type="checkbox" value="{{ data.id }}" name="select[]">&nbsp;
+                                {{ data.name }}
+                                <input type="hidden" name="supplierstore[]" value="{{ data.id }}">
+                            </td>
+                            <td>{{ data.location }}</td>
+                            <td>
+                                <input type="number" class="form-control" name="order[]">
+                            </td>
+                           
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</form>
+</div>
+
+
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $('#distributor').change(function () {
+        let distributorId = $(this).val();
+
+        if (distributorId) {
+            
+            $.ajax({
+                url: '/get-customer-stores/',  // Your Django URL for fetching stores
+                type: 'GET',
+                data: {
+                    'distributor_id': distributorId
+                },
+                
+                success: function (response) {
+                    let storeSelect = $('#distributorstore');
+                    storeSelect.empty();
+                    storeSelect.append('<option selected disabled>Choose Store</option>');
+
+                    response.data.forEach(function (item) {
+                        storeSelect.append(
+                            `<option value="${item.id}">${item.store_name}</option>`
+                        );
+                    });
+                },
+                error: function (xhr, status, error) {
+                    console.error("Error fetching stores:", error);
+                }
+            });
+        }
+    });
+</script>
+
+
+{% endblock %}

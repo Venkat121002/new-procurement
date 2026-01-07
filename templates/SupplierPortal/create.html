@@ -1,0 +1,76 @@
+{% extends "SupplierPortal/supplier_base.html" %} 
+
+{% block body_block %}
+
+{% load static %}
+<style>
+    .required-star {
+        color: red;
+        font-weight: bold;
+    }
+</style>
+<div class="content-wrapper">
+   
+    {% if not view %}
+    <button type="submit" form="myForm" class="btn btn-success">Save</button>
+    {% endif %}
+    <a href="javascript:window.history.back()" class="btn btn-danger">Cancel</a>
+
+    <div class="col-12 grid-margin stretch-card">
+        <div class="container mt-5 col-md-6">
+            <div class="card card-body">
+                <h2>{{ screen_name }}</h2>
+                    <form  method="post" enctype="multipart/form-data" id="myForm">
+                    {% csrf_token %}
+                    {% for form_field in form %}
+                    <div class="form-group">
+                         <label>
+                            {{ form_field.label }}
+                            {% if form_field.field.required %}
+                                <span class="required-star">*</span>
+                            {% endif %}
+                        </label>
+                        {% comment %} {{ form_field.label_tag }} {% endcomment %}
+                        {{ form_field }}
+                        <span class="text-danger">{{form_field.errors}}</span>
+                    </div>
+                    {% endfor %}
+                </form>
+            </div>
+        </div>
+    </div>
+
+</div>
+{% if view %}
+<script>
+    // Select the form by ID
+    var form = document.getElementById('myForm');
+    
+    // Loop through all form elements
+    for (var i = 0; i < form.elements.length; i++) {
+        form.elements[i].disabled = true;
+    }
+</script>
+{% endif %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+$(document).ready(function() {
+    $("#id_category").change(function() {
+        var category_id = $(this).val();
+        $.ajax({
+            url: "{% url 'get_subcategories' %}",
+            data: {'category_id': category_id},
+            success: function(data) {
+                var subcategoryDropdown = $("#id_subcategory");
+                subcategoryDropdown.empty();
+                subcategoryDropdown.append('<option value="">Select Subcategory</option>');
+                $.each(data.subcategories, function(index, subcategory) {
+                    subcategoryDropdown.append('<option value="' + subcategory.id + '">' + subcategory.name + '</option>');
+                });
+            }
+        });
+    });
+});
+</script>
+
+{% endblock %}

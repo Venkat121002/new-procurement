@@ -1,0 +1,282 @@
+{% extends 'SupplierPortal/supplier_base.html' %}
+{% block body_block %}
+{% load static %}
+<style>
+    th {
+        text-align: inherit;
+        text-align: -webkit-match-parent;
+        background: #d9e6f1;
+    }
+</style>
+<style>
+    #tableID_filter {
+        display: flex;
+        justify-content: flex-end; /* move to right */
+        margin-bottom: 10px;
+    }
+    
+    #tableID_filter label {
+        display: flex;
+        align-items: center;
+        font-weight: bold;
+        gap: 8px;
+    }
+    
+    #tableID_filter input[type="search"] {
+        padding: 5px 10px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        font-size: 14px;
+
+    
+    }
+    </style>
+    <style>
+        #tableID_length {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            font-weight: bold;
+            gap: 8px;
+        }
+        
+        #tableID_length label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        #tableID_length select {
+            padding: 12px 10px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 14px;
+            background-color: #fff;
+            cursor: pointer;
+        }
+        </style>
+
+<div class="content-wrapper " >
+    <h4>Supplier Approval Request </h4>
+    <div class="col-12 grid-margin stretch-card">
+        
+
+        <div class="card">
+            
+            <div class="card-body">
+                
+                <a class="btn btn-success mr-2 mt-2" href="{% url 'orderapproval' mainid%}">Approve</a>
+                <button type="button" class="btn btn-danger reject-btn mt-2" 
+                data-toggle="modal" data-target="#rejectModal"
+                data-id="{{ id }}">
+            Reject
+        </button>
+         <div class="col-lg-12 col-md-12 col-sm-4 col-xs-4"
+                                                style="background-color:rgb(233, 233, 233);"><br>
+
+                                                <div class="form-row" >
+                                                    <div class="form-group col-md-3 mb-0">
+                                                        <label><b>Order No:</b>&nbsp;{{receivedmain.po_number}}</label>
+                                                        
+                                                    </div>
+                                              
+                                                   
+                                                    <div class="form-group col-md-3 mb-0">
+                                                        <label><b>Vendor:</b>&nbsp;{{receivedmain.vendor}}</label>
+                                                       
+                                                    </div>
+                                               
+                                               
+                                                    <div class="form-group col-md-3 mb-0">
+                                                        <label><b> Amount:</b> &nbsp;{{receivedmain.total_amount}}</label>
+                                                       
+                                                    </div>
+                                                    <div class="form-group col-md-3 mb-0">
+                                                        <label><b> Date:</b> &nbsp;{{receivedmain.order_date}}</label>
+                                                       
+                                                    </div>
+                                                    
+
+                                                </div>
+                                                <br>
+
+
+                                            </div><br>
+                <div class="table-responsive">
+                    <table id="tableID" class="display table table-hover " style="margin-top: 20px; ">
+                        <thead class="">
+                            <tr>
+                                <th>No.</th>
+                                <th>Supplier</th>
+                                {% comment %} <th>Short Name</th> {% endcomment %}
+                                <th>supplierstore</th>
+                                <th>item_unit</th>
+                                <th>package_size</th>
+                                <th>ordertype</th>
+                                <th>quantity</th>
+                                <th>unit_price</th>
+                                <th>total_price</th>
+                                <th>tax</th>
+                                <th>discount</th>
+                                <th>discount type</th>
+                               
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for data in supplier %}
+                            <tr>
+                                <td>{{ forloop.counter }}</td>
+                                <td>{{ data.supplier }}</td>
+                                <td>{{ data.supplierstore }}</td>
+                                <td>{{ data.item_unit.item }}/{{ data.item_unit.conversion_factor_to_base }}{{ data.item_unit.unit }}</td>
+                                <td>{{ data.package_size }}</td>
+                                <td>{{ data.ordertype }}</td>
+                                <td>{{ data.quantity }}</td>
+                                <td>{{ data.unit_price }}</td>
+                                <td>{{ data.total_price }}</td>
+                                <td>{{ data.tax }}</td>
+                                <td>{{ data.discount }}</td>
+                                <td>{{ data.discount_type }}</td>
+
+                                
+                            </tr>
+                            {% endfor %}
+
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            </div>
+        
+        </div>
+    </div>
+</div>
+
+<!-- Rejection Modal -->
+<div class="modal fade" id="rejectModal" tabindex="-1" role="dialog" aria-labelledby="rejectModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="rejectModalLabel">Reject Supplier</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form method="post" action="{% url 'order_rejections'  mainid  %}">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <label>Reason for Rejection</label>
+                            <textarea class="form-control" name="rejection_reason" required></textarea>
+                            <input type="hidden" id="supplier_id" name="supplier_id">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Confirm Rejection</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript to Capture Supplier ID -->
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll(".reject-btn").forEach(function (button) {
+            button.addEventListener("click", function () {
+                var supplierId = this.getAttribute("data-id"); // Get supplier ID from button
+                document.getElementById("supplier_id").value = supplierId; // Set supplier ID in hidden input
+            });
+        });
+    });
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const table = document.getElementById('tableID');
+        const tbody = table.querySelector('tbody');
+        let allRows = Array.from(tbody.querySelectorAll('tr')); // Save original rows
+    
+        // 1. Copy Button
+        document.querySelector('.buttons-copy').addEventListener('click', function() {
+            let range, selection;
+            if (document.createRange && window.getSelection) {
+                range = document.createRange();
+                selection = window.getSelection();
+                selection.removeAllRanges();
+                try {
+                    range.selectNodeContents(table);
+                    selection.addRange(range);
+                } catch (e) {
+                    range.selectNode(table);
+                    selection.addRange(range);
+                }
+                document.execCommand('copy');
+                selection.removeAllRanges();
+                alert('Table copied to clipboard!');
+            }
+        });
+    
+        // 2. CSV Download Button
+        document.querySelector('.buttons-csv').addEventListener('click', function() {
+            let csv = [];
+            const rows = table.querySelectorAll('tr');
+            rows.forEach(function(row) {
+                const cols = row.querySelectorAll('td, th');
+                const rowData = [];
+                cols.forEach(function(col) {
+                    rowData.push('"' + col.innerText.replace(/"/g, '""') + '"');
+                });
+                csv.push(rowData.join(','));
+            });
+    
+            const csvFile = new Blob([csv.join('\n')], { type: 'text/csv' });
+            const downloadLink = document.createElement('a');
+            downloadLink.download = 'table_data.csv';
+            downloadLink.href = window.URL.createObjectURL(csvFile);
+            downloadLink.style.display = 'none';
+            document.body.appendChild(downloadLink);
+            downloadLink.click();
+            document.body.removeChild(downloadLink);
+        });
+    
+        // 3. Print Button
+        document.querySelector('.buttons-print').addEventListener('click', function() {
+            const newWin = window.open('', '_blank');
+            newWin.document.write('<html><head><title>Print Table</title>');
+            newWin.document.write('<style>table { width: 100%; border-collapse: collapse; } table, th, td { border: 1px solid black; padding: 8px; }</style>');
+            newWin.document.write('</head><body>');
+            newWin.document.write(table.outerHTML);
+            newWin.document.write('</body></html>');
+            newWin.document.close();
+            newWin.print();
+        });
+    
+        // 4. Entries Dropdown
+        const lengthSelect = document.querySelector('select[name="tableID_length"]');
+        lengthSelect.addEventListener('change', function() {
+            let selectedValue = parseInt(this.value);
+            tbody.innerHTML = ''; // Clear table body
+            if (selectedValue === -1) { // Show all
+                allRows.forEach(row => tbody.appendChild(row));
+            } else {
+                allRows.slice(0, selectedValue).forEach(row => tbody.appendChild(row));
+            }
+        });
+    
+        // 5. Search Filter
+        const searchInput = document.querySelector('#tableID_filter input');
+        searchInput.addEventListener('input', function() {
+            const searchText = this.value.toLowerCase();
+            tbody.innerHTML = ''; // Clear table body
+            const filteredRows = allRows.filter(row => {
+                return row.innerText.toLowerCase().includes(searchText);
+            });
+            filteredRows.forEach(row => tbody.appendChild(row));
+        });
+    });
+    </script>
+{% endblock %}

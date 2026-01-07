@@ -1,0 +1,94 @@
+{% extends 'SupplierPortal/supplier_base.html' %}
+{% block body_block %}
+{% load static %}
+
+<div class="content-wrapper">
+    <div class="col-12 grid-margin stretch-card">
+        <div class="card">
+            
+   
+            <div class="card-body">
+                <h3 class="card-title">Received Goods Details</h3>
+                <div class="col-lg-12 col-md-12 col-sm-4 col-xs-4"
+                                                style="background-color:rgb(233, 233, 233);"><br>
+
+                                                <div class="form-row" >
+                                                    <div class="form-group col-md-3 mb-0">
+                                                        <label><b>Invoice No:</b>&nbsp;{{GoodsReceiveds.invoice}}</label>
+                                                        
+                                                    </div>
+                                                    <div class="form-group col-md-3 mb-0">
+                                                        <label><b>GRN No:</b>&nbsp;{{GoodsReceiveds.GRN_number.GRN_number}}</label>
+                                                       
+                                                    </div>
+                                                   
+                                                    <div class="form-group col-md-3 mb-0">
+                                                        <label><b>Vendor:</b>&nbsp;{{GoodsReceiveds.po_number.vendor}}</label>
+                                                       
+                                                    </div>
+                                                    <div class="form-group col-md-3 mb-0">
+                                                        <label><b>Invoice Date:</b> &nbsp;{{GoodsReceiveds.received_date}}</label>
+                                                       
+                                                    </div>
+                                                    
+                                                    <div class="form-group col-md-3 mb-0">
+                                                        <label><b>GRN Amount:</b> &nbsp;{{GoodsReceiveds.GRN_amount}}</label>
+                                                       
+                                                    </div>
+                                                    <div class="form-group col-md-3 mb-0">
+                                                        <label><b>Paid Amount:</b> &nbsp;{{GoodsReceiveds.paid_amount}}</label>
+                                                       
+                                                    </div>
+                                                    <div class="form-group col-md-3 mb-0">
+                                                        <label><b>Pending Amount:</b> &nbsp;{{GoodsReceiveds.pending_amount}}</label>
+                                                       
+                                                    </div>
+                                                    
+
+                                                </div>
+                                                <br>
+
+
+                                            </div><br>
+                <div class="table-responsive">
+                    <table id="tableID" class="display table table-hover">
+                        <thead class="bg-col">
+                            <tr>
+                                <th>No.</th>
+                                <th>invoice</th>
+                                <th>Payment Date</th>
+                                <th>Paid by</th>
+                                <th>Payment Method</th>
+                                <th>Paid Amount</th>
+                                <th>Mobile Number</th>
+                            
+                              
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for data in payments %}
+                            <tr>
+                                <td>{{ forloop.counter }}</td>
+                                <td>{{data.invoice.invoice}}</td>
+                                <td>{{data.payment_date}}</td>
+                                <td>{{data.paid_by}}</td>
+                                <td>{{data.payment_method}}</td>
+                                <td>{{data.paid_amount}}</td>
+                          
+                                <td>{{data.mobile_number}}</td>
+                          
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <br><br><br>
+
+            </div>
+         
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}

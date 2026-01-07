@@ -1,0 +1,177 @@
+{% extends 'SupplierPortal/supplier_base.html' %}
+{% block body_block %}
+{% load static %}
+
+<div class="content-wrapper">
+    <div class="col-12 grid-margin stretch-card">
+        <div class="card">
+            <div class="card-body">
+                <h3>Stock ReOrder Details</h3>
+       
+
+            </div>
+          
+   
+            <div class="card-body">
+                <div class="pb-2">
+                    <button onclick="downloadPDF()" class="btn btn-primary">PDF</button>
+                    <button onclick="downloadCSV()" class="btn btn-primary">CSV</button>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-bordered" id="printpdf">
+                        <thead>
+                            <tr>
+                            <th>Item Name</th>
+                                <th>Brand</th>
+                            <th>Monthly Ordered Qty</th>
+                            <th>In-Hand Qty</th>
+                            <th>Used/Consumed Qty</th>
+                            
+                            <th>Reorder Quantity</th>
+                            <th>Reorder Needed?</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                             {% for row in report %}
+                                <tr>
+                                    <td>{{ row.item_name }}</td>
+                                    <td>{{ row.brand }}</td>
+                                    <td align="right">{{ row.total_received }}</td>
+                                    <td align="right">{{ row.current_stock }}</td>
+                                    <td align="right">{{ row.consumed }}</td>
+                                    
+                                    <td align="right">
+                                        {% if row.reorder_needed %}
+                                            {{ row.reorder_qty }}
+                                        {% else %}
+                                            -
+                                        {% endif %}
+                                    </td>
+                                    <td align="center">
+                                        {% if row.reorder_needed %}
+                                            <span style="color: red;">Yes</span>
+                                        {% else %}
+                                            No
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add these scripts at the bottom -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script>
+    function downloadPDF() {
+        // Initialize jsPDF
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF('l', 'pt', 'a4'); // Landscape mode
+        
+        // Get the table element
+        const element = document.getElementById('printpdf');
+        const options = {
+            scale: 2, // Higher quality
+            useCORS: true,
+            allowTaint: true,
+            scrollX: 0,
+            scrollY: 0,
+            windowWidth: element.scrollWidth,
+            windowHeight: element.scrollHeight
+        };
+        
+        // Show loading indicator
+        const loading = document.createElement('div');
+        loading.style.position = 'fixed';
+        loading.style.top = '0';
+        loading.style.left = '0';
+        loading.style.width = '100%';
+        loading.style.height = '100%';
+        loading.style.backgroundColor = 'rgba(0,0,0,0.5)';
+        loading.style.color = 'white';
+        loading.style.display = 'flex';
+        loading.style.justifyContent = 'center';
+        loading.style.alignItems = 'center';
+        loading.style.zIndex = '9999';
+        loading.innerHTML = '<h2>Generating PDF, please wait...</h2>';
+        document.body.appendChild(loading);
+        
+        // Use html2canvas to capture the table
+        html2canvas(element, options).then(canvas => {
+            // Remove loading indicator
+            document.body.removeChild(loading);
+            
+            // Calculate the PDF dimensions
+            const imgData = canvas.toDataURL('image/png');
+            const imgWidth = doc.internal.pageSize.getWidth() - 20; // Margin
+            const pageHeight = doc.internal.pageSize.getHeight() - 20;
+            const imgHeight = canvas.height * imgWidth / canvas.width;
+            
+            let heightLeft = imgHeight;
+            let position = 10; // Top margin
+            
+            // Add the first page
+            doc.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
+            heightLeft -= pageHeight;
+            
+            // Add additional pages if the content is too long
+            while (heightLeft >= 0) {
+                position = heightLeft - imgHeight;
+                doc.addPage();
+                doc.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
+                heightLeft -= pageHeight;
+            }
+            
+            // Save the PDF
+            doc.save('stock_order_details.pdf');
+        });
+    }
+
+    function downloadCSV() {
+        let csv = [];
+        const rows = document.querySelectorAll("table tr");
+    
+        for (let row of rows) {
+            let cols = row.querySelectorAll("td, th");
+            let rowData = [];
+            for (let col of cols) {
+                rowData.push('"' + col.innerText.replace(/"/g, '""') + '"');
+            }
+            csv.push(rowData.join(","));
+        }
+    
+        const csvContent = csv.join("\n");
+        const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = "report.csv";
+        link.style.display = "none";
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+</script>
+
+<style>
+    @media print {
+        body * {
+            visibility: hidden;
+        }
+        #printpdf, #printpdf * {
+            visibility: visible;
+        }
+        #printpdf {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+        }
+    }
+</style>
+{% endblock %}

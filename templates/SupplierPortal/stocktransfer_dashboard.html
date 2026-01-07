@@ -1,0 +1,214 @@
+{% extends 'SupplierPortal/supplier_base.html' %}
+{% block body_block %}
+{% load static %}
+<style>
+    body {
+  padding: 2rem 0rem;
+}
+
+.card {
+  margin-bottom: 1rem;
+  background-color: rgb(255, 255, 255);
+}
+
+</style>
+<style>
+  .double-buttons.small {
+  display: inline-block;
+  border: 1px solid #ddd;
+  background-color: #fff;
+  border-radius: 15px;
+  height: 30px;
+  font-size: 11px;
+  overflow: hidden;
+  position: relative;
+}
+
+.double-buttons.small a {
+  display: inline-block;
+  padding: 0 16px;
+  line-height: 30px;
+  color: #444;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+.double-buttons.small a:first-child {
+  border-right: 1px solid #ddd;
+}
+
+.double-buttons.small a:hover {
+  background-color: #EE4E44;
+  color: #fff;
+}
+
+.double-buttons.small a:active {
+  background-color: #444;
+  color: #fff;
+}
+
+.double-buttons.small .or {
+  position: absolute;
+  display: block;
+  width: 20px;
+  height: 20px;
+  line-height: 20px;
+  font-size: 10px;
+  background-color: #fff;
+  border-radius: 50%;
+  border: 1px solid #ddd;
+  color: #666;
+  top: 50%;
+  left: 50%;
+  margin-top: -10px;
+  margin-left: -10px;
+  pointer-events: none;
+}
+
+</style>
+<div class="content-wrapper">
+    <div class="col-12 grid-margin stretch-card">
+        
+                <div class="container">
+                    <div class="row">
+                      <div class="col-12 col-sm-6 col-lg-4">
+                        <div class="card text-center" style="background-color: #fff; border-left: 4.5px solid #186306; border-right: 4.5px solid #186306;">
+                          <div class="card-body">
+                            <div class="d-flex align-items-center">
+                              <img src="https://cdn-icons-png.flaticon.com/512/1170/1170678.png" width="60" height="60" class="me-3 p-2 rounded" alt="Stock Request">
+                              <div class="text-start">
+                                <h5 class="card-title mb-2">Stock Request</h5>
+                               
+                                <div class="double-buttons small">
+                                  <a href="{% url 'stock_request_tostore' %}">Process</a>
+                                 <a href="{% url 'supplierstoretostorerequest_view' %}">View</a>
+                                  
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div class="col-12 col-sm-6 col-lg-4">
+                        <div class="card text-center" style="background-color: #fff; border-left: 4.5px solid #186306; border-right: 4.5px solid #186306;">
+                          <div class="card-body">
+                            <div class="d-flex align-items-center">
+                              <img src="https://cdn-icons-png.flaticon.com/512/1141/1141785.png" width="60" height="60" class="me-3 p-2 rounded" alt="Requested Stock Transfer">
+                              <div class="text-start">
+                                <h5 class="card-title mb-2">Stock Transfer</h5>
+                       
+                                <div class="double-buttons small">
+                                  <a href="{% url 'approvedsupplierstorerequest' %}">Process</a>
+                                 <a href="view_supplierstorerequest">View</a>
+                                  
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      
+                      <div class="col-12 col-sm-6 col-lg-4">
+                        <div class="card text-center" style="background-color: #fff; border-left: 4.5px solid #186306; border-right: 4.5px solid #186306;">
+                          <div class="card-body">
+                            <div class="d-flex align-items-center">
+                              <img src="https://cdn-icons-png.flaticon.com/512/906/906175.png" width="60" height="60" class="me-3 p-2 rounded">
+                              <div class="text-start">
+                                <h5 class="card-title mb-2">Direct Transfer</h5>
+                   
+                                <div class="double-buttons small">
+                                  <a href="{% url 'stocktransfertostore' %}">Process</a>
+                                 <a href="direct_suppliertransferdetails">View</a>
+                                  
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      {% comment %} <div class="col-12 col-sm-6 col-lg-4">
+                        <div class="card text-center" style="background-color: #fff; border-left: 4.5px solid #186306; border-right: 4.5px solid #186306;">
+                          <div class="card-body">
+                            <div class="d-flex align-items-center">
+                              <img src="https://cdn-icons-png.flaticon.com/512/109/109617.png" width="60" height="60" class="me-3 p-2 rounded">
+                              <div class="text-start">
+                                <h5 class="card-title mb-2">Transfer Confirmation</h5>
+            
+                                <div class="double-buttons small">
+                                  <a href="{% url 'displytransferdetails' %}">Process</a>
+                                 <a href="view_supplierdisply_transferdetails">View</a>
+                                  
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div> {% endcomment %}
+                      
+                      {% comment %} <div class="col-12 col-sm-6 col-lg-4">
+                        <div class="card text-center" style="background-color: #fff; border-left: 4.5px solid #186306; border-right: 4.5px solid #186306;">
+                          <div class="card-body">
+                            <div class="d-flex align-items-center">
+                              <img src="https://cdn-icons-png.flaticon.com/512/3349/3349159.png" width="60" height="60" class="me-3 p-2 rounded">
+                              <div class="text-start">
+                                <h5 class="card-title mb-2">Assign Logistics</h5>
+                             
+                                <div class="double-buttons small">
+                                  <a href="{% url 'displytransfer' %}">Process</a>
+                                 <a href="view_disply_transfer">View</a>
+                                  
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div> {% endcomment %}
+                      {% comment %} <div class="col-12 col-sm-6 col-lg-4">
+                        <div class="card text-center" style="background-color: #fff; border-left: 4.5px solid #186306; border-right: 4.5px solid #186306;">
+                          <div class="card-body">
+                            <div class="d-flex align-items-center">
+                              <img src="https://cdn-icons-png.flaticon.com/512/633/633611.png" width="60" height="60" class="me-3 p-2 rounded">
+                              <div class="text-start">
+                                <h5 class="card-title mb-2">Delivered Stocks</h5>
+                    
+                                <div class="double-buttons small">
+                                  <a href="{% url 'delivered_stocks' %}">Process</a>
+                                 <a href="view_delivered_stocks">View</a>
+                                  
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div> {% endcomment %}
+                      <div class="col-12 col-sm-6 col-lg-4">
+                        <div class="card text-center" style="background-color: #fff; border-left: 4.5px solid #186306; border-right: 4.5px solid #186306;">
+                          <div class="card-body">
+                            <div class="d-flex align-items-center">
+                              <img src="https://cdn-icons-png.flaticon.com/512/3050/3050525.png" width="60" height="60" class="me-3 p-2 rounded">
+                              <div class="text-start">
+                                <h5 class="card-title mb-2">Transfer Details</h5>
+                       
+                                <div class="double-buttons small">
+                                  <a href="{% url 'supplierstocktransferdetailssss' %}">View</a>
+                              
+                                  
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      
+                    </div>
+                  </div>
+            
+         
+
+    </div>
+</div>
+
+
+{% endblock %}

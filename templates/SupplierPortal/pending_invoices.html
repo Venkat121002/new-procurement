@@ -1,0 +1,84 @@
+{% extends 'SupplierPortal/supplier_base.html' %}
+{% block body_block %}
+{% load static %}
+
+<div class="content-wrapper">
+    <div class="col-12 grid-margin stretch-card">
+        <div class="card">
+            <div class="card-body">
+              
+                <a href="{% url 'create_invoice' %}">
+                    <button type="button" class="btn btn-primary float-right">+ New Invoice</button>
+                </a>
+          
+
+            </div>
+   
+            <div class="card-body">
+                <h3 class="card-title">Pending Invoice</h3>
+             
+                <div class="table-responsive">
+                    <table id="tableID" class="display table table-hover">
+                        <thead class="bg-col">
+                            <tr>
+                                <th>No.</th>
+                                <th>Branch</th>
+                                <th>Store To</th>
+                                <th>Supplier</th>
+                                <th>Invoice ID</th>
+                                 <th>Invoice</th>
+                                 <th>Edit</th>
+                                 <th>Refference</th>
+                                <th>PO Number</th>
+                                <th>GRN Number</th>
+                                <th>received_by</th>
+                                <th>GRN_amount</th>
+                                <th>paid_amount</th>
+                                <th>pending_amount</th>
+                                <th>Status</th>
+                                <th>received_date</th>
+                               
+                              
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for data in pendinginvoice %}
+                            <tr>
+                                <td>{{ forloop.counter }}</td>
+                                <td>{{data.supplier}}</td>
+                                <td>{{data.store_to}}</td>
+                                <td>{{ data.po_number.vendor.name }}</td>
+                                <td>{{data.invoice}}</td>
+                                 <td><a href="{% url 'supplier_grminvoice' data.id %}" class="btn btn-info">
+                                            <i class="fas fa-file-invoice"></i>
+                                        </a></td>
+                                <td><a href="{% url 'supplierinvoiceedit' data.id %}" class="btn btn-warning">
+                                <i class="fas fa-edit"></i>
+                            </a></td>
+                                        <td>{{data.refference_number}}</td>
+                                <td>{{data.po_number.po_number}}</td>
+                                <td>{{data.GRN_number.GRN_number}}</td>
+                                <td>{{data.received_by}}</td>
+                          
+                                <td>{{data.GRN_amount}}</td>
+                             
+                                    <td>{{data.paid_amount}}</td>
+                                    <td>{{data.pending_amount}}</td>
+                                    <td>{% if data.payment_status == "Paid" %}<span class="badge badge-success">Paid</span>{% elif data.payment_status == "PartiallyPaid" %}<span class="badge badge-warning">PartiallyPaid</span> {% else %}<span class="badge badge-danger">Pending</span>{% endif %}</td>
+                                    <td>{{data.received_date}}</td>
+                                   
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <br><br><br>
+
+            </div>
+         
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}

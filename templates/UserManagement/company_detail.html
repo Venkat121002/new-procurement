@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% block body_block %}
+{% load static %}
+
+
+<div class="content-wrapper">
+    <a href="{% url 'user_list' %}" class="btn btn-danger">Back</a>
+    <div class="col-12 grid-margin stretch-card">
+        <div class="container mt-5 col-md-6">
+            <div class="card card-body">
+                <h2>{{ screen_name }}</h2>
+                <form action="" method="post" id="myForm" enctype="multipart/form-data" onsubmit="return checkEdit(event)">
+                    {% csrf_token %}
+
+                    {% for form_field in form %}
+                    <div class="form-group">
+                        {{ form_field.label_tag }}
+                        {{ form_field }}
+                    </div>
+                    {% endfor %}
+
+
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    // Select the form by ID
+    var form = document.getElementById('myForm');
+    
+    // Loop through all form elements
+    for (var i = 0; i < form.elements.length; i++) {
+        form.elements[i].disabled = true;
+    }
+</script>
+{% endblock %}
+

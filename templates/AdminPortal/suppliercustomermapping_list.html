@@ -1,0 +1,137 @@
+{% extends 'AdminPortal/base.html' %}
+{% block body_block %}
+{% load static %}
+
+<style>
+    th {
+        text-align: inherit;
+        text-align: -webkit-match-parent;
+        background: #d9e6f1;
+    }
+</style>
+<style>
+    #tableID_filter {
+        display: flex;
+        justify-content: flex-end; /* move to right */
+        margin-bottom: 10px;
+    }
+    
+    #tableID_filter label {
+        display: flex;
+        align-items: center;
+        font-weight: bold;
+        gap: 8px;
+    }
+    
+    #tableID_filter input[type="search"] {
+        padding: 5px 10px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        font-size: 14px;
+
+    
+    }
+    </style>
+    <style>
+        #tableID_length {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            font-weight: bold;
+            gap: 8px;
+        }
+        
+        #tableID_length label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        #tableID_length select {
+            padding: 12px 10px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 14px;
+            background-color: #fff;
+            cursor: pointer;
+        }
+        </style>
+
+<div class="content-wrapper">
+    <div class="col-12 grid-margin stretch-card">
+        <div class="card">
+            <div class="card-body">
+             
+                <a href="{% url 'suppliercustomermapping_create' %}">
+                    <button type="button" class="btn btn-primary float-right">+ New</button>
+                </a>
+        
+                <h3>Distributor-Supplier View</h3>
+                <!-- <div class="dt-buttons">       <button class="dt-button buttons-copy buttons-html5 btn btn-info btn-sm" tabindex="0" aria-controls="tableID" type="button" title="Copy" style="margin: 5px; padding: 5px; border-radius: 4px; border: 1px solid rgb(204, 204, 204); background: rgb(71, 69, 161); color: rgb(255, 255, 255); font-size: 14px; cursor: pointer;"><span><i class="fas fa-copy"></i> </span></button> <button class="dt-button buttons-csv buttons-html5 btn btn-success btn-sm" tabindex="0" aria-controls="tableID" type="button" title="CSV" style="margin: 5px; padding: 5px; border-radius: 4px; border: 1px solid rgb(204, 204, 204); background: rgb(71, 69, 161); color: rgb(255, 255, 255); font-size: 14px; cursor: pointer;"><span><i class="fas fa-file-csv"></i> </span></button> <button class="dt-button buttons-print btn btn-primary btn-sm" tabindex="0" aria-controls="tableID" type="button" title="Print" style="margin: 5px; padding: 5px; border-radius: 4px; border: 1px solid rgb(204, 204, 204); background: rgb(71, 69, 161); color: rgb(255, 255, 255); font-size: 14px; cursor: pointer;"><span><i class="fas fa-print"></i> </span></button> </div>
+                <div class="dataTables_length" id="tableID_length"><label>Show <select name="tableID_length" aria-controls="tableID" class=""><option value="10">10</option><option value="25">25</option><option value="50">50</option><option value="100">100</option><option value="500">500</option><option value="-1">All</option></select> entries</label></div>
+                <div id="tableID_filter" class="dataTables_filter"><label>Search:<input type="search" class="" placeholder="" aria-controls="tableID"></label></div> -->
+
+                <!-- New Tab -->
+            </div>
+          
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table id="tableID" class="display table table-hover">
+                        <thead>
+                            <tr>
+                                <th>No.</th>
+                                <th>Supplier</th>
+                                <th>Distributor</th>
+                                <th>Description</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for data in records %}
+                            <tr>
+                                <td>{{ forloop.counter }}</td>
+                                <td>{{ data.supplier }}</td>
+                                <td>{{ data.customer }}</td>
+                                <td>{{ data.description }}</td>
+                                <td>
+                                    <div class="dropdown">
+                                        <button class="btn dropdown-toggle" type="button"
+                                            id="dropdownMenuIconButton2" data-toggle="dropdown" aria-haspopup="true"
+                                            aria-expanded="false">
+                                            <i class="fas fa-ellipsis-v"></i>
+                                        </button>
+                                        <div class="dropdown-menu" aria-labelledby="dropdownMenuIconButton2">
+                                            <a class="dropdown-item" href="{% url 'suppliercustomermapping_detail' data.pk %}">
+                                                <button class="btn iconbg-rose" data-bs-toggle="tooltip"
+                                                    data-bs-placement="top" title="View"><i class="fa fa-eye"></i> View</button>
+                                            </a>
+                                         
+                                            <a class="dropdown-item" href="{% url 'suppliercustomermapping_update' data.pk %}">
+                                                <button class="btn iconbg-yellow" data-bs-toggle="tooltip"
+                                                    data-bs-placement="top" title="Edit"><i class="fas fa-edit"></i> Edit</button>
+                                            </a>
+                                
+                                            <a class="dropdown-item" href="{% url 'suppliercustomermapping_delete' data.pk %}">
+                                                <button class="btn iconbg-rose" data-bs-toggle="tooltip"
+                                                    data-bs-placement="top" title="Delete"><i class="fas fa-trash-alt"></i> Delete</button>
+                                            </a>
+                                           
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    
+                </div>
+                <br><br><br>
+
+            </div>
+            
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}

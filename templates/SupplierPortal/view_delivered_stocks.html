@@ -1,0 +1,149 @@
+{% extends 'SupplierPortal/supplier_base.html' %}
+{% block body_block %}
+{% load static %}
+
+<div class="content-wrapper">
+    <div class="col-12 grid-margin stretch-card">
+        <div class="card">
+
+            <div class="card-body">
+                <h3 class="card-title">Upcoming Stock</h3>
+             
+                <div class="table-responsive">
+                    <table id="tableID" class="display table table-hover">
+                        <thead class="bg-col">
+                            <tr>
+                                <th>No.</th>
+                                <th>Transfer ID</th>
+                                <th>transfer_date</th>
+                                <th>SourceStore</th>
+                                <th>Destination Store</th>
+                                <th>Expected date</th>
+                                <th>Total Amount</th>
+                                <th>TrackingStatus</th>
+                               <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for data in records %}
+                            <tr>
+                                <td>{{ forloop.counter }}</td>
+                                <td>{{data.transfer_id}}</td>
+                                <td>{{data.transfer_date}}</td>
+                                <td>{{data.storefrom}}</td>
+                                <td>{{data.destinationstore}}</td>
+                                <td>{{data.delivery_date}}</td>
+                                <td>{{data.total_amount}}</td>
+                               
+                             <td><a href="{% url '_stocktransferstatus' data.id %}">{% if data.tracking_status == "Pending"%}<span class="badge badge-danger">Pending</span>{% elif data.tracking_status == "Confirmed"%}<span class="badge badge-primary">Confirmed</span>{% elif data.tracking_status == "OrderShipped"%}<span class="badge badge-info">Shipped</span>
+                                    {% elif data.tracking_status == "InTransit"%}<span class="badge badge-secondary">In Transit</span>{% else %}<span class="badge badge-success">Delivered</span>{% endif %}</a></td>
+                                    <td>
+                                        <a class="btn btn-primary" href="{% url 'view_suppliertransfer_sub' data.id %}" >
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        <button class="btn btn-primary" data-id="{{data.id}}" data-toggle="modal" data-target="#exampleModalCenter" >
+                                            <i class="fas fa-qrcode"></i>
+                                        </button>
+                                    
+                                   
+                                       
+                                    </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <br><br><br>
+
+            </div>
+         
+        </div>
+    </div>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const table = document.getElementById('tableID');
+        const tbody = table.querySelector('tbody');
+        let allRows = Array.from(tbody.querySelectorAll('tr')); // Save original rows
+    
+        // 1. Copy Button
+        document.querySelector('.buttons-copy').addEventListener('click', function() {
+            let range, selection;
+            if (document.createRange && window.getSelection) {
+                range = document.createRange();
+                selection = window.getSelection();
+                selection.removeAllRanges();
+                try {
+                    range.selectNodeContents(table);
+                    selection.addRange(range);
+                } catch (e) {
+                    range.selectNode(table);
+                    selection.addRange(range);
+                }
+                document.execCommand('copy');
+                selection.removeAllRanges();
+                alert('Table copied to clipboard!');
+            }
+        });
+    
+        // 2. CSV Download Button
+        document.querySelector('.buttons-csv').addEventListener('click', function() {
+            let csv = [];
+            const rows = table.querySelectorAll('tr');
+            rows.forEach(function(row) {
+                const cols = row.querySelectorAll('td, th');
+                const rowData = [];
+                cols.forEach(function(col) {
+                    rowData.push('"' + col.innerText.replace(/"/g, '""') + '"');
+                });
+                csv.push(rowData.join(','));
+            });
+    
+            const csvFile = new Blob([csv.join('\n')], { type: 'text/csv' });
+            const downloadLink = document.createElement('a');
+            downloadLink.download = 'table_data.csv';
+            downloadLink.href = window.URL.createObjectURL(csvFile);
+            downloadLink.style.display = 'none';
+            document.body.appendChild(downloadLink);
+            downloadLink.click();
+            document.body.removeChild(downloadLink);
+        });
+    
+        // 3. Print Button
+        document.querySelector('.buttons-print').addEventListener('click', function() {
+            const newWin = window.open('', '_blank');
+            newWin.document.write('<html><head><title>Print Table</title>');
+            newWin.document.write('<style>table { width: 100%; border-collapse: collapse; } table, th, td { border: 1px solid black; padding: 8px; }</style>');
+            newWin.document.write('</head><body>');
+            newWin.document.write(table.outerHTML);
+            newWin.document.write('</body></html>');
+            newWin.document.close();
+            newWin.print();
+        });
+    
+        // 4. Entries Dropdown
+        const lengthSelect = document.querySelector('select[name="tableID_length"]');
+        lengthSelect.addEventListener('change', function() {
+            let selectedValue = parseInt(this.value);
+            tbody.innerHTML = ''; // Clear table body
+            if (selectedValue === -1) { // Show all
+                allRows.forEach(row => tbody.appendChild(row));
+            } else {
+                allRows.slice(0, selectedValue).forEach(row => tbody.appendChild(row));
+            }
+        });
+    
+        // 5. Search Filter
+        const searchInput = document.querySelector('#tableID_filter input');
+        searchInput.addEventListener('input', function() {
+            const searchText = this.value.toLowerCase();
+            tbody.innerHTML = ''; // Clear table body
+            const filteredRows = allRows.filter(row => {
+                return row.innerText.toLowerCase().includes(searchText);
+            });
+            filteredRows.forEach(row => tbody.appendChild(row));
+        });
+    });
+    </script>
+
+{% endblock %}

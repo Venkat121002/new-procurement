@@ -1,0 +1,142 @@
+{% extends 'SupplierPortal/supplier_base.html' %}
+{% block body_block %}
+{% load static %}
+
+<div class="content-wrapper">
+    <div class="col-12 grid-margin stretch-card">
+        <div class="card">
+            
+   
+            <div class="card-body">
+                <div class="row d-flex justify-content-between">
+                <h3 class="card-title">Stock Transfer To Store</h3>
+             
+            </div>
+                <form method ="POST">
+                    {% csrf_token %}
+                <div class="row p-1 mb-2">
+                    <div class="col-md-3">
+                        <label >Branch</label>
+                        <input type="text" class="form-control" value="{{supplier.supplier}}" readonly>
+                    </div>
+                    <div class="col-md-3">
+                        <label >Branch Store</label>
+                        <input type="text" class="form-control" value="{{supplier.name}}({{supplier.storetype}})" readonly>
+                    </div>
+                    <div class="col-md-3">
+                        <label >Destination Store<span style="color: red;">*</span></label>
+                        <select class="form-control" name="destination_store" required>
+                            <option selected disabled>Choose Destination</option>
+                            {% for data in destination_store %}
+                            <option value="{{data.id}}">{{data.name}}({{data.storetype}})</option>
+                            {% endfor %}
+                        </select>
+
+                    </div>
+                    <div class="col-md-3">
+                        <label >Expected Delivery Date<span style="color: red;">*</span></label>
+                        <input type="date"  class="form-control" name="expected_delivery_date"  required>
+                    </div>
+                 
+         
+                </div>
+           
+          
+             
+                    <div class="text-right mt-2 mb-1">
+                       
+                        <button type="submit" name="transfer_btn" value="transfer_btn" class="btn btn-primary btn-lm mr-3">Transfer
+                        </button>
+                    </div>
+                <div class="table-responsive">
+                    <table id="tableID" class="display table table-hover">
+                        <thead class="bg-col">
+                            <tr>
+                                <th>#.</th>
+                     
+                                <th>Brand</th>
+                                <th>Product</th>
+                                <th>Unit</th>
+                                <th>Instock</th>
+                                <th>Qty</th>
+                                <th>Transfer Type</th>
+                            
+                                <th>Expiry Date</th>
+                                <th>Batch</th>
+                                <th>Packsize</th>
+                                <th>Price</th>
+                             
+                                <th>manufacture_date</th>
+                            
+                              
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for data in records %}
+                            <tr>
+                                <td><input type="checkbox" name="active_products" value="{{data.id}}"></td>
+                           
+                                <td>{{data.item_unit.brand}}</td>
+                                <td>{{data.item_unit.item}}</td>
+                                <td>{{data.item_unit.conversion_factor_to_base}}/{{data.item_unit.unit.symbol}}</td>
+                                <td>{{data.stock_balance}}</td>
+                                <td><input type="number" name="transferqty_{{data.id}}" value="0" style="width: 100px;" class="form-control"></td>
+                                <td><select name="transfertype_{{data.id}}" id="transfertype" class="form-control">
+                                    <option value="Piece">Piece</option>
+                                    <option value="Package">Package</option>
+                                </select></td>
+                               
+
+                                <td>{{data.expiry_date}}</td>
+                                <td>{{data.batch_no}}</td>
+                                <td>{{data.packsize}}</td>
+                                <td>{% if data.receivetype == 'Piece' %}{{data.item_unit.price}}{% else %}{{data.packsize.pack_price}} {% endif %}</td>
+                          
+                                
+                                    <td>{{data.manufacture_date}}</td>
+                               
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </form>
+         
+
+            </div>
+         
+        </div>
+    </div>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Get all checkboxes
+    const checkboxes = document.querySelectorAll('input[type="checkbox"][name="active_products"]');
+
+    document.querySelector('form').addEventListener('submit', function(e) {
+        let valid = true;
+
+        checkboxes.forEach(function(checkbox) {
+            const id = checkbox.value;
+            const qtyInput = document.querySelector(`input[name="transferqty_${id}"]`);
+
+            if (checkbox.checked) {
+                if (!qtyInput || qtyInput.value.trim() === "" || parseFloat(qtyInput.value) <= 0) {
+                    qtyInput.style.border = "2px solid red"; // Highlight invalid field
+                    valid = false;
+                } else {
+                    qtyInput.style.border = ""; // Reset border if valid
+                }
+            }
+        });
+
+        if (!valid) {
+            e.preventDefault(); // Stop form submission
+            alert("Please enter a transfer quantity greater than 0 for all selected items.");
+        }
+    });
+});
+</script>
+
+
+{% endblock %}

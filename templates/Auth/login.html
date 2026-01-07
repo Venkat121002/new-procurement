@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>BB Project</title>
+  <link rel="stylesheet" href="{% static 'assets/vendors/feather/feather.css' %}">
+  <link rel="stylesheet" href="{% static 'assets/vendors/ti-icons/css/themify-icons.css' %}">
+  <link rel="stylesheet" href="{% static 'assets/vendors/css/vendor.bundle.base.css' %}">
+  <link rel="stylesheet" href="{% static 'assets/css/vertical-layout-light/style.css' %}">
+  <link rel="shortcut icon" href="{% static 'assets/images/favicon.png' %}"/>
+  <style>
+    .auth-wrapper {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      background-color: #f8f9fa;
+    }
+    .auth-card {
+      width: 100%;
+      max-width: 450px;
+      padding: 2rem;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      background-color: white;
+    }
+    .brand-logo {
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+    .brand-logo img {
+      max-height: 60px;
+    }
+    .auth-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+    .auth-subtitle {
+      font-size: 1rem;
+      color: #6c757d;
+      margin-bottom: 2rem;
+    }
+    .auth-form .form-group {
+      margin-bottom: 1.5rem;
+    }
+    .auth-form .form-control {
+      height: 48px;
+      border-radius: 4px;
+    }
+    .auth-form .btn {
+      height: 48px;
+      font-weight: 500;
+      border-radius: 4px;
+    }
+    .auth-options {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 1rem;
+    }
+    .auth-link {
+      color: #4e73df;
+      text-decoration: none;
+    }
+    .auth-link:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="auth-wrapper">
+    <div class="auth-card">
+      <div class="brand-logo">
+        <img src="{% static 'assets/images/bb_logo.jpg' %}" alt="logo">
+      </div>
+      <h4 class="auth-title">Hello! let's get started</h4>
+      <h6 class="auth-subtitle">Sign in to continue.</h6>
+     
+      <form class="auth-form" method="post">
+        {% csrf_token %}
+        <div class="form-group">
+          <input type="email" name="email" class="form-control form-control-lg" placeholder="Email" required value="admin@gmail.com"> 
+        </div>
+        <div class="form-group">
+          <input type="password" name="password" class="form-control form-control-lg" placeholder="Password" required>
+        </div>
+        <button type="submit" class="btn btn-block btn-primary btn-lg">SIGN IN</button>
+        <div class="auth-options">
+          <div class="form-check">
+            <label class="form-check-label">
+              <input type="checkbox" class="form-check-input">
+              Keep me signed in
+            </label>
+          </div>
+          <a href="#" class="auth-link">Forgot password?</a>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="{% static 'assets/vendors/js/vendor.bundle.base.js' %}"></script>
+  <script src="{% static 'assets/js/off-canvas.js' %}"></script>
+  <script src="{% static 'assets/js/hoverable-collapse.js' %}"></script>
+  <script src="{% static 'assets/js/template.js' %}"></script>
+  <script src="{% static 'assets/js/settings.js' %}"></script>
+  <script src="{% static 'assets/js/todolist.js' %}"></script>
+</body>
+</html>

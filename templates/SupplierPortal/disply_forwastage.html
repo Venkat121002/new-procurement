@@ -1,0 +1,136 @@
+{% extends 'SupplierPortal/supplier_base.html' %}
+{% block body_block %}
+{% load static %}
+
+<div class="content-wrapper">
+    <div class="col-12 grid-margin stretch-card">
+        <div class="card">
+            
+   
+            <div class="card-body">
+                <div class="row d-flex justify-content-between">
+                <h3 class="card-title">View Wastage Stock</h3>
+                
+            </div>
+            {% if messages %}
+                <div id="message-container">
+                    {% for message in messages %}
+                    <div class="alert 
+                        {% if message.tags %}
+                            alert-{{ message.tags }}
+                        {% else %}
+                            alert-info
+                        {% endif %}"
+                        role="alert">
+                        {{ message }}
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+                <form method ="POST">
+                    {% csrf_token %}
+                <div class="row p-1 mb-2">
+                    <div class="col-md-3">
+                        <label >Product Category</label>
+                        <select name="category" id="category" class="form-control" >
+                            <option selected disabled>Choose</option>
+                            {% for data in category %}
+                            <option value="{{data.id}}">{{data.name}}</option>
+                            {% endfor %}
+
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label >Product Sub-Category</label>
+                        <select name="sub_category" id="sub_category" class="form-control" >
+                            <option selected disabled>Choose</option>
+                            {% for data in sub_category %}
+                            <option value="{{data.id}}">{{data.name}}</option>
+                            {% endfor %}
+
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label >Product</label>
+                        <select name="product" id="product" class="form-control" >
+                            <option selected disabled>Choose</option>
+                            {% for data in product %}
+                            <option value="{{data.id}}">{{data.item}}/{{data.item.conversion_factor_to_base}}{{data.item.unit.symbol}}</option>
+                            {% endfor %}
+
+                        </select>
+                    </div>
+                    <div class="col-md-3 pt-4">
+                    <button type="submit" class="btn btn-primary btn-sm mr-3"><i class="fas fa-search"></i>
+                    </button>
+                    
+                </div>
+              
+             
+    
+                </div>
+           
+             
+        
+            </form>
+
+            </div>
+         
+        </div>
+     
+    </div>
+    {% if instockrecords %}
+    <div class="col-12 grid-margin stretch-card">
+        <div class="card">
+            <div class="card-body"> 
+        <div class="table-responsive">
+            <table id="tableID" class="display table table-hover">
+                <thead class="bg-col">
+                    <tr>
+                        <th>No.</th>
+             
+                        <th>Brand</th>
+                        <th>Product</th>
+                        <th>Unit</th>
+                        <th>WastageType</th>
+                        <th>Quantity</th>
+                    
+                        <th>Expiry Date</th>
+                        <th>Batch</th>
+                        <th>Packsize</th>
+                        <th>Price</th>
+                 
+                        <th>manufacture_date</th>
+                    
+                      
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for data in instockrecords %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                   
+                        <td>{{data.inventory_batch.item_unit.brand}}</td>
+                        <td>{{data.inventory_batch.item_unit.item}}</td>
+                        <td>{{data.inventory_batch.item_unit.conversion_factor_to_base}}/{{data.inventory_batch.item_unit.unit.symbol}}</td>
+                        <td>{{data.wastage_type}}</td>
+                        <td>{{data.wastage_qty}}</td>
+                        <td>{{data.inventory_batch.expiry_date}}</td>
+                        <td>{{data.inventory_batch.batch_no}}</td>
+                        <td>{{data.inventory_batch.packsize}}</td>
+                        <td>{{data.amount}}</td>
+                        <td>{{data.inventory_batch.manufacture_date}}</td>
+                       
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    </div>
+</div>
+{% endif %}
+</div>
+
+
+{% endblock %}

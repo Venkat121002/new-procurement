@@ -1,0 +1,35 @@
+
+{% extends 'base.html' %}
+{% block body_block %}
+{% load static %}
+<div class="container mt-5 col-md-6 ">
+      <div class="card card-body">
+        <h4>Create Company</h4>
+        <form method="post" enctype="multipart/form-data">
+          {% csrf_token %}
+          {% for form in form %}
+          <div class="form-group">
+              {{form.label_tag}}
+              {{form}}
+              {{form.errors}}
+
+          </div>
+          
+          {% endfor %}
+          <div>
+            {% comment %} <label for="">Local Currency</label>
+            <select name="local_currency" class="form-control" id="">
+             
+              <option value="">--Select--</option>
+              {% for data in currencies %}
+              <option  value="{{data}}">{{data}}</option>
+              {% endfor %}
+            </select> {% endcomment %}
+          </div>
+          <button type="submit" class="btn btn-primary mr-2 mt-2"> Submit </button>
+          <button class="btn btn-light">Cancel</button>
+        </form>
+      </div>
+    </div>
+ 
+{% endblock %}

@@ -1,0 +1,63 @@
+{% extends 'SupplierPortal/supplier_base.html' %}
+{% block body_block %}
+{% load static %}
+
+<div class="content-wrapper">
+   
+
+ 
+    <div class="col-12 grid-margin stretch-card">
+        <div class="container mt-5 col-md-12">
+            <h2>{{ screen_name }}</h2>
+            <div class="card card-body" >
+            
+                    <form  method="post" enctype="multipart/form-data" id="myForm">
+                    {% csrf_token %}
+                    <div class="row" style="padding: 12px;">
+                        <div class="table-responsive">
+                    <table id="" class="display table table-hover">
+                        <thead class="bg-col">
+                            <tr>
+                                <th>No.</th>
+                                <th>Approver</th>
+                                <th>Status</th>
+                                <th>Reason</th>
+                                 
+                               
+                              
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for data in record %}
+                                <tr>
+                                    <td>{{ forloop.counter }}</td>
+                                    <td>{{ data.approver }}</td>
+                                    <td>
+                                        <input type="checkbox" {% if data.status == "Approved" %}checked{% endif %} >
+                                    </td>
+                                    <td>
+                                      {{ data.reject_reason }}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+              
+                </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    document.getElementById('selectAll').addEventListener('change', function() {
+  let checkboxes = document.querySelectorAll('.form-check-input');
+  checkboxes.forEach(checkbox => {
+    checkbox.checked = this.checked;
+  });
+});
+</script>
+{% endblock %}

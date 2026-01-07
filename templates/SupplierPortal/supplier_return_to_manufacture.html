@@ -1,0 +1,76 @@
+{% extends 'SupplierPortal/supplier_base.html' %}
+{% block body_block %}
+{% load static %}
+
+<div class="content-wrapper">
+    <div class="col-12 grid-margin stretch-card">
+        <div class="card">
+            
+            
+            <div class="card-body">
+                <h3 class="card-title">Returned Stocks</h3>
+                <div class="row p-3">
+                    {% comment %} <div class="col-mg-4">
+                        <label >Customer</label>
+                        <input type="text" class="form-control" value="{{supplier.customer}}" readonly>
+                    </div>
+                    <div class="col-mg-4 offset-md-1">
+                        <label >Customer Store</label>
+                        <input type="text" class="form-control" value="{{supplier.name}}({{supplier.storetype}})" readonly>
+                    </div> {% endcomment %}
+    
+                </div>
+             
+                <div class="table-responsive">
+                    <table id="tableID" class="display table table-hover">
+                        <thead class="bg-col">
+                            <tr>
+                                <th>No.</th>
+                     
+                                <th>Brand</th>
+                                <th>Product</th>
+                                <th>Unit</th>
+                                <th>Return Type</th>
+                                <th>Return QTY</th>
+                                <th>Expiry Date</th>
+                                <th>Batch</th>
+                                <th>Packsize</th>
+                                <th>Price</th>
+                                <th>manufacture_date</th>
+                            
+                              
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for data in records %}
+                            <tr>
+                                <td>{{ forloop.counter }}</td>
+                           
+                                <td>{{data.item_unit.brand}}</td>
+                                <td>{{data.item_unit.item}}</td>
+                                <td>{{data.item_unit.conversion_factor_to_base}}/{{data.item_unit.unit.symbol}}</td>
+                                <td>{{data.returntype}}</td>
+                                <td>{{data.quantity}}</td>
+                                <td>{{data.batch.expiry_date}}</td>
+                                <td>{{data.batch.batch_no}}</td>
+                                <td>{{data.batch.packsize}}</td>
+                                <td>{{data.amount}}</td>
+                          
+                               
+                                <td>{{data.batch.manufacture_date}}</td>
+                               
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <br><br><br>
+
+            </div>
+         
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}

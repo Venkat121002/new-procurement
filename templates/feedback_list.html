@@ -1,0 +1,124 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block body_block %}
+
+<div class="content-wrapper">
+    <div class="col-12 grid-margin stretch-card">
+        <div class="card">
+
+            <!-- ================= HEADER & ACTIONS ================= -->
+            <div class="card-body">
+                <div class="d-flex justify-content-end mb-3 gap-2">
+                    <button
+                        type="button"
+                        class="btn btn-primary"
+                        data-toggle="modal"
+                        data-target=".feedback-reason-modal"
+                    >
+                        + Add Feedback Reason
+                    </button>
+                </div>
+
+                <h3>Feedback List</h3>
+            </div>
+
+            <!-- ================= TABLE ================= -->
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table id="tableID" class="display table table-hover">
+                        <thead class="bg-col">
+                            <tr>
+                                <th>No.</th>
+                                <th>User</th>
+                                <th>Reason</th>
+                                <th>Feedback</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for fb in feedbacks %}
+                            <tr>
+                                <td>{{ forloop.counter }}</td>
+                                <td>{{ fb.user.first_name }}</td>
+                                <td>{{ fb.reason.reason }}</td>
+                                <td>{{ fb.feedback }}</td>
+                                <td>{{ fb.created_at|date:"Y-m-d H:i" }}</td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="5" class="text-center">
+                                    No feedback available
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <br><br><br>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- ================= MODAL ================= -->
+<div
+    class="modal fade feedback-reason-modal"
+    tabindex="-1"
+    role="dialog"
+    aria-hidden="true"
+>
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title">Add Feedback Reason</h5>
+                <button type="button" class="close" data-dismiss="modal">
+                    <span>&times;</span>
+                </button>
+            </div>
+
+            <form method="POST">
+                {% csrf_token %}
+
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>Feedback Reason</label>
+                        <input
+                            type="text"
+                            name="reason"
+                            class="form-control"
+                            placeholder="Enter feedback reason"
+                            required
+                        >
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-success">
+                        Save
+                    </button>
+                    <button
+                        type="button"
+                        class="btn btn-secondary"
+                        data-dismiss="modal"
+                    >
+                        Cancel
+                    </button>
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block script_block %}
+<script>
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip();
+    });
+</script>
+{% endblock %}

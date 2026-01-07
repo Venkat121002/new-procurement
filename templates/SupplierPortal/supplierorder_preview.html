@@ -1,0 +1,428 @@
+{% extends 'SupplierPortal/supplier_base.html' %}
+{% block body_block %}
+{% load static %}
+    <!-- content -->
+    <div class="page-wrapper">
+        <div class="content">
+            <div class="main-wrapper" style="padding-top:50px;padding-left:60px;">
+                <div class="content">
+                    <div class="container-fluid">
+                        <div class="row clearfix">
+                            <div class="col-lg-11 col-md-12 col-sm-8 col-xs-8">
+                                <div class="card">
+                                    <div class="header" id="hello">
+                                        <style>
+
+                                            body,
+                                            .card {
+                                                font-size: 5px !important;
+                                            }
+                                            #table1 {
+                                                border: 0.5px solid black;
+                                                border-collapse: collapse;
+                                            }
+                                            #table1 th {
+                                                border: 0.5px solid black;
+                                                border-collapse: collapse;
+                                            }
+                                            #table1, #table2{
+                                                border-spacing: 0px;
+
+                                            }
+                                            #table2{
+
+                                                border: 0.5px solid black;
+                                                border-collapse: collapse;
+                                            }
+                                            table td,
+                            				table th {
+                            					font-size: 10px !important;
+                            					text-align: left;
+                            				}
+                                        </style>
+
+                                        <div id="pat" class="container">
+
+                                            <table style="width: 100%;">
+                                                <tr>
+                                                    <td>
+                                                        <div class="">
+                                                            <center>
+                                                                <img src="{% static 'images/cascadeLogo2.jpg' %}"
+                                                                        alt="logo Image"
+                                                                        style="width:300px;height:80px;">
+                                                            </center>
+                                                           
+
+                                                        </div>
+                                                    </td>
+                                                </tr>j
+                                                <tr>
+                                                    <td style="padding: 0px;"><hr style="padding: 0px;"></td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="5" style="text-align: center;">
+                                                        CASCADE CBD
+                                                    </td>
+                                                </tr>
+
+                                                <tr>
+                                                    <td colspan="5" style="text-align: center;">
+                                                        P.O BOX 6530-00100,THIKA
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="5" style="text-align: center;">
+                                                        PHONE NO: 0703000444
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td><br></td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="5" style="text-align: center;">
+                                                        <h2>Purchase Order</h2>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <h5>PO No: {{records.po_number}}</h5>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="5">
+                                                        <table style="width: 100%;" id="table2">
+                                                            <tr>
+                                                                <td rowspan="2" style="border: solid 1px black;">To,: {{records.vendor}}
+                                                                </td>
+                                                                <td style="border: solid 1px black;">ORDER DATE: {{records.order_date}}
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td style="border: solid 1px black;"> PO No: {{records.po_number}}</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td style="border: solid 1px black;"> 
+                                                                     STORE: {{records.supplierstore}}</td>
+                                                                <td style="border: solid 1px black;">BRANCH  :{{records.supplier}}</td>
+                                                            </tr>
+                                                            <tr>
+                                                                                     <td colspan="2" style="border: solid 1px black;">
+                                                                    Expected_Delivery: {{records.expected_delivery}}  {% if po_parent.purpose != None %}{{po_parent.purpose}}{% endif %}</td>
+                                                            </tr>
+                                                        </table>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td><br></td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="5">
+                                                        <table style="width: 100%;" id="table1">
+                                                            <tr>
+                                                                <th style="border: solid 1px black;border-collapse: collapse;text-align: center; ">
+                                                                    S.No.</th>
+                                                                <th style="border: solid 1px black;border-collapse: collapse;text-align: center; ">
+                                                                    Item Name</th>
+
+                                                                <th style="border: solid 1px black;border-collapse: collapse;text-align: center; ">
+                                                                        Order type</th>     
+                                                                
+                                                                <th style="border: solid 1px black;border-collapse: collapse;text-align: center; ">
+                                                                    Qty</th>
+                                                        
+                                                                <th style="border: solid 1px black;border-collapse: collapse;text-align: center; ">
+                                                                    Unit Price</th>
+                                                                <th style="border: solid 1px black;border-collapse: collapse;text-align: center; ">
+                                                                    Discount</th>
+                                                                    <th style="border: solid 1px black;border-collapse: collapse;text-align: center; ">
+                                                                        Discount Type</th>
+                                                                <th style="border: solid 1px black;border-collapse: collapse;text-align: center; ">
+                                                                                Tax</th>
+                                                                <th style="border: solid 1px black;border-collapse: collapse;text-align: center; ">
+                                                                    Amount(ksh)</th>
+                                                            </tr>
+                                                            {% for data in subtable %}
+                                                            <tr>
+                                                                <td style="border: solid 1px black;border-collapse: collapse;text-align: center; ">
+                                                                    {{forloop.counter}}</td>
+                                                                <td style="border: solid 1px black;border-collapse: collapse;text-align: center;  ">
+                                                                    {{data.item_unit}} </td>
+                                                                <td style="border: solid 1px black;border-collapse: collapse;text-align: center;  ">
+                                                                        {{data.ordertype}}</td>    
+                                                                    
+                                                                <td style="border: solid 1px black;border-collapse: collapse;text-align: center;  ">
+                                                                    {{data.quantity}}</td>
+                                                                <td style="border: solid 1px black;border-collapse: collapse;text-align: center;  ">
+                                                                    {{data.unit_price|floatformat:2}}</td>
+                                                                <td style="border: solid 1px black;border-collapse: collapse;text-align: center;  ">
+                                                                    {{data.discount}}</td>
+                                                                    <td style="border: solid 1px black;border-collapse: collapse;text-align: center;  ">
+                                                                        {{data.discount_type}}</td>
+                                                                <td style="border: solid 1px black;border-collapse: collapse;text-align: center;  ">
+                                                                            {{data.tax}}</td>
+                                                                <td style="border: solid 1px black;border-collapse: collapse;text-align: center;  ">
+                                                                    {{data.total_price|floatformat:2}}</td>
+
+                                                            </tr>
+                                                            {% endfor %}
+                                                            <tr>
+                                                                <td colspan="3" style="border: solid 1px black;border-collapse: collapse;text-align: center;font-weight:bold ">
+                                                                    Total: {{records.total_amount}}</td>
+                                                                <td style="border: solid 1px black;border-collapse: collapse;text-align: center;font-weight:bold  ">
+                                                                    {{total_rate|floatformat:2}}</td>
+                                                                <td style="border: solid 1px black;border-collapse: collapse;text-align: center;font-weight:bold  ">
+                                                                    0.00</td>
+                                                                <td style="border: solid 1px black;border-collapse: collapse;text-align: center;font-weight:bold  ">
+                                                                        </td>
+                                                                <td style="border: solid 1px black;border-collapse: collapse;text-align: center;font-weight:bold  ">
+                                                                        </td>
+                                                                <td style="border: solid 1px black;border-collapse: collapse;text-align: center;font-weight:bold  ">
+                                                                    {{po_parent.net_amount|floatformat:2}}</td>
+                                                            </tr>
+                                                            {% comment %} <tr> {% endcomment %}
+                                                                <td colspan="3" rowspan="2" style="border: solid 1px black;border-collapse: collapse; ">
+                                                                    Payments:</td>
+                                                                {% comment %} <td style="border: solid 1px black;border-collapse: collapse;font-weight:bold ">
+                                                                    Add Freigth charges</td>
+                                                                <td style="border: solid 1px black;border-collapse: collapse;text-align: center;font-weight:bold  ">
+                                                                    {{po_parent.freight_charges}}</td>
+                                                                <td style="border: solid 1px black;border-collapse: collapse;text-align: center;font-weight:bold  ">
+                                                                        </td>
+                                                                        <td style="border: solid 1px black;border-collapse: collapse;text-align: center;font-weight:bold  ">
+                                                                        </td>
+                                                                <td style="border: solid 1px black;border-collapse: collapse;text-align: center;font-weight:bold  ">
+                                                                    {{po_parent.net_amount|floatformat:2}}</td>
+                                                            </tr>
+                                                            <tr>
+                                                                
+                                                                <td style="border: solid 1px black;border-collapse: collapse;font-weight:bold ">
+                                                                    Extra charges</td> {% endcomment %}
+                                                                {% comment %} <td style="border: solid 1px black;border-collapse: collapse;text-align: center;font-weight:bold  ">
+                                                                    {{po_parent.extra_charges}}</td> {% endcomment %}
+                                                                {% comment %} <td style="border: solid 1px black;border-collapse: collapse;text-align: center;font-weight:bold  ">
+                                                                        </td>
+                                                                <td style="border: solid 1px black;border-collapse: collapse;text-align: center;font-weight:bold  ">
+                                                                        </td> {% endcomment %}
+                                                                {% comment %} <td style="border: solid 1px black;border-collapse: collapse;text-align: center;font-weight:bold  ">
+                                                                    {{po_parent.net_amount|floatformat:2}}</td>
+                                                            </tr> {% endcomment %}
+                                                            <tr style="text-align: center;">
+                                                                <td colspan="4"
+                                                                    style="border: solid 1px black;border-collapse: collapse;text-align: center;font-weight:bold  ">
+                                                                    Grand Total : {{records.total_amount|floatformat:2}}</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td colspan="8"
+                                                                    style="border: solid 1px black;border-collapse: collapse; ">
+                                                                    KSH</td>
+                                                            </tr>
+
+
+                                                        </table>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="5" style="text-align: center;">
+                                                        <br>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="5" style="text-align: center;">
+                                                        INSTRUCTIONs TO SUPPLIERS
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="5" style="text-align: left;">
+                                                        1. IN AMENDEMMENT/CHANGES IN THE ORDER QTY. OR PRICES MENTIONED
+                                                        HEREIN WILL NOT BE ACCEPTABLE
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="5" style="text-align: left;">
+                                                        2. L.P.O. NO. GIVEN ABOVE MUST BE QUOTED FOR INVOICE
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="5" style="text-align: left;">
+                                                        3. ORDER IS VALID FOR THREE(3) WEEKS
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="8"><br></td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="5" style="text-align: left;">
+                                                        Delivary Instruction :
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="8"><br></td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="5" style="text-align: left;">
+                                                        restratent Terms :
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="8"><br></td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="5">
+                                                        <table style="border: 1px solid black; width:100%;">
+                                                            <tr>
+                                                                <td>Price: ex wors /FOB/ C&F</td>
+                                                                <td></td>
+                                                                <td></td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>Delivary Date : {% if po_parent.deliver_date != None %}{{po_parent.deliver_date}}{% endif %}</td>
+                                                                <td style="text-align: center;">Authorized By</td>
+                                                                <td style="text-align: right;">for restratent Limited
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td> Credit days:0</td>
+                                                                <td></td>
+                                                                <td></td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td> Terms:</td>
+                                                                <td></td>
+                                                                <td></td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td> </td>
+                                                                <td></td>
+                                                                <td style="text-align: right;">Authorized Signtory</td>
+                                                            </tr>
+                                                        </table>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td><br></td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="5">
+                                                        <table style="border: 1px solid black; width:100%;">
+                                                            <tr>
+                                                                <td colspan="3" style="text-align: center;">Acceptance
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>Date:</td>
+                                                                <td style="text-align: center;">Name:</td>
+                                                                <td style="text-align: right;">Signature:</td>
+                                                            </tr>
+                                                        </table>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                    </div>
+                                        <div class="row pad-top-botm" align="center">
+                                            <div class="col-lg-12 col-md-12 col-sm-12">
+                                                <hr>
+                                                <button class="btn btn-primary btn-lg" onclick="codespeedy()">
+                                                    pdf</button>
+                                              
+                                            </div>
+                                        </div>
+                                        <br>
+
+                                    <br>
+                                    <br>
+                                    <br>
+                                    <br>
+                                    <br>
+                                    <br>
+                                    <br>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <script src="jquery-3.6.0.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+        <script type="text/javascript">
+
+            function codespeedy() {
+                var print_div = document.getElementById("hello");
+                var print_area = window.open();
+                print_area.document.write(print_div.innerHTML);
+                print_area.document.close();
+                print_area.focus();
+                print_area.print();
+                print_area.close();
+                // This is the code print a particular div element
+            }
+        </script>
+        <script type="text/javascript">
+
+            function sendmail() {
+                var doc = new jsPDF();
+
+                // get the HTML element
+                var element = document.getElementById('hello');
+
+                // get the div content as HTML
+                var html = element.innerHTML;
+
+                // remove any inline styles
+                html = html.replace(/(<[^>]+) style=".*?"/gi, '$1');
+
+                // add the HTML content to the PDF
+                doc.fromHTML(html);
+                // store the PDF as a variable
+                var pdfOutput = doc.output();
+                console.log("pdfOutput", pdfOutput);
+            }
+        </script>
+        <script>
+            function printData() {
+                var mypage = document.getElementById("hello");
+                opening = window.open("");
+                opening.document.write(mypage.outerHTML);
+                opening.print();
+                opening.close();
+            }
+        </script>
+        <script>
+            $(document).ready(function () {
+                $('#mail').on('change', function () {
+                    // var form_data = new FormData($('form')[0]);
+                    var file = this.files[0];
+                    var formData = new FormData();
+                    formData.append('file', file);
+                    url = $("#mail").attr("data-cities-url");
+                    var headers = { 'X-CSRFToken': '{{ csrf_token }}' }
+                    // alert(url)
+                    $.ajax({
+                        url: url,
+                        type: 'POST',
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                        headers: headers,
+                        success: function (data) {
+                            alert('Mail send successfully!');
+                        },
+                        error: function (xhr, status, error) {
+                            console.error(error);
+                            alert('An error occurred while uploading the file.');
+                        }
+                    });
+                });
+            });
+        </script>
+{% endblock %}

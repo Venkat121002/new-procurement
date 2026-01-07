@@ -1,0 +1,82 @@
+{% extends 'CustomerPortal/customer_base.html' %}
+{% block body_block %}
+{% load static %}
+<style>
+    .card.h-100 {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        cursor: pointer;
+        border: 1px solid rgba(0,0,0,0.125);
+    }
+    
+    .card.h-100:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 1rem 3rem rgba(0,0,0,0.175) !important;
+        background-color: #f8f9fa;
+    }
+    
+    .card-header.bg-primary {
+        transition: background-color 0.3s ease;
+    }
+    
+    .card.h-100:hover .card-header.bg-primary {
+        background-color: #0062cc !important;
+    }
+</style>
+<div class="content-wrapper">
+    <div class="col-12 grid-margin stretch-card">
+        <div class="card">
+            <div class="card-body">
+                <h3 class="card-title mb-4">Distributor Branches</h3>
+                <div class="row">
+                    {% for branch in records %}
+                    <div class="col-md-6 mb-4">
+                        <div class="card h-100 shadow-sm">
+                            <div class="card-header rounded bg-primary text-white">
+                                <h5 class="mb-0">{{ branch.name }}</h5>
+                                <small class="d-block">{{ branch.company.name }}</small>
+                            </div>
+                            <div class="card-body">
+                                <dl class="row mb-0">
+                                    <dt class="col-sm-4">Customer:</dt>
+                                    <dd class="col-sm-8">{{ branch.customer.name }}</dd>
+
+                                    <dt class="col-sm-4">Address:</dt>
+                                    <dd class="col-sm-8">{{ branch.address }}</dd>
+
+                                    <dt class="col-sm-4">Phone:</dt>
+                                    <dd class="col-sm-8">{{ branch.phone_number }}</dd>
+
+                                    <dt class="col-sm-4">Manager:</dt>
+                                    <dd class="col-sm-8">{{ branch.manager_name }}</dd>
+
+                                    <dt class="col-sm-4">Location:</dt>
+                                    <dd class="col-sm-8">
+                                        <div class="d-flex gap-2">
+                                            <span class="badge bg-info">{{ branch.country }}</span>
+                                            <span class="badge bg-info">{{ branch.state }}</span>
+                                            <span class="badge bg-info">{{ branch.city }}</span>
+                                        </div>
+                                    </dd>
+
+                                    {% comment %} Uncomment if needed
+                                    <dt class="col-sm-4">Description:</dt>
+                                    <dd class="col-sm-8">{{ branch.description|truncatechars:50 }}</dd>
+
+                                    <dt class="col-sm-4">Created:</dt>
+                                    <dd class="col-sm-8">{{ branch.created_at|date:"M d, Y" }}</dd>
+
+                                    <dt class="col-sm-4">Updated:</dt>
+                                    <dd class="col-sm-8">{{ branch.update_at|date:"M d, Y" }}</dd>
+                                    {% endcomment %}
+                                </dl>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,250 @@
+{% extends 'AdminPortal/base.html' %}
+{% block body_block %}
+{% load static %}
+<style>
+    th {
+        text-align: inherit;
+        text-align: -webkit-match-parent;
+        background: #d9e6f1;
+    }
+</style>
+<style>
+    #tableID_filter {
+        display: flex;
+        justify-content: flex-end; /* move to right */
+        margin-bottom: 10px;
+    }
+    
+    #tableID_filter label {
+        display: flex;
+        align-items: center;
+        font-weight: bold;
+        gap: 8px;
+    }
+    
+    #tableID_filter input[type="search"] {
+        padding: 5px 10px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        font-size: 14px;
+
+    
+    }
+    </style>
+    <style>
+        #tableID_length {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            font-weight: bold;
+            gap: 8px;
+        }
+        
+        #tableID_length label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        #tableID_length select {
+            padding: 12px 10px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 14px;
+            background-color: #fff;
+            cursor: pointer;
+        }
+        </style>
+
+<div class="content-wrapper">
+    
+    <div class="col-12 grid-margin stretch-card">
+        <div class="card">
+            
+
+            <div class="card-body">
+                <h1 class="card-title text-left"> Branch List for Approval</h1>
+                <div class="table-responsive">
+                    <table id="tableID" class="display table table-hover">
+                        <thead class="">
+                            <tr>
+                                <th>No.</th>
+                                <th>Branch Name</th>
+                                {% comment %} <th>Short Name</th> {% endcomment %}
+                                <th>Contact Person</th>
+                                <th>KAS Membership</th>
+                                <th>Address</th>
+                                <th>City</th>
+                                <th>District</th>
+                                <th>Pincode</th>
+                                <th>Phone</th>
+                                <th>Email</th>
+                                <th>Website</th>
+                                <th>Rejection Reason</th>
+                                <th colspan="2">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for data in suppliers %}
+                            <tr>
+                                <td>{{ forloop.counter }}</td>
+                                <td>{{ data.supplier_name }}</td>
+                                {% comment %} <td>{{ data.short_name }}</td> {% endcomment %}
+                                <td>{{ data.contact_person }}</td>
+                                <td>{{ data.kas_membership_number }}</td>
+                                <td>{{ data.address }}</td>
+                                <td>{{ data.city }}</td>
+                                <td>{{ data.district }}</td>
+                                <td>{{ data.pincode }}</td>
+                                <td>{{ data.phone }}</td>
+                                <td>{{ data.email }}</td>
+                                <td>{{ data.website }}</td>
+                                <td>{{data.rejection_reason}}</td>
+                                <td>
+                                    <a class="btn btn-success" href="{% url 'approval' data.id %}">Approve</a>
+                                </td>
+                                <td>
+                                    <button type="button" class="btn btn-danger reject-btn" 
+                                            data-toggle="modal" data-target="#rejectModal"
+                                            data-id="{{ data.id }}">
+                                        Reject
+                                    </button>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        
+        </div>
+    </div>
+</div>
+
+<!-- Rejection Modal -->
+<div class="modal fade" id="rejectModal" tabindex="-1" role="dialog" aria-labelledby="rejectModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="rejectModalLabel">Reject Supplier</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form method="post" action="{% url 'rejection' %}">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <label>Reason for Rejection</label>
+                            <textarea class="form-control" name="rejection_reason" required></textarea>
+                            <input type="hidden" id="supplier_id" name="supplier_id">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Confirm Rejection</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript to Capture Supplier ID -->
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll(".reject-btn").forEach(function (button) {
+            button.addEventListener("click", function () {
+                var supplierId = this.getAttribute("data-id"); // Get supplier ID from button
+                document.getElementById("supplier_id").value = supplierId; // Set supplier ID in hidden input
+            });
+        });
+    });
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const table = document.getElementById('tableID');
+        const tbody = table.querySelector('tbody');
+        let allRows = Array.from(tbody.querySelectorAll('tr')); // Save original rows
+    
+        // 1. Copy Button
+        document.querySelector('.buttons-copy').addEventListener('click', function() {
+            let range, selection;
+            if (document.createRange && window.getSelection) {
+                range = document.createRange();
+                selection = window.getSelection();
+                selection.removeAllRanges();
+                try {
+                    range.selectNodeContents(table);
+                    selection.addRange(range);
+                } catch (e) {
+                    range.selectNode(table);
+                    selection.addRange(range);
+                }
+                document.execCommand('copy');
+                selection.removeAllRanges();
+                alert('Table copied to clipboard!');
+            }
+        });
+    
+        // 2. CSV Download Button
+        document.querySelector('.buttons-csv').addEventListener('click', function() {
+            let csv = [];
+            const rows = table.querySelectorAll('tr');
+            rows.forEach(function(row) {
+                const cols = row.querySelectorAll('td, th');
+                const rowData = [];
+                cols.forEach(function(col) {
+                    rowData.push('"' + col.innerText.replace(/"/g, '""') + '"');
+                });
+                csv.push(rowData.join(','));
+            });
+    
+            const csvFile = new Blob([csv.join('\n')], { type: 'text/csv' });
+            const downloadLink = document.createElement('a');
+            downloadLink.download = 'table_data.csv';
+            downloadLink.href = window.URL.createObjectURL(csvFile);
+            downloadLink.style.display = 'none';
+            document.body.appendChild(downloadLink);
+            downloadLink.click();
+            document.body.removeChild(downloadLink);
+        });
+    
+        // 3. Print Button
+        document.querySelector('.buttons-print').addEventListener('click', function() {
+            const newWin = window.open('', '_blank');
+            newWin.document.write('<html><head><title>Print Table</title>');
+            newWin.document.write('<style>table { width: 100%; border-collapse: collapse; } table, th, td { border: 1px solid black; padding: 8px; }</style>');
+            newWin.document.write('</head><body>');
+            newWin.document.write(table.outerHTML);
+            newWin.document.write('</body></html>');
+            newWin.document.close();
+            newWin.print();
+        });
+    
+        // 4. Entries Dropdown
+        const lengthSelect = document.querySelector('select[name="tableID_length"]');
+        lengthSelect.addEventListener('change', function() {
+            let selectedValue = parseInt(this.value);
+            tbody.innerHTML = ''; // Clear table body
+            if (selectedValue === -1) { // Show all
+                allRows.forEach(row => tbody.appendChild(row));
+            } else {
+                allRows.slice(0, selectedValue).forEach(row => tbody.appendChild(row));
+            }
+        });
+    
+        // 5. Search Filter
+        const searchInput = document.querySelector('#tableID_filter input');
+        searchInput.addEventListener('input', function() {
+            const searchText = this.value.toLowerCase();
+            tbody.innerHTML = ''; // Clear table body
+            const filteredRows = allRows.filter(row => {
+                return row.innerText.toLowerCase().includes(searchText);
+            });
+            filteredRows.forEach(row => tbody.appendChild(row));
+        });
+    });
+    </script>
+{% endblock %}

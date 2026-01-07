@@ -1,0 +1,134 @@
+{% extends 'SupplierPortal/supplier_base.html' %}
+{% block body_block %}
+{% load static %}
+
+<div class="content-wrapper">
+    <div class="col-12 grid-margin stretch-card">
+        <div class="card">
+            
+   
+            <div class="card-body">
+                <div class="row d-flex justify-content-between">
+                <h3 class="card-title">Stock Return To Manufacturer</h3>
+             
+            </div>
+                <form method ="POST">
+                    {% csrf_token %}
+                <div class="row p-1 mb-2">
+                    <div class="col-md-3">
+                        <label >Supplier</label>
+                        <input type="text" class="form-control" value="{{supplier.supplier}}" readonly>
+                    </div>
+                    <div class="col-md-3">
+                        <label >Supplier Store</label>
+                        <input type="text" class="form-control" value="{{supplier.name}}({{supplier.storetype}})" readonly>
+                    </div>
+                    <div class="col-md-3">
+                        <label >Manufacturer</label>
+                        <input type="text" class="form-control" value="{{manufacture.name}}"     readonly>
+
+                    </div>
+                    <!-- <div class="col-md-3">
+                        <label >Product-SubCategory</label>
+                        <select name="subcategory" id="subcategory" class="form-control">
+                            <option selected disabled>Choose</option>
+                            {% for data in subcategory %}
+                            <option value="{{data.id}}">{{data.category.name}} - {{data.name}}</option>
+                            {% endfor %}
+
+                        </select>
+                    </div> -->
+                    <!-- <div class="col-md-3">
+                        <label >Product</label>
+                        <select name="subcategory" id="subcategory" class="form-control">
+                            <option selected disabled>Choose</option>
+                            {% for data in product %}
+                            <option value="{{data.id}}">{{data.item.item_name}}/{{data.conversion_factor_to_base}}{{data.unit.symbol}}</option>
+                            {% endfor %}
+
+                        </select>
+                    </div> -->
+                    <!-- <div class="col-md-3 pt-4">
+                        <button type="submit" name="search_btn" value="search_btn" class="btn btn-primary btn-sm mr-3"><i class="fas fa-search"></i>
+                        </button>
+                    </div>
+     -->
+                </div>
+            </form>
+             
+                <form method="POST">
+                    {% csrf_token %}
+             
+                    <div class="text-right mt-2 mb-1">
+                        <button type="submit" name="return_btn" value="return_btn" class="btn btn-primary btn-sm mr-3">Return
+                        </button>
+                    </div>
+                <div class="table-responsive">
+                    <table id="tableID" class="display table table-hover">
+                        <thead class="bg-col">
+                            <tr>
+                                <th>#.</th>
+                     
+                                <th>Brand</th>
+                                <th>Product</th>
+                                <th>Unit</th> 
+                                <th>Instock</th>
+                                <th>Return Qty</th>
+                                <th>Return Type</th>
+                                <th>Reason</th>
+                                <th>Expiry Date</th>
+                                <th>Batch</th>
+                                <th>Packsize</th>
+                                <th>Price</th>
+                                <th>Tax</th>
+                                <th>discount</th>
+                                <th>discount_type</th>
+                                <th>manufacture_date</th>
+                            
+                              
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for data in records %}
+                            <tr>
+                                <td><input type="checkbox" name="active_products" value="{{data.id}}"></td>
+                           
+                                <td>{{data.item_unit.brand}}</td>
+                                <td>{{data.item_unit.item}}</td>
+                             <td>{{data.item_unit.conversion_factor_to_base}}/{{data.item_unit.unit.symbol}}</td> 
+                                <td>{{data.stock_balance}}</td>
+                                <td><input type="number" name="returnqty_{{data.id}}" class="form-control" style="width: 100px;"></td>
+                                <td><select name="returntype_{{data.id}}" id="returntype" class="form-control">
+                                    <option value="Piece">Piece</option>
+                                    <option value="Package">Package</option>
+                                </select></td>
+                                <td>
+                                <input type="text" name="Reason_{{ data.id }}"  id="Reason_{{ data.id }}" class="form-control" style="width: 300px;" >
+                                </td>
+                                <td>{{data.expiry_date}}</td>
+                                <td>{{data.batch_no}}</td>
+                                <td>{{data.packsize}}</td>
+                                <td>{% if data.receivetype == 'Piece' %}{{data.item_unit.price}}{% else %}{{data.packsize.pack_price}} {% endif %}</td>
+                          
+                                <td>{{data.tax}}</td>
+                             
+                                    <td>{{data.discount}}</td>
+                                    <td>{{data.discount_type}}</td>
+                                    <td>{{data.manufacture_date}}</td>
+                               
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </form>
+         
+
+            </div>
+         
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}

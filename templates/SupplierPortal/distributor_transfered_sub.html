@@ -1,0 +1,95 @@
+{% extends 'SupplierPortal/supplier_base.html' %}
+{% block body_block %}
+{% load static %}
+
+<div class="content-wrapper">
+    <div class="col-12 grid-margin stretch-card">
+        <div class="card">
+            
+   
+            <div class="card-body">
+                <h3 class="card-title">Transfer Goods Details</h3>
+                <div class="col-lg-12 col-md-12 col-sm-4 col-xs-4"
+                                                style="background-color:rgb(233, 233, 233);"><br>
+
+                                                <div class="form-row" >
+                                                    <div class="form-group col-md-3 mb-0">
+                                                        <label><b>Tranfer ID:</b>&nbsp;{{records.transfer_id}}</label>
+                                                        
+                                                    </div>
+                                                    <div class="form-group col-md-3 mb-0">
+                                                        <label><b>Request ID:</b>&nbsp;{{records.request.po_number}}</label>
+                                                       
+                                                    </div>
+                                                   
+                                                    <div class="form-group col-md-3 mb-0">
+                                                        <label><b>Transfer From:</b>&nbsp;{{records.storefrom}}</label>
+                                                       
+                                                    </div>
+                                                    <div class="form-group col-md-3 mb-0">
+                                                        <label><b>Transfer To:</b> &nbsp;{{records.distributorstore}}</label>
+                                                       
+                                                    </div>
+                                                    <div class="form-group col-md-3 mb-0">
+                                                        <label><b>Transfer Date:</b> &nbsp;{{records.transfer_date}}</label>
+                                                       
+                                                    </div>
+                                                    <div class="form-group col-md-3 mb-0">
+                                                        <label><b>Expected date:</b> &nbsp;{{records.delivery_date}}</label>
+                                                       
+                                                    </div>
+                                                    <div class="form-group col-md-3 mb-0">
+                                                        <label><b>Total Amount:</b> &nbsp;{{records.total_amount}}</label>
+                                                       
+                                                    </div>
+                                                    <div class="form-group col-md-3 mb-0">
+                                                        <label><b>Approval Status:</b> &nbsp;{% if data.approval_status == "Pending" %} <span class="badge badge-info">Pending</span>{% elif data.approval_status == "Approved" %}<span class="badge badge-success">Approved</span>{% else %}<span class="badge badge-danger">Rejected</span>{% endif %}</label>
+                                                       
+                                                    </div>
+                                                    
+
+                                                </div>
+                                                <br>
+
+
+                                            </div><br>
+                <div class="table-responsive">
+                    <table id="tableID" class="display table table-hover">
+                        <thead class="bg-col">
+                            <tr>
+                                  <th>No.</th>
+                                <th>Item.Dec</th>
+                                <th>Expiry Date</th>
+                                <th>Batch_no</th>
+                                <th>Packsize</th>
+                                <th>Quantity</th>
+                                <th>Amount</th>
+                              
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for data in subtable %}
+                            <tr>
+                              <td>{{ forloop.counter }}</td>
+                                <td>{{data.item_unit.item}}/{{data.item_unit.conversion_factor_to_base}}{{data.item_unit.unit.symbol}}</td>
+                                <td>{{data.batch.expiry_date}}</td>
+                                <td>{{data.batch.batch_no}}</td>
+                                <td>{{data.batch.packsize}}</td>
+                                <td>{{data.quantity}}</td>
+                          
+                                <td>{{data.amount}}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <br><br><br>
+
+            </div>
+         
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}

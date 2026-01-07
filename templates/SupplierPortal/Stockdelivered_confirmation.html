@@ -1,0 +1,93 @@
+{% extends 'SupplierPortal/supplier_base.html' %}
+{% block body_block %}
+{% load static %}
+
+<div class="content-wrapper">
+    <div class="col-12 grid-margin stretch-card">
+        <div class="card">
+            
+   
+            <div class="card-body">
+                <h3 class="card-title">Goods Transfer Confirmation</h3>
+                <form method="post">
+                    {% csrf_token %}
+                <div class="col-lg-12 col-md-12 col-sm-4 col-xs-4"
+                                                style="background-color:rgb(233, 233, 233);"><br>
+
+                                                <div class="form-row" >
+                                                    <div class="form-group col-md-3 mb-0">
+                                                        <label><b>Transfer No:</b>&nbsp;{{records.transfer_id}}</label>
+                                                        
+                                                    </div>
+                                                    <div class="form-group col-md-3 mb-0">
+                                                        <label><b>Source Store:</b>&nbsp;{{records.storefrom}}</label>
+                                                       
+                                                    </div>
+                                                   
+                                                    <div class="form-group col-md-3 mb-0">
+                                                        <label><b>Destination Store:</b>&nbsp;{{records.destinationstore}}</label>
+                                                       
+                                                    </div>
+                                                    <div class="form-group col-md-3 mb-0">
+                                                        <label><b>Expected Delivery Date:</b> &nbsp;{{records.delivery_date}}</label>
+                                                       
+                                                    </div>
+                                                    <div class="form-group col-md-3 mb-0">
+                                                        <label><b>Total Amount:</b> &nbsp;{{records.total_amount}}</label>
+                                                       
+                                                    </div>
+                                                    <div class="form-group col-md-3 mb-0">
+                                                        <label><b>Transfer Date:</b> &nbsp;{{records.transfer_date}}</label>
+                                                       
+                                                    </div>
+                                                    
+
+                                                </div>
+                                                <br>
+
+
+                                            </div><br>
+                        <div class="text-right mt-2 mb-1">
+    
+                            <button type="submit" name="Approved" value="Approved" class="btn btn-primary btn-lm mr-3">Delivered
+                            </button>
+                        </div>
+                    </form>
+                <div class="table-responsive">
+                    <table id="tableID" class="display table table-hover">
+                        <thead class="bg-col">
+                            <tr>
+                                <th>No.</th>
+                                <th>Item.Dec</th>
+                         
+                                <th>Quantity</th>
+                                <th>Amount</th>
+                            
+                              
+                            </tr>
+                        </thead>
+                        <tbody>
+                           {% for data in recordssub %}
+               
+                            <tr>
+                                <td>{{ forloop.counter }}</td>
+                                <td>{{ data.item_unit.item }}/{{ data.item_unit.conversion_factor_to_base }}{{ data.item_unit.unit.symbol }}</td>
+                   
+                                <td>{{ data.quantity }}</td>
+                                <td>{{ data.amount }}</td>
+                            </tr>
+                        {% endfor %}
+          
+                        </tbody>
+                    </table>
+                </div>
+                <br><br><br>
+
+            </div>
+         
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}

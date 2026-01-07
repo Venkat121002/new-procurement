@@ -1,0 +1,133 @@
+{% extends 'AdminPortal/base.html' %}
+{% block body_block %}
+{% load static %}
+
+<div class="content-wrapper">
+    <div class="col-12 grid-margin stretch-card">
+        <div class="card">
+            <div class="card-body">
+                {% comment %} {% if 'storetypemaster_create' in user_permissions %} {% endcomment %}
+                <div class="d-flex justify-content-end mb-3 gap-2">
+                    <a href="{% static 'file_formats/storetypemaster.csv' %}" class="btn btn-info mr-2" download>
+                        <i class="fas fa-download"></i> Download File Format
+                    </a>
+                    <a href="{% url 'bulk_upload_storetypemaster' %}" class="btn btn-primary mr-2">
+                        Import
+                    </a>
+                    <a href="{% url 'storetypemaster_list' %}" class="me-2 mr-1">
+                        <button type="button" class="btn btn-primary" id="downloadCSV">Export</button>
+                    </a>
+
+                    <a href="{% url 'storetypemaster_create' %}" class="btn btn-primary">
+                        + New
+                    </a>
+                
+                    
+                
+                    
+                
+                </div>
+     
+                <h3>{{screen_name}}</h3>
+
+                <!-- New Tab -->
+            </div>
+          
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table id="tableID" class="display table table-hover">
+                        <thead class="bg-col">
+                            <tr>
+                                <th>No.</th>
+<th>name</th>
+<th>description</th>
+                                    <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for data in records %}
+                            <tr>
+                                <td>{{ forloop.counter }}</td>
+                                <td>{{data.name}}</td>
+                                <td>{{data.description}}</td>
+                                    <td>
+                                        <div class="dropdown">
+                                            <button class="btn dropdown-toggle" type="button"
+                                                id="dropdownMenuIconButton2" data-toggle="dropdown" aria-haspopup="true"
+                                                aria-expanded="false">
+                                                <i class="fas fa-ellipsis-v"></i>
+                                            </button>
+                                           
+                                            <div class="dropdown-menu" aria-labelledby="dropdownMenuIconButton2">
+                                                <a class="dropdown-item" href="{% url 'storetypemaster_detail' data.pk %}">
+                                                    <button class="btn iconbg-rose" data-bs-toggle="tooltip"
+                                                        data-bs-placement="top" title="View"><i
+                                                            class="fa fa-eye"></i> View</button>
+                                                </a>
+                                              
+                                                <a class="dropdown-item" href="{% url 'storetypemaster_update' data.pk %}">
+                                                    <button class="btn iconbg-yellow" data-bs-toggle="tooltip"
+                                                        data-bs-placement="top" title="Edit"><i class="fas fa-edit"></i>
+                                                        Edit</button>
+                                                </a>
+                                                
+                                                <a class="dropdown-item" href="{% url 'storetypemaster_delete' data.pk %}">
+                                                    <button class="btn iconbg-rose" data-bs-toggle="tooltip"
+                                                        data-bs-placement="top" title="Delete"><i
+                                                            class="fas fa-trash-alt"></i> Delete</button>
+                                                </a>
+                                           
+                                                
+                                            </div>
+                                        </div>
+                                    </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+             
+
+            </div>
+           
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById("downloadCSV").addEventListener("click", function () {
+        let table = document.getElementById("tableID");
+        let rows = table.querySelectorAll("tr");
+        let csvContent = [];
+
+        // Extract table headers (exclude last column)
+        let headers = Array.from(table.querySelectorAll("thead th"))
+            .slice(0, -1) // Exclude last header
+            .map(th => `"${th.textContent.trim()}"`);
+        csvContent.push(headers.join(","));
+
+        // Extract table rows (exclude last column)
+        rows.forEach(row => {
+            let cells = row.querySelectorAll("td");
+            if (cells.length > 0) {
+                let rowData = Array.from(cells)
+                    .slice(0, -1) // Exclude last cell
+                    .map(td => `"${td.textContent.trim()}"`);
+                csvContent.push(rowData.join(","));
+            }
+        });
+
+        // Create CSV file
+        let csvBlob = new Blob([csvContent.join("\n")], { type: "text/csv" });
+        let csvUrl = URL.createObjectURL(csvBlob);
+
+        // Create and trigger download
+        let hiddenLink = document.createElement("a");
+        hiddenLink.href = csvUrl;
+        hiddenLink.download = "data.csv";
+        document.body.appendChild(hiddenLink);
+        hiddenLink.click();
+        document.body.removeChild(hiddenLink);
+    });
+</script>
+{% endblock %}
