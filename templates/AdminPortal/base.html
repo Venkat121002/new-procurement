@@ -440,7 +440,7 @@
             </div>
           </li>
           
-            {% if request.user.is_admin or request.user.is_superuser %}
+            {% if request.user.is_admin or request.user.is_superuser or request.user.is_company_admin%}
             <li class="nav-item ">
 
               <a class="nav-link" href="{% url 'feedback_list' %}">
@@ -504,7 +504,7 @@
     </div>
   </div>
 </div>
-    {% if alert_messages and alert_messages.message != "success" and request.user.is_admin %}
+    {% if alert_messages and alert_messages.message != "success" and request.user.is_company_admin %}
 <div class="bb-left-alert-wrapper">
   <div class="bb-left-alert">
     <span>{{ alert_messages.message }}</span>

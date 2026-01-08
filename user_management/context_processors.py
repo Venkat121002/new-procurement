@@ -37,6 +37,6 @@ def alert_messages(request):
             user=request.user,
             is_read=False
         ).last()
-        print('messages in context processor', type(message))
+        print('messages in context processor', message)
 
     return {'alert_messages': message}

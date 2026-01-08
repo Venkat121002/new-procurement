@@ -96,7 +96,15 @@ def user_login(request):
                     request.session['company'] = user.company.pk if user.company else None
                     
                     if users.is_admin:
-                        return redirect('select_supplier_store',pk=users.id)  # pk is a user id
+                        # ---- Package Check (ROISOUK) ----
+                        package_data = json.dumps({'buyer_id': buyer_id})
+                        package_check = call_post_method_for_without_token(
+                            PACKAGE_URL, 'package_check/', package_data
+                        )
+                        print('package status code---',package_check.status_code)
+                        if package_check.status_code in [200, 201]:
+                            print('dddddddd',package_check.json())
+                            return redirect('select_supplier_store',pk=users.id)  # pk is a user id
                     else:
                         supplieruser = SupplierUser.objects.get(user_id = user.id)
                         role_obj =Role.objects.filter(pk=supplieruser.role.id, company_id=user.company.pk).first()
@@ -111,11 +119,27 @@ def user_login(request):
                         #=========== need to check howmany stores access this user have ==================
                         getstores = supplieruser.store.all()
                         if getstores.count() > 1:
-                            return redirect('select_supplier_store',pk=user.id)  # pk is a user id
+                            # ---- Package Check (ROISOUK) ----
+                            package_data = json.dumps({'buyer_id': buyer_id})
+                            package_check = call_post_method_for_without_token(
+                                PACKAGE_URL, 'package_check/', package_data
+                            )
+                            print('package status code---',package_check.status_code)
+                            if package_check.status_code in [200, 201]:
+                                print('dddddddd',package_check.json())
+                                return redirect('select_supplier_store',pk=user.id)  # pk is a user id
                         else:
                             getstores1 = getstores.first()
                             request.session['supplier_store_id'] = getstores1.id
-                            return redirect('dashboard')
+                            # ---- Package Check (ROISOUK) ----
+                            package_data = json.dumps({'buyer_id': buyer_id})
+                            package_check = call_post_method_for_without_token(
+                                PACKAGE_URL, 'package_check/', package_data
+                            )
+                            print('package status code---',package_check.status_code)
+                            if package_check.status_code in [200, 201]:
+                                print('dddddddd',package_check.json())
+                                return redirect('dashboard')
 
                 else:
                     if user.roles is not None:
@@ -131,8 +155,16 @@ def user_login(request):
                         # request.session['company']=None
                         request.session['company'] = user.company.pk if user.company.pk else None
                         request.session['permission']=[]
+                    # ---- Package Check (ROISOUK) ----
+                    package_data = json.dumps({'buyer_id': buyer_id})
+                    package_check = call_post_method_for_without_token(
+                        PACKAGE_URL, 'package_check/', package_data
+                    )
+                    print('package status code---',package_check.status_code)
+                    if package_check.status_code in [200, 201]:
+                        print('dddddddd',package_check.json())
                     
-                    return redirect('dashboard')
+                        return redirect('dashboard')
                 
             
 
