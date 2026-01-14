@@ -51,7 +51,7 @@ def user_registration(request):
 @company_session_required
 def user_list(request):
     company=Company.objects.get(id = request.company) 
-    if request.user.is_superuser:
+    if request.user.is_superuser or request.user.is_company_admin:
         records = User.objects.filter(is_active=True,company_id=company.id)
         context = {
             'user_list': 'active', 'user_list_show': 'show', 'records': records
