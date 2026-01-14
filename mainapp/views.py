@@ -2191,8 +2191,10 @@ def supplierstore_create(request):
     """
     try:
         company = Company.objects.get(id=request.company)
+        print('company----',company)
         if request.method == "POST":
             form = SupplierStoreForm(request.POST)
+            print('form---',form)
             if form.is_valid():
                 obj = form.save(commit=False)
 

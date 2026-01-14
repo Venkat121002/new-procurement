@@ -25,12 +25,14 @@ def user_registration(request):
 
     user=request.session['is_superuser']
     # contact=Contacts.objects.filter(branch_id=request.branch_id)
+    print('buyer-idddd',request.user.buyer_id)
     if request.method == 'POST':
         form = UserRegistrationForm(request.POST,is_superuser=user)
         if form.is_valid():
             obj = form.save(commit=False)
             obj.password = make_password(form.cleaned_data.get('password'))
             obj.company_id=company.id
+            obj.buyer_id = request.user.buyer_id
             obj.is_superuser = form.cleaned_data.get('is_superadmin')
             obj.save()
             return redirect('user_list')  # Redirect to a success page after registration
@@ -77,7 +79,7 @@ def user_edit(request,pk):
             form = UserRegistrationForm(request.POST,instance=record)
             if form.is_valid():
                 obj=form.save()
-                return redirect('supplieruser_list') 
+                return redirect('user_list') 
         else:
             form = UserRegistrationForm(instance=record)
 
@@ -111,7 +113,7 @@ def user_delete(request,pk):
         obj=User.objects.get(pk=pk)
         obj.is_active=False
         obj.save()
-        return redirect('supplieruser_list')          
+        return redirect('user_list')          
         #records = User.objects.all()
     except Exception as error:
         return render(request, '500.html', {'error': error})
