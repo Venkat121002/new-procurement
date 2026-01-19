@@ -2193,7 +2193,7 @@ def supplierstore_create(request):
         company = Company.objects.get(id=request.company)
         print('company----',company)
         if request.method == "POST":
-            form = SupplierStoreForm(request.POST)
+            form = SupplierStoreForm(request.POST,company = company.id)
             print('form---',form)
             if form.is_valid():
                 obj = form.save(commit=False)
@@ -2203,7 +2203,7 @@ def supplierstore_create(request):
                   # Save the form data as a new record
                 return redirect('supplierstore_list')
         else:
-            form = SupplierStoreForm()  # Display an empty form
+            form = SupplierStoreForm(company = company.id)  # Display an empty form
         context = {
             'form': form, 'screen_name': 'Branch Store','Portal': 'Supplier'
         }
@@ -2247,7 +2247,7 @@ def supplierstore_detail(request, pk):
     try:
         company = Company.objects.get(id=request.company)
         record = get_object_or_404(SupplierStore, pk=pk,company_id=company.id)
-        form = SupplierStoreForm(instance=record)
+        form = SupplierStoreForm(instance=record,company = company.id)
         context = {
             'screen_name': 'Branch Store', 'view': True, 'form': form
         }
@@ -2272,7 +2272,7 @@ def supplierstore_update(request, pk):
         company = Company.objects.get(id=request.company)
         supplierstore = get_object_or_404(SupplierStore, pk=pk,company_id=company.id)
         if request.method == "POST":
-            form = SupplierStoreForm(request.POST, instance=supplierstore)
+            form = SupplierStoreForm(request.POST, instance=supplierstore,company = company.id)
             if form.is_valid():
                 obj = form.save(commit=False)
 
@@ -2280,7 +2280,7 @@ def supplierstore_update(request, pk):
                 obj.save()  # Save the updated record
                 return redirect('supplierstore_list')
         else:
-            form = SupplierStoreForm(instance=supplierstore)  # Display the existing record in the form
+            form = SupplierStoreForm(instance=supplierstore,company = company.id)  # Display the existing record in the form
         context = {
             'form': form, 'screen_name': 'branch Store'
         }
@@ -2324,7 +2324,7 @@ def itemmaster_create(request):
     try:
         company = Company.objects.get(id=request.company)
         if request.method == "POST":
-            form = ItemMasterForm(request.POST)
+            form = ItemMasterForm(request.POST,company = company.id)
             if form.is_valid():
                 obj = form.save(commit=False)
 
@@ -2333,6 +2333,7 @@ def itemmaster_create(request):
                   # Save the form data as a new record
                 return redirect('itemmaster_list')
         else:
+            form = ItemMasterForm(request.POST,company = company.id)
             form = ItemMasterForm()  # Display an empty form
         context = {
             'form': form, 'screen_name': 'ItemMaster'
@@ -2378,7 +2379,7 @@ def itemmaster_detail(request, pk):
     try:
         company = Company.objects.get(id=request.company)
         record = get_object_or_404(ItemMaster, pk=pk,company_id=company.id)
-        form = ItemMasterForm(instance=record)
+        form = ItemMasterForm(instance=record,company = company.id)
         context = {
             'screen_name': 'ItemMaster', 'view': True, 'form': form
         }
@@ -2403,7 +2404,7 @@ def itemmaster_update(request, pk):
         company = Company.objects.get(id=request.company)
         itemmaster = get_object_or_404(ItemMaster, pk=pk,company_id=company.id)
         if request.method == "POST":
-            form = ItemMasterForm(request.POST, instance=itemmaster)
+            form = ItemMasterForm(request.POST, instance=itemmaster,company = company.id)
             if form.is_valid():
                 obj = form.save(commit=False)
 
@@ -2411,7 +2412,7 @@ def itemmaster_update(request, pk):
                 obj.save()  # Save the updated record
                 return redirect('itemmaster_list')
         else:
-            form = ItemMasterForm(instance=itemmaster)  # Display the existing record in the form
+            form = ItemMasterForm(instance=itemmaster,company = company.id)  # Display the existing record in the form
         context = {
             'form': form, 'screen_name': 'ItemMaster'
         }
@@ -2717,7 +2718,7 @@ def itemunit_create(request):
     # try:
     company = Company.objects.get(id=request.company)
     if request.method == "POST":
-        form = ItemUnitForm(request.POST)
+        form = ItemUnitForm(request.POST,company = company.id)
         if form.is_valid():
             obj = form.save(commit=False)
             obj.company_id=company.id
@@ -2725,7 +2726,7 @@ def itemunit_create(request):
                 # Save the form data as a new record
             return redirect('itemunit_list')
     else:
-        form = ItemUnitForm()  # Display an empty form
+        form = ItemUnitForm(company = company.id)  # Display an empty form
     context = {
         'form': form, 'screen_name': 'ItemUnit'
     }
@@ -2770,7 +2771,7 @@ def itemunit_detail(request, pk):
     try:
         company = Company.objects.get(id=request.company)
         record = get_object_or_404(ItemUnit, pk=pk,company_id=company.id)
-        form = ItemUnitForm(instance=record)
+        form = ItemUnitForm(instance=record,company = company.id)
         context = {
             'screen_name': 'ItemUnit', 'view': True, 'form': form
         }
@@ -2795,7 +2796,7 @@ def itemunit_update(request, pk):
         company = Company.objects.get(id=request.company)
         itemunit = get_object_or_404(ItemUnit, pk=pk,company_id=company.id)
         if request.method == "POST":
-            form = ItemUnitForm(request.POST, instance=itemunit)
+            form = ItemUnitForm(request.POST, instance=itemunit,company = company.id)
             if form.is_valid():
                 obj = form.save(commit=False)
 
@@ -2803,7 +2804,7 @@ def itemunit_update(request, pk):
                 obj.save()  # Save the updated record
                 return redirect('itemunit_list')
         else:
-            form = ItemUnitForm(instance=itemunit)  # Display the existing record in the form
+            form = ItemUnitForm(instance=itemunit,company = company.id)  # Display the existing record in the form
         context = {
             'form': form, 'screen_name': 'ItemUnit'
         }
