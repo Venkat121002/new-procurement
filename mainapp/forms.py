@@ -93,7 +93,18 @@ class ItemSubCategoryMasterForm(GenericModelForm):
     class Meta:
         model = ItemSubCategoryMaster
         exclude = ('company',)
+    
+    def __init__(self, *args, **kwargs):
+        company_id = kwargs.pop('company', None)   # get company from view
+        super().__init__(*args, **kwargs)
+    
+        if company_id:
+            print("company_id in form init:", company_id)
+            
+            self.fields['category'].queryset = ItemCategoryMaster.objects.filter(company_id=company_id)
+            # self.fields['storetype'].queryset = StoreTypeMaster.objects.filter(company_id=company)
 
+    
 class SupplierCustomerMappingForm(GenericModelForm):
     class Meta:
         model = SupplierCustomerMapping
@@ -137,11 +148,23 @@ class ItemMasterForm(GenericModelForm):
     class Meta:
         model = ItemMaster
         exclude = ('company','barcode')
-    def __init__(self,*args,**kwargs):
-        company = kwargs.pop('company', None)   # get company from view
+
+    # def __init__(self,*args,**kwargs):
+    #     company = kwargs.pop('company', None)  
+    #     super().__init__(*args, **kwargs)
+    #     if company:
+    #         self.fields['category'].queryset = ItemCategoryMaster.objects.filter(company_id=company)
+    
+    def __init__(self, *args, **kwargs):
+        company_id = kwargs.pop('company', None)   
         super().__init__(*args, **kwargs)
-        if company:
-            self.fields['category'].queryset = ItemCategoryMaster.objects.filter(company_id=company)
+    
+        if company_id:
+            print("company_id in form init:", company_id)
+            
+            self.fields['category'].queryset =  ItemCategoryMaster.objects.filter(company_id=company_id)
+            self.fields['subcategory'].queryset =  ItemSubCategoryMaster.objects.filter(company_id=company_id)
+
 
 class OrderRequestParentForm(GenericModelForm):
     class Meta:
@@ -184,6 +207,18 @@ class PackageSizeMasterForm(GenericModelForm):
     class Meta:
         model = PackageSizeMaster
         exclude = ('company',)
+    
+    def __init__(self, *args, **kwargs):
+        company_id = kwargs.pop('company', None)   
+        super().__init__(*args, **kwargs)
+    
+        if company_id:
+            print("company_id in form init:", company_id)
+            
+            self.fields['itemunit'].queryset =  ItemUnit.objects.filter(company_id=company_id)
+            self.fields['brand'].queryset =  BrandMaster.objects.filter(company_id=company_id)
+
+
 
 class PackageAssignmentForm(GenericModelForm):
     class Meta:
@@ -245,3 +280,14 @@ class MultiApproverForm(GenericModelForm):
     class Meta:
         model = MultiApprover
         fields = ['process', 'user', 'description']
+       
+    def __init__(self, *args, **kwargs):
+        company_id = kwargs.pop('company', None)   
+        super().__init__(*args, **kwargs)
+    
+        if company_id:
+            print("company_id in form init:", company_id)
+            
+            # self.fields['process'].queryset =  Company.objects.filter(company_id=company_id)
+            self.fields['user'].queryset =  User.objects.filter(company_id=company_id)
+    
