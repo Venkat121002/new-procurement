@@ -162,12 +162,15 @@ class Currency(models.Model):
 
 class Feedback_Reasons(models.Model):
     reason = models.CharField(max_length=255)
+    company = models.ForeignKey(Company, on_delete=models.CASCADE, related_name='%(class)s_companies',blank=False, null=True)
 
     def __str__(self):
             return self.reason
     
 class Feedback(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE , null=True, blank=True )
+    company = models.ForeignKey(Company, on_delete=models.CASCADE, related_name='%(class)s_companies',blank=False, null=True)
+
     endpoint = models.CharField(max_length=255 , null=True, blank=True )
     name = models.CharField(max_length=255 , null=True, blank=True )
     feedback = models.TextField( null=True, blank=True)

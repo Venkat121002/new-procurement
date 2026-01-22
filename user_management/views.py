@@ -460,7 +460,7 @@ def select_customer_store(request,pk): # user id
 
 def feedback_create(request):
     print('hhshshhshs',request.META.get('HTTP_REFERER', '/'))
-
+    company=Company.objects.get(id = request.user.company_id)
     referer = request.META.get('HTTP_REFERER', '/')
     path = urlparse(referer).path      # '/collect_fees'
     last_name = path.strip('/').split('/')[-1]
@@ -478,6 +478,7 @@ def feedback_create(request):
         print('yyyyyyyyyyy',request.POST)
         reason = get_object_or_404(Feedback_Reasons, id=reason_id)
         Feedback.objects.create(
+            company=request.user.company,
             user=request.user,
             reason=reason,
             feedback=feedback_text,
@@ -502,7 +503,7 @@ def feedback_create(request):
 
             return redirect('supplierdashboard')
 
-    reasons = Feedback_Reasons.objects.all()
+    reasons = Feedback_Reasons.objects.filter(company=company)
 
 
     return render(
@@ -517,19 +518,25 @@ def feedback_create(request):
 
 def feedback_list(request):
     # POST → SAVE ONLY FEEDBACK REASON
+    company=Company.objects.get(id = request.user.company_id)
     if request.method == "POST":
         reason_text = request.POST.get("reason")
 
         if reason_text:
             Feedback_Reasons.objects.create(
+                company=request.user.company,
                 reason=reason_text
             )
 
         return redirect("feedback_list")
 
     # GET → LIST ONLY FEEDBACK
-    feedbacks = Feedback.objects.select_related("user", "reason").order_by("-created_at")
-
+    # feedbacks = Feedback.objects.select_related("user", "reason").order_by("-created_at")
+    feedbacks = Feedback.objects.filter(
+        company=company
+    ).select_related(
+        "user", "reason"
+    ).order_by("-created_at")
 
     return render(
         request,
