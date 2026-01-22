@@ -109,8 +109,19 @@
                                 <td>{{data.expiry_date}}</td>
                                 <td>{{data.batch_no}}</td>
                                 {% comment %} <td>{{data.packsize}}</td> {% endcomment %}
-                                <td>{% if data.receivetype == 'Piece' %}{{data.item_unit.price}}{% else %}{{data.packsize.pack_price}} {% endif %}</td>
-                          
+                                <!-- <td>{% if data.receivetype == 'Piece' %}{{data.item_unit.price}}{% else %}{{data.packsize.pack_price}} {% endif %}</td> -->
+                                 <td>
+                                    {% if data.receivetype == 'Piece' %}
+                                        {{ data.item_unit.price }}
+                                    {% else %}
+                                        {% if data.packsize %}
+                                            {{ data.packsize.pack_price }}
+                                        {% else %}
+                                            0
+                                        {% endif %}
+                                    {% endif %}
+                                </td>
+
                                 <td>{{data.tax}}</td>
                              
                                     <td>{{data.discount}}</td>
