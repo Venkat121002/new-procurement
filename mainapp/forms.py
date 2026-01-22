@@ -148,6 +148,7 @@ class ItemMasterForm(GenericModelForm):
     class Meta:
         model = ItemMaster
         exclude = ('company','barcode')
+
     # def __init__(self,*args,**kwargs):
     #     company = kwargs.pop('company', None)  
     #     super().__init__(*args, **kwargs)
@@ -163,6 +164,7 @@ class ItemMasterForm(GenericModelForm):
             
             self.fields['category'].queryset =  ItemCategoryMaster.objects.filter(company_id=company_id)
             self.fields['subcategory'].queryset =  ItemSubCategoryMaster.objects.filter(company_id=company_id)
+
 
 class OrderRequestParentForm(GenericModelForm):
     class Meta:
