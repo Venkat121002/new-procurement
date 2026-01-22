@@ -86,8 +86,15 @@ def supplier_stockadjustment(request): # pk is a manufacturer id
                     reason = request.POST.get(f'reason_{data}')
 
                     
-                    amt = instockrecords.item_unit.price if return_type == 'Piece' else instockrecords.packsize.pack_price
-                   
+                    # amt = instockrecords.item_unit.price if return_type == 'Piece' else instockrecords.packsize.pack_price
+                    if return_type == 'Piece':
+                        amt = instockrecords.item_unit.price
+                    else:
+                        if instockrecords.packsize:
+                            amt = instockrecords.packsize.pack_price
+                        else:
+                            amt = 0   # or raise validation error
+
                     if return_qty and return_type:
                         SupplierStockAdjustmentSub.objects.create(
                             company_id = request.company,
