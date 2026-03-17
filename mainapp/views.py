@@ -19,7 +19,7 @@ from django.core.mail import send_mail
 from django.conf import settings
 from .forms import InviteForm
 from SupplierPortal.models import *
-
+from mainapp.utils import *
 import re
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -295,6 +295,7 @@ class UserSubscriptionAPIView(APIView):
                 'start_date': request.data.get('start_date'),
                 'end_date': request.data.get('end_date'),
                 'module': request.data.get('module'),
+                'plan_name': request.data.get('plan_name'),
                 'no_of_user_is_limited': request.data.get('no_of_user_is_limited', False),
                 'no_of_user_value': request.data.get('no_of_user_value'),
                 'is_active': request.data.get('is_active', True),
@@ -871,11 +872,13 @@ def supplier_list(request):
     - In case of an error, renders a custom 500 error page.
     """
     try:
-    
+        print('company name',request.user.company_id)
+        branch_allowed = check_branch_limit(request)
+        # branch_allowed = check_branch_limit(request)
         company = Company.objects.get(id=request.company)
         records = Supplier.objects.filter(company_id=company.id)
         context = {
-            'records': records, 'screen_name': 'Branch'
+            'records': records, 'screen_name': 'Branch', 'branch_allowed': branch_allowed,
         }
         return render(request, 'AdminPortal/supplier_list.html', context)
     except Exception as error:
@@ -4610,9 +4613,10 @@ def multiapproval_process(request):
 @login_required(login_url='/')
 def multiapproval_view(request):
     try:
+        approvel_limit = check_approval_limit(request)
         company = Company.objects.get(id=request.company)
         records = MultiApprover.objects.filter(company_id = company.id)
-        context = {'records':records,'screen_name':"View Multiapprovels"}
+        context = {'records':records,'screen_name':"View Multiapprovels","approvel_limit":approvel_limit}
         return render(request, 'AdminPortal/multiapproval_view.html',context)
     except Exception as error:
         return render(request, '500.html', {'error': error})

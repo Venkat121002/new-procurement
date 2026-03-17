@@ -18,7 +18,7 @@ from django.contrib import messages
 import qrcode
 from io import BytesIO
 from django.core.files.base import ContentFile
-
+from mainapp.utils import *
 from django.utils import timezone
 from SupplierPortal.models import *
 from django.core.mail import send_mail
@@ -133,6 +133,7 @@ def supplierdashboard(request):
 @supplier_store_session_required
 def supplierorder_view(request):
     try:
+        pr_limit_check = check_pr_limit(request)
         company = Company.objects.get(id=request.company)
         supplier_store = request.supplier_store_id
         supplierstore = SupplierStore.objects.get(id = supplier_store)
@@ -829,10 +830,11 @@ def supplier_grminvoice(request, pk):
 @supplier_store_session_required
 def pending_invoices(request):
     try:
+        invoice_allowed = check_invoice_limit(request)
         company = Company.objects.get(id=request.company)
         supplier_store = int(request.supplier_store_id)
         pendinginvoice = SupplierInvoice.objects.filter(store_to_id = supplier_store)
-        context = {'pendinginvoice':pendinginvoice}
+        context = {'pendinginvoice':pendinginvoice,"invoice_allowed":invoice_allowed}
         return render(request,"SupplierPortal/pending_invoices.html",context)
     except Exception as error:
         return render(request, '500.html', {'error': error})

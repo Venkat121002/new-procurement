@@ -8,10 +8,13 @@
             <div class="card-body">
               
                 <a href="{% url 'create_invoice' %}">
+                {% if invoice_allowed %} 
                     <button type="button" class="btn btn-primary float-right">+ New Invoice</button>
                 </a>
-          
-
+                {% else %}
+                <p class="text-danger mb-0">Invoice limit reached. Upgrade your plan.</p>
+                {% endif %}
+ 
             </div>
    
             <div class="card-body">

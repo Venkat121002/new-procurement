@@ -17,10 +17,13 @@
                     <a href="{% url 'storetypemaster_list' %}" class="me-2 mr-1">
                         <button type="button" class="btn btn-primary" id="downloadCSV">Export</button>
                     </a>
-
+                    {% if approvel_limit %}
                     <a href="{% url 'multiapproval_process' %}" class="btn btn-primary">
                         + New
                     </a>
+                    {% else %}
+                    <p class="text-danger mb-0">Branch limit reached. Upgrade your plan.</p>
+                    {% endif %}
                 
                     
                 

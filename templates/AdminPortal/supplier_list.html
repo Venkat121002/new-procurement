@@ -9,8 +9,12 @@
             <div class="card-body">
                 {% comment %} {% if 'supplier_create' in user_permissions %} {% endcomment %}
                 <a href="{% url 'supplier_create' %}">
+                    {% if branch_allowed %}
                     <button type="button" class="btn btn-primary float-right">+ New</button>
                 </a>
+                {% else %}
+                <p class="text-danger mb-0">Branch limit reached. Upgrade your plan.</p>
+                {% endif %}
           
                 <h3>{{screen_name}}</h3>
                

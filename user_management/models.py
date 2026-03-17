@@ -115,7 +115,7 @@ class UserSubscription(models.Model):
     start_date = models.DateField()
     end_date = models.DateField()
     module = models.CharField(max_length=255)
-
+    plan_name = models.CharField(max_length=255)
     no_of_user_is_limited = models.BooleanField(default=False)
     no_of_user_value = models.IntegerField(null=True, blank=True)
 

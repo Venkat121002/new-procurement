@@ -9,10 +9,13 @@
                 <a href="{% url 'reorder_stocks' %}">
                     <button type="button" class="btn btn-primary float-right">+ Reorder</button>
                 </a>
-             
+                {% if pr_limit %}
                 <a href="{% url 'supplierorder' %}">
                     <button type="button" class="btn btn-primary float-right">+ New</button>
                 </a>
+                {% else %}
+                <p class="text-danger mb-0">Branch limit reached. Upgrade your plan.</p>
+                {% endif %}
           
                 <h3>Purchase View</h3>
             
