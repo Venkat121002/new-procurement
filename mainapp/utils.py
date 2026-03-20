@@ -1,5 +1,6 @@
 from user_management.models import *
 from SupplierPortal.models import *
+from mainapp.models import *
 
 
 def check_branch_limit(request):
@@ -194,9 +195,7 @@ def check_invoice_limit(request):
 def check_approval_limit(request):
     if not request.user.is_authenticated:
         return False
-    supplier_store = request.supplier_store_id
     try:
-        supplier_store = int(request.supplier_store_id)
         print('------------------------------------')
         print('user company',request.user.company_name_id)
         company_id = request.user.company_name_id
@@ -209,7 +208,7 @@ def check_approval_limit(request):
 
         else:
             return False
-        approval_count= SupplierInvoice.objects.filter(store_to_id = supplier_store).count()
+        approval_count= MultiApprover.objects.filter(company=company).count()
         print('approval Count:', approval_count)
 
         plan_limits = {

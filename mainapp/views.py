@@ -4616,7 +4616,7 @@ def multiapproval_view(request):
         approvel_limit = check_approval_limit(request)
         company = Company.objects.get(id=request.company)
         records = MultiApprover.objects.filter(company_id = company.id)
-        context = {'records':records,'screen_name':"View Multiapprovels","approvel_limit":approvel_limit}
+        context = {'records':records,'screen_name':"View Multiapprovels",'approvel_limit':approvel_limit}
         return render(request, 'AdminPortal/multiapproval_view.html',context)
     except Exception as error:
         return render(request, '500.html', {'error': error})
