@@ -1,3 +1,4 @@
+from mainapp.models import MultiApprover
 from user_management.models import *
 from SupplierPortal.models import *
 from mainapp.models import *
@@ -20,7 +21,7 @@ def check_branch_limit(request):
 
         else:
             return False
-        branch_count = Branch.objects.filter(company_name=company).count()
+        branch_count = Branch.objects.filter(company=company).count()
         print('Branch Count:', branch_count)
 
         plan_limits = {
@@ -58,8 +59,8 @@ def check_pr_limit(request):
     supplier_store = request.supplier_store_id
     try:
         print('------------------------------------')
-        print('user company',request.user.company_name_id)
-        company_id = request.user.company_name_id
+        print('user company',request.user.company_id)
+        company_id = request.user.company_id
         if company_id:
             company = company_id
             user_sub = UserSubscription.objects.get(company=company)
@@ -104,8 +105,8 @@ def check_pr_limit(request):
     supplier_store = request.supplier_store_id
     try:
         print('------------------------------------')
-        print('user company',request.user.company_name_id)
-        company_id = request.user.company_name_id
+        print('user company',request.user.company_id)
+        company_id = request.user.company_id
         if company_id:
             company = company_id
             user_sub = UserSubscription.objects.get(company=company)
@@ -151,8 +152,8 @@ def check_invoice_limit(request):
     try:
         supplier_store = int(request.supplier_store_id)
         print('------------------------------------')
-        print('user company',request.user.company_name_id)
-        company_id = request.user.company_name_id
+        print('user company',request.user.company_id)
+        company_id = request.user.company_id
         if company_id:
             company = company_id
             user_sub = UserSubscription.objects.get(company=company)
@@ -197,11 +198,11 @@ def check_approval_limit(request):
         return False
     try:
         print('------------------------------------')
-        print('user company',request.user.company_name_id)
-        company_id = request.user.company_name_id
+        print('user company',request.user.company)
+        company_id = request.user.company
         if company_id:
             company = company_id
-            user_sub = UserSubscription.objects.get(company=company)
+            user_sub = UserSubscription.objects.get(company=company.id)
             print('User Subscription:', user_sub)
             plan_name = str(user_sub.plan_name).lower()
             print('Plan Name:', plan_name)
