@@ -378,7 +378,7 @@
             <span class="menu-title">PackageSizeMaster</span>
         </a>
 
-        <a class="nav-link {{countrymaster}}" href="{% url 'countrymaster_list' %}">
+        {% comment %} <a class="nav-link {{countrymaster}}" href="{% url 'countrymaster_list' %}">
           <i class="fa fa-globe menu-icon"></i>
           <span class="menu-title">CountryMaster</span>
         </a>
@@ -386,7 +386,7 @@
         <a class="nav-link {{subcountrymaster}}" href="{% url 'subcountrymaster_list' %}">
           <i class="fa fa-map-marker-alt menu-icon"></i>
           <span class="menu-title">SubCountryMaster</span>
-        </a>
+        </a> {% endcomment %}
 
           
             <a class="nav-link {{storetypemaster}}" href="{% url 'storetypemaster_list' %}">

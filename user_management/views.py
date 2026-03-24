@@ -376,7 +376,7 @@ def select_supplier_store(request,pk): # pk is a user id
             supplier = Supplier.objects.get(id = user.supplier.id)
             store_list = SupplierStore.objects.filter(supplier_id = supplier.id)
         else:
-            suppieruser = SupplierUser.objects.get(user_id = user.id)
+            suppieruser = SupplierUser.objects.get(user=user.id)
             store_list = suppieruser.store.all()
 
         if request.method == 'POST':
